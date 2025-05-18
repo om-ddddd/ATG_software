@@ -1,0 +1,21 @@
+{
+    "template": "Application v3",
+    "description": "GUI Composer v3 Template",
+    "version": "3.6.0",
+    "window": {
+        "frame": false
+    },
+    "projectName": "main",
+    "applicationName": "main",
+    "applicationIcon": "",
+    "windowIcon": "",
+    "splashImage": "",
+    "tiBrandingEnabled": false,
+    "disableAutoConnect": false,
+    "vendorName": "",
+    "technologyName": "",
+    "customLicense": "",
+    "customManifest": "",
+    "customAppInfo": "",
+    "nosplash": true
+}

@@ -1,0 +1,24 @@
+{
+    "widgetBindings": [
+        {
+            "widgetId": "input_5",
+            "serverBindName": "widget.pm.sineinput",
+            "propertyName": "value"
+        },
+        {
+            "widgetId": "led",
+            "serverBindName": "widget.pm.gate_status",
+            "propertyName": "on"
+        },
+        {
+            "widgetId": "input_1",
+            "serverBindName": "widget.pm.cum_sineinput",
+            "propertyName": "point"
+        },
+        {
+            "widgetId": "input",
+            "serverBindName": "widget.pm.mainoutput",
+            "propertyName": "point"
+        }
+    ]
+}
