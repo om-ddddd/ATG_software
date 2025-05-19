@@ -475,6 +475,26 @@ const init = () => {
         });
     });
 
+    // Add event listeners for H and R buttons
+    GcWidget.querySelector('#button').then(hButton => {
+        if (hButton) {
+            hButton.addEventListener('click', () => {
+                if (window.pmVars) {
+                    window.pmVars.hold_status = 1;
+                }
+            });
+        }
+    });
+    GcWidget.querySelector('#button_1').then(rButton => {
+        if (rButton) {
+            rButton.addEventListener('click', () => {
+                if (window.pmVars) {
+                    window.pmVars.hold_status = 0;
+                }
+            });
+        }
+    });
+
 };
 
 
@@ -490,30 +510,8 @@ function startSineWaveGenerator() {
 
     function updateSineValue(timestamp) {
         // Calculate elapsed time
-        const timeElapsed = (timestamp - startTime) / 1000;
-        const amplitude = tideRange / 2; // Half of peak-to-peak value
-
-        // Calculate sine value with DC offset
-        sineValue = 19.06 + amplitude * Math.sin(angularFrequency * timeElapsed);
+    
         
-        // // Update the cum_sineinput value in pmVars
-        // if (window.pmVars) {
-        //     window.pmVars.cum_sineinput = sineValue;
-        // }
-
-        // Update the input sine value display
-        GcWidget.querySelector('#input_2').then(sineValueInput => {
-            if (sineValueInput) {
-                sineValueInput.value = sineValue.toFixed(2);
-            }
-        });
-
-        // Update the oscilloscope
-        GcWidget.querySelector('#input').then(input => {
-            if (input && input.addDataPoint) {
-                input.addDataPoint(sineValue);
-            }
-        });
 
         animationId = requestAnimationFrame(updateSineValue);
     }
