@@ -164,25 +164,36 @@
         left: 45px;
         top: -37px}
     #container_1 {
-        width: 204px;
+        width: 320px;
         height: 61px;
         position: absolute;
         left: 12px;
         top: 32px;
         border-style: solid;
         border-width: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background: #f8f8f8;
+        padding-left: 10px;
+        gap: 24px;
     }
-    #label {
-        position: absolute;
-        left: 5px;
-        top: 2px;
-        width: 180px
+    #actual_wl_span, #required_wl_span {
+        font-size: 18px;
+        font-weight: 500;
+        color: #1a237e;
+        margin-right: 18px;
+        display: flex;
+        align-items: center;
     }
-    #label_1 {
-        position: absolute;
-        left: 5px;
-        top: 24px;
-        width: 180px;
+    #actual_wl_value, #required_wl_value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #388e3c;
+        margin-left: 8px;
+        min-width: 48px;
+        display: inline-block;
+        text-align: right;
     }
     #container_2 {
         width: 120px;
@@ -361,6 +372,8 @@
             <gc-widget-tab-panel id="main_tab" class="container" label=" " icon-name="round:action:article" vertical layout has-heading>
                 <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="10000" trigger-level="-4" plot-title=" " x-axis-title="Time">
                     <gc-widget-container id="container_1">
+                    <span id="actual_wl_span">Actual WL: <span id="actual_wl_value"></span></span>
+                    <span id="required_wl_span" style="margin-left: 20px;">Required WL: <span id="required_wl_value"></span></span>
                     </gc-widget-container>
                     <gc-widget-container id="container_2">
                         <gc-widget-button id="button" label="H"></gc-widget-button>

@@ -519,6 +519,56 @@ function startSineWaveGenerator() {
     animationId = requestAnimationFrame(updateSineValue);
 }
 
+// Update Actual WL and Required WL spans in container_1
+function updateActualWLSpan() {
+    const actualWLValue = document.getElementById('actual_wl_value');
+    if (actualWLValue && window.pmVars) {
+        let val = window.pmVars.mainoutput;
+        if (typeof val === 'number') {
+            actualWLValue.textContent = val.toFixed(2);
+        } else if (!isNaN(parseFloat(val))) {
+            actualWLValue.textContent = parseFloat(val).toFixed(2);
+        } else {
+            actualWLValue.textContent = val ?? '';
+        }
+    }
+}
+function updateRequiredWLSpan() {
+    const requiredWLValue = document.getElementById('required_wl_value');
+    if (requiredWLValue && window.pmVars) {
+        let val = window.pmVars.cum_sineinput;
+        if (typeof val === 'number') {
+            requiredWLValue.textContent = val.toFixed(2);
+        } else if (!isNaN(parseFloat(val))) {
+            requiredWLValue.textContent = parseFloat(val).toFixed(2);
+        } else {
+            requiredWLValue.textContent = val ?? '';
+        }
+    }
+}
+// Initial update after DOMContentLoaded
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    updateActualWLSpan();
+    updateRequiredWLSpan();
+} else {
+    document.addEventListener('DOMContentLoaded', () => {
+        updateActualWLSpan();
+        updateRequiredWLSpan();
+    });
+}
+// Listen for changes in pmVars
+(function listenPmVarsWL() {
+    function tryAddListener() {
+        if (window.pmVars && window.pmVars.addListener) {
+            window.pmVars.addListener('mainoutput', updateActualWLSpan);
+            window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
+        } else {
+            setTimeout(tryAddListener, 500);
+        }
+    }
+    tryAddListener();
+})();
+
 document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init);
 
 /**
