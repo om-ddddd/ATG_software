@@ -442,11 +442,6 @@ Boilerplate code for working with webcomponents in the application
 const init = () => {
     console.info('Initializing application...');
 
-    // Add menubar product-name-clicked event listener
-    // GcWidget.querySelector('gc-widget-menubar').then(menubar => {
-    //     menubar.addEventListener('product-name-clicked', () => window.open('https://dev.ti.com/', 'Dev Zone'));
-    // });
-
     // Get the tide range selector
     GcWidget.querySelector('#tide_range').then(tideRangeSelector => {
         tideRangeSelector.addEventListener('change', (event) => {
@@ -470,14 +465,13 @@ const init = () => {
 
                 if (mainTabIndex >= 0) {
                     tabContainer.index = mainTabIndex;
-                    // Start sine wave generator and setup label updaters
                     startSineWaveGenerator();
                     setupWaterLevelLabels();
                 }
             });
         });
     });
-
+    
     // Add event listener for H button to set hold_status to 1
     GcWidget.querySelector('#button').then(hButton => {
         hButton.addEventListener('click', () => {
@@ -499,21 +493,6 @@ const init = () => {
             }
         });
     });
-
-    // Set up the oscilloscope initially
-    GcWidget.querySelector('#oscilloscope').then(oscilloscope => {
-        if (oscilloscope) {
-            console.info('Oscilloscope found and initialized');
-            
-            // If we're already on the main tab, set up the labels
-            GcWidget.querySelector('#main_tab_container').then(tabContainer => {
-                if (tabContainer && tabContainer.index === Array.from(tabContainer.querySelectorAll('gc-widget-tab-panel'))
-                    .findIndex(panel => panel.id === 'main_tab')) {
-                    setupWaterLevelLabels();
-                }
-            });
-        }
-    });
 };
 
 
@@ -527,56 +506,34 @@ function startSineWaveGenerator() {
 
     startTime = performance.now();
 
-    function updateSineValue(timestamp) {
-        // Calculate elapsed time
-        const timeElapsed = (timestamp - startTime) / 1000;
-        const amplitude = tideRange / 2; // Half of peak-to-peak value
-
-        // Calculate sine value with DC offset
-        sineValue = 19.06 + amplitude * Math.sin(angularFrequency * timeElapsed);
-        
-        // // Update the cum_sineinput value in pmVars
-        // if (window.pmVars) {
-        //     window.pmVars.cum_sineinput = sineValue;
-        // }
-
-        // Update the input sine value display
-        GcWidget.querySelector('#input_2').then(sineValueInput => {
-            if (sineValueInput) {
-                sineValueInput.value = sineValue.toFixed(2);
-            }
-        });
-
-        // Update the oscilloscope with actual values from pmVars
+    function updateOscilloscope(timestamp) {
+        // Instead of calculating the sine value, we use pmVars.sineinput from the microcontroller
         if (window.pmVars) {
+            const sineInputValue = window.pmVars.sineinput;
+            const mainOutputValue = window.pmVars.mainoutput;
+            const cumSineInputValue = window.pmVars.cum_sineinput;
+            
+            // Update the oscilloscope with actual values from the microcontroller
+            
             // Update mainoutput (Actual WL) oscilloscope
             GcWidget.querySelector('#input').then(input => {
-                if (input && input.addDataPoint) {
-                    const mainoutputValue = window.pmVars.mainoutput;
-                    if (mainoutputValue !== undefined) {
-                        input.addDataPoint(mainoutputValue);
-                    }
+                if (input && input.addDataPoint && mainOutputValue !== undefined) {
+                    input.addDataPoint(mainOutputValue);
                 }
             });
             
             // Update cum_sineinput (Required WL) oscilloscope
             GcWidget.querySelector('#input_1').then(input => {
-                if (input && input.addDataPoint) {
-                    const cumSineValue = window.pmVars.cum_sineinput;
-                    if (cumSineValue !== undefined) {
-                        input.addDataPoint(cumSineValue);
-                    } else {
-                        // If no value yet in pmVars, use the calculated sine value
-                        input.addDataPoint(sineValue);
-                    }
+                if (input && input.addDataPoint && cumSineInputValue !== undefined) {
+                    input.addDataPoint(cumSineInputValue);
                 }
             });
         }
 
-        animationId = requestAnimationFrame(updateSineValue);
+        animationId = requestAnimationFrame(updateOscilloscope);
     }
 
-    animationId = requestAnimationFrame(updateSineValue);
+    animationId = requestAnimationFrame(updateOscilloscope);
 }
 
 /**

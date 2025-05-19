@@ -132,8 +132,8 @@
         margin: 0
     }
     #oscilloscope {
-        height: 597px;
-        width: 1132px;
+        height: 578px;
+        width: 1142px;
         position: absolute;
         left: 10px;
         top: -37px}
@@ -178,7 +178,7 @@
         position: absolute;
         left: 60px;
         top: 4px;
-        width: 42px;
+        width: 45px;
         height: 40px
     }
     #container_3 {
@@ -215,6 +215,55 @@
         top: 390px;
         z-index: -1
     }
+    #input_3 {
+        position: absolute;
+        left: 607px;
+        top: 16px
+    }
+    #input_4 {
+        position: absolute;
+        left: 980px;
+        top: 13px
+    }
+    #label_5 {
+        position: absolute;
+        left: 526px;
+        top: 21px
+    }
+    #label_6 {
+        position: absolute;
+        left: 899px;
+        top: 19px
+    }
+    #label_7 {
+        position: absolute;
+        left: 556px;
+        top: 37px;
+        width: 115px;
+        height: 24px
+    }
+    #label_8 {
+        position: absolute;
+        left: 557px;
+        top: 66px;
+        width: 115px;
+        height: 24px;
+    }
+    #knob {
+        position: absolute;
+        left: 886px;
+        top: 380px
+    }
+    #input_2 {
+        position: absolute;
+        left: 235px;
+        top: 10px
+    }
+    #label_3 {
+        position: absolute;
+        left: 169px;
+        top: 14px
+    }
 </style>
 
 <div id="editorRoot" layout vertical one flex>
@@ -241,7 +290,7 @@
     </header>
 
     <gc-widget-container id="viewport" flex one vertical layout>
-        <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left" index="0" initial-index="0" no-labels>
+        <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left" index="4" initial-index="0" no-labels>
             <gc-widget-tab-panel id="page_home" class="container" label="Home" icon-name="round:action:home" tooltip="Application home" center-justified layout vertical>
                 <gc-widget-container id="page_home_product_container" layout center class="container" vertical one flex>
                     <gc-widget-label id="page_home_product_name" label="ATG"></gc-widget-label>
@@ -251,6 +300,12 @@
             </gc-widget-tab-panel>
           
             <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="round:action:settings" vertical layout has-heading tooltip="Calibration and settings">
+                <gc-widget-label id="label_3" label="gain"></gc-widget-label>
+                <gc-widget-input id="input_2" min-value="247" max-value="500"></gc-widget-input>
+                <gc-widget-input id="input_3"></gc-widget-input>
+                <gc-widget-input id="input_4"></gc-widget-input>
+                <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
+                <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
             </gc-widget-tab-panel>
               <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation" icon-name="round:action:info" has-heading layout vertical>
               <gc-widget-listbox id="listbox" labels="New Tide,Modify Tide,Delete Tide" selected-index="0" selected-label="Item 1" selected-value="1"></gc-widget-listbox>
@@ -282,8 +337,11 @@
                         <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
                         <gc-widget-led id="led"></gc-widget-led>
                     </gc-widget-container>
+                    <gc-widget-label id="label_7" label="Green - Feedback "></gc-widget-label>
+                    <gc-widget-label id="label_8" label="Orange - Input"></gc-widget-label>
                     <gc-widget-virtual-oscilloscope-input id="input_1" legend-name="Legend Name" vertical-units-per-division="20"></gc-widget-virtual-oscilloscope-input>
                     <gc-widget-virtual-oscilloscope-input id="input" legend-name="Legend Name" vertical-units-per-division="20"></gc-widget-virtual-oscilloscope-input>
+                    <gc-widget-knob id="knob" max-value="10"></gc-widget-knob>
                 </gc-widget-virtual-oscilloscope>
             </gc-widget-tab-panel>
         </gc-widget-tab-container>

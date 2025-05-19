@@ -1,6 +1,21 @@
 {
     "widgetBindings": [
         {
+            "widgetId": "input_2",
+            "serverBindName": "widget.pm.main_gain",
+            "propertyName": "value"
+        },
+        {
+            "widgetId": "input_3",
+            "serverBindName": "widget.pm.offset",
+            "propertyName": "value"
+        },
+        {
+            "widgetId": "input_4",
+            "serverBindName": "widget.pm.fine_offset",
+            "propertyName": "value"
+        },
+        {
             "widgetId": "input_5",
             "serverBindName": "widget.pm.sineinput",
             "propertyName": "value"
@@ -8,7 +23,7 @@
         {
             "widgetId": "led",
             "serverBindName": "widget.pm.gate_status",
-            "propertyName": "on"
+            "propertyName": "glow"
         },
         {
             "widgetId": "input_1",
@@ -19,6 +34,11 @@
             "widgetId": "input",
             "serverBindName": "widget.pm.mainoutput",
             "propertyName": "point"
+        },
+        {
+            "widgetId": "knob",
+            "serverBindName": "widget.pm.mainoutput",
+            "propertyName": "value"
         }
     ]
 }
