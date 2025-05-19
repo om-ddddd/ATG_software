@@ -67,7 +67,7 @@
         min-width: 41.6vw;
     }
     #container {
-        width: 56vw;
+        width: 876px;
         height: 25vh;
         position: absolute;
         left: 19vw;
@@ -82,8 +82,8 @@
     }
     #tides_per_screen {
         position: absolute;
-        left: 41.5vw;
-        top: 2.7vh;
+        left: 675px;
+        top: 22px;
         width: 5.8vw;
     }
     #tide_range {
@@ -101,48 +101,49 @@
     }
     #label_tides_per_screen {
         position: absolute;
-        left: 33.3vw;
-        top: 2.9vh;
-        width: 92px;
-        height: 29px;
+        left: 502px;
+        top: 22px;
+        width: 150px;
+        height: 33px;
     }
     #accept_button {
         position: absolute;
-        left: 42vw;
-        top: 28vh;
+        left: 638px;
+        top: 225px;
     }
     #input_5 {
         position: absolute;
-        left: 245px;
-        top: 111px;
+        left: 207px;
+        top: 114px;
         width: 139px;
     }
     #label_4 {
         position: absolute;
-        left: 158px;
-        top: 113px;
+        left: 109px;
+        top: 115px;
         width: 76px;
         height: 27px;
     }
     #main_tab {
         --gc-padding: 0;
-        margin: 0
+        margin: 0;
+        height: 747px
     }
     #main_tab_container {
         margin: 0
     }
     #oscilloscope {
-        height: 578px;
-        width: 1142px;
+        height: 699px;
+        width: 1281px;
         position: absolute;
-        left: 10px;
+        left: 45px;
         top: -37px}
     #container_1 {
         width: 204px;
         height: 61px;
         position: absolute;
-        left: 7px;
-        top: 33px;
+        left: 12px;
+        top: 32px;
         border-style: solid;
         border-width: 1px;
     }
@@ -203,37 +204,25 @@
         --gc-off-color: #f9230b;
         --gc-on-color: #17de63
     }
-    #input {
-        position: absolute;
-        left: 880px;
-        top: 365px;
-        z-index: -1
-    }
-    #input_1 {
-        position: absolute;
-        left: 879px;
-        top: 390px;
-        z-index: -1
-    }
     #input_3 {
         position: absolute;
-        left: 607px;
-        top: 16px
+        left: 258px;
+        top: 107px
     }
     #input_4 {
         position: absolute;
-        left: 980px;
-        top: 13px
+        left: 863px;
+        top: 107px
     }
     #label_5 {
         position: absolute;
-        left: 526px;
-        top: 21px
+        left: 205px;
+        top: 115px
     }
     #label_6 {
         position: absolute;
-        left: 899px;
-        top: 19px
+        left: 777px;
+        top: 114px
     }
     #label_7 {
         position: absolute;
@@ -249,32 +238,51 @@
         width: 115px;
         height: 24px;
     }
-    #knob {
+    #input_6 {
         position: absolute;
-        left: 886px;
-        top: 380px
+        left: 499px;
+        top: 114px;
+        width: 142px
     }
-    #input_2 {
+    #label_9 {
         position: absolute;
-        left: 235px;
-        top: 10px
+        left: 407px;
+        top: 120px;
+        width: 81px;
+        height: 21px
+    }
+    #input_1 {
+        position: absolute;
+        left: 1038px;
+        top: 357px
+    }
+    #input {
+        position: absolute;
+        left: 1039px;
+        top: 507px
     }
     #label_3 {
         position: absolute;
-        left: 169px;
-        top: 14px
+        left: 82px;
+        top: 160px
+    }
+    #slider {
+        position: absolute;
+        left: 126px;
+        top: 147px;
+        width: 1154px
     }
 </style>
 
 <div id="editorRoot" layout vertical one flex>
-    <gc-widget-theme id="theme" hidden></gc-widget-theme>
+    <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
     <gc-widget-about-dialog id="about_dialog"></gc-widget-about-dialog>
     <gc-widget-cloudagent-dialog id="cloudagent_dialog"></gc-widget-cloudagent-dialog>
 
     <!-- Add target communication configuration below this line -->
     <gc-target-connection-manager id="connection_manager" auto-connect active-configuration="xds+pm">
     <gc-transport-xds id="xds" device-name="TMS320F280049C" connection-name="Texas Instruments XDS110 USB Debug Probe"></gc-transport-xds>
-    <gc-model-program id="pm" program-or-bin-path="./firmware/main_target.out"></gc-model-program>
+    <gc-model-program id="pm" program-or-bin-path="./firmware/atg_main.out"></gc-model-program>
 </gc-target-connection-manager>
 
     <header>
@@ -300,12 +308,12 @@
             </gc-widget-tab-panel>
           
             <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="round:action:settings" vertical layout has-heading tooltip="Calibration and settings">
-                <gc-widget-label id="label_3" label="gain"></gc-widget-label>
-                <gc-widget-input id="input_2" min-value="247" max-value="500"></gc-widget-input>
-                <gc-widget-input id="input_3"></gc-widget-input>
                 <gc-widget-input id="input_4"></gc-widget-input>
-                <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
                 <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
+                <gc-widget-input id="input_3"></gc-widget-input>
+                <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
+                <gc-widget-label id="label_3" label="Gain"></gc-widget-label>
+                <gc-widget-slider id="slider" step="0.1" labels="0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500" max-value="500"></gc-widget-slider>
             </gc-widget-tab-panel>
               <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation" icon-name="round:action:info" has-heading layout vertical>
               <gc-widget-listbox id="listbox" labels="New Tide,Modify Tide,Delete Tide" selected-index="0" selected-label="Item 1" selected-value="1"></gc-widget-listbox>
@@ -318,13 +326,15 @@
                     <gc-widget-select id="tide_range" labels="10,20,30,40,50,60" initial-index="0"></gc-widget-select>
                     <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
                     <gc-widget-input id="tides_per_screen"></gc-widget-input>
-                    <gc-widget-label id="label_4" label="Sine_Range"></gc-widget-label>
                     <gc-widget-input id="input_5"></gc-widget-input>
+                    <gc-widget-input id="input_6"></gc-widget-input>
+                    <gc-widget-label id="label_4" label="Sine Range"></gc-widget-label>
+                    <gc-widget-label id="label_9" label="DC OFFSET"></gc-widget-label>
                 </gc-widget-container>
                 <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
             </gc-widget-tab-panel>
-            <gc-widget-tab-panel id="main_tab" class="container" icon-name="round:action:article" vertical layout has-heading>
-                <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="10000" plot-title=" " x-axis-title="Time">
+            <gc-widget-tab-panel id="main_tab" class="container" label=" " icon-name="round:action:article" vertical layout has-heading>
+                <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="10000" trigger-level="-4" plot-title=" " x-axis-title="Time">
                     <gc-widget-container id="container_1">
                         <gc-widget-label id="label" label="Required W.L."></gc-widget-label>
                         <gc-widget-label id="label_1" label="Actual W.L."></gc-widget-label>
@@ -339,9 +349,8 @@
                     </gc-widget-container>
                     <gc-widget-label id="label_7" label="Green - Feedback "></gc-widget-label>
                     <gc-widget-label id="label_8" label="Orange - Input"></gc-widget-label>
-                    <gc-widget-virtual-oscilloscope-input id="input_1" legend-name="Legend Name" vertical-units-per-division="20"></gc-widget-virtual-oscilloscope-input>
-                    <gc-widget-virtual-oscilloscope-input id="input" legend-name="Legend Name" vertical-units-per-division="20"></gc-widget-virtual-oscilloscope-input>
-                    <gc-widget-knob id="knob" max-value="10"></gc-widget-knob>
+                    <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" " vertical-units-per-division="13" vertical-pos="-4"></gc-widget-virtual-oscilloscope-input>
+                    <gc-widget-virtual-oscilloscope-input id="input" legend-name=" " vertical-units-per-division="13" vertical-pos="-4"></gc-widget-virtual-oscilloscope-input>
                 </gc-widget-virtual-oscilloscope>
             </gc-widget-tab-panel>
         </gc-widget-tab-container>

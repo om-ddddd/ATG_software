@@ -440,7 +440,10 @@ Boilerplate code for working with webcomponents in the application
 **/
 
 const init = () => {
-    console.info('Initializing application...');
+    // Add menubar product-name-clicked event listener
+    // GcWidget.querySelector('gc-widget-menubar').then(menubar => {
+    //     menubar.addEventListener('product-name-clicked', () => window.open('https://dev.ti.com/', 'Dev Zone'));
+    // });
 
     // Get the tide range selector
     GcWidget.querySelector('#tide_range').then(tideRangeSelector => {
@@ -465,34 +468,13 @@ const init = () => {
 
                 if (mainTabIndex >= 0) {
                     tabContainer.index = mainTabIndex;
+                    // window.pmVars.cum_sineinput = 10; 
                     startSineWaveGenerator();
-                    setupWaterLevelLabels();
                 }
             });
         });
     });
-    
-    // Add event listener for H button to set hold_status to 1
-    GcWidget.querySelector('#button').then(hButton => {
-        hButton.addEventListener('click', () => {
-            // Set hold_status to 1 when H button is clicked
-            if (window.pmVars) {
-                window.pmVars.hold_status = 1;
-                console.info('H button pressed: hold_status set to 1');
-            }
-        });
-    });
 
-    // Add event listener for R button to set hold_status to 0
-    GcWidget.querySelector('#button_1').then(rButton => {
-        rButton.addEventListener('click', () => {
-            // Set hold_status to 0 when R button is clicked
-            if (window.pmVars) {
-                window.pmVars.hold_status = 0;
-                console.info('R button pressed: hold_status set to 0');
-            }
-        });
-    });
 };
 
 
@@ -506,93 +488,37 @@ function startSineWaveGenerator() {
 
     startTime = performance.now();
 
-    function updateOscilloscope(timestamp) {
-        // Instead of calculating the sine value, we use pmVars.sineinput from the microcontroller
-        if (window.pmVars) {
-            const sineInputValue = window.pmVars.sineinput;
-            const mainOutputValue = window.pmVars.mainoutput;
-            const cumSineInputValue = window.pmVars.cum_sineinput;
-            
-            // Update the oscilloscope with actual values from the microcontroller
-            
-            // Update mainoutput (Actual WL) oscilloscope
-            GcWidget.querySelector('#input').then(input => {
-                if (input && input.addDataPoint && mainOutputValue !== undefined) {
-                    input.addDataPoint(mainOutputValue);
-                }
-            });
-            
-            // Update cum_sineinput (Required WL) oscilloscope
-            GcWidget.querySelector('#input_1').then(input => {
-                if (input && input.addDataPoint && cumSineInputValue !== undefined) {
-                    input.addDataPoint(cumSineInputValue);
-                }
-            });
-        }
+    function updateSineValue(timestamp) {
+        // Calculate elapsed time
+        const timeElapsed = (timestamp - startTime) / 1000;
+        const amplitude = tideRange / 2; // Half of peak-to-peak value
 
-        animationId = requestAnimationFrame(updateOscilloscope);
-    }
-
-    animationId = requestAnimationFrame(updateOscilloscope);
-}
-
-/**
- * Setup the Required WL and Actual WL labels to show pmVars values
- */
-function setupWaterLevelLabels() {
-    // Get references to the labels
-    let requiredWLLabel, actualWLLabel;
-    
-    GcWidget.querySelector('#label').then(label => {
-        requiredWLLabel = label;
-        updateRequiredWL();
-    });
-    
-    GcWidget.querySelector('#label_1').then(label => {
-        actualWLLabel = label;
-        updateActualWL();
-    });
-    
-    // Update Required WL label with cum_sineinput value
-    function updateRequiredWL() {
-        if (window.pmVars && requiredWLLabel) {
-            const value = window.pmVars.cum_sineinput;
-            if (value !== undefined) {
-                requiredWLLabel.label = `Required WL: ${typeof value === 'number' ? value.toFixed(2) : value}`;
-            } else {
-                requiredWLLabel.label = 'Required WL: --';
-            }
-            setTimeout(updateRequiredWL, 100); // Update regularly
-        }
-    }
-    
-    // Update Actual WL label with mainoutput value
-    function updateActualWL() {
-        if (window.pmVars && actualWLLabel) {
-            const value = window.pmVars.mainoutput;
-            if (value !== undefined) {
-                actualWLLabel.label = `Actual WL: ${typeof value === 'number' ? value.toFixed(2) : value}`;
-            } else {
-                actualWLLabel.label = 'Actual WL: --';
-            }
-            setTimeout(updateActualWL, 100); // Update regularly
-        }
-    }
-    
-    // Add listeners for value changes (alternative approach)
-    if (window.pmVars && window.pmVars.addListener) {
-        window.pmVars.addListener('cum_sineinput', (newValue) => {
-            if (requiredWLLabel) {
-                requiredWLLabel.label = `Required WL: ${typeof newValue === 'number' ? newValue.toFixed(2) : newValue}`;
-            }
-        });
+        // Calculate sine value with DC offset
+        sineValue = 19.06 + amplitude * Math.sin(angularFrequency * timeElapsed);
         
-        window.pmVars.addListener('mainoutput', (newValue) => {
-            if (actualWLLabel) {
-                actualWLLabel.label = `Actual WL: ${typeof newValue === 'number' ? newValue.toFixed(2) : newValue}`;
+        // // Update the cum_sineinput value in pmVars
+        // if (window.pmVars) {
+        //     window.pmVars.cum_sineinput = sineValue;
+        // }
+
+        // Update the input sine value display
+        GcWidget.querySelector('#input_2').then(sineValueInput => {
+            if (sineValueInput) {
+                sineValueInput.value = sineValue.toFixed(2);
             }
         });
+
+        // Update the oscilloscope
+        GcWidget.querySelector('#input').then(input => {
+            if (input && input.addDataPoint) {
+                input.addDataPoint(sineValue);
+            }
+        });
+
+        animationId = requestAnimationFrame(updateSineValue);
     }
+
+    animationId = requestAnimationFrame(updateSineValue);
 }
 
 document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init);

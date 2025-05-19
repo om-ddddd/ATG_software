@@ -1,8 +1,8 @@
 {
     "widgetBindings": [
         {
-            "widgetId": "input_2",
-            "serverBindName": "widget.pm.main_gain",
+            "widgetId": "input_4",
+            "serverBindName": "widget.pm.fine_offset",
             "propertyName": "value"
         },
         {
@@ -11,13 +11,18 @@
             "propertyName": "value"
         },
         {
-            "widgetId": "input_4",
-            "serverBindName": "widget.pm.fine_offset",
+            "widgetId": "slider",
+            "serverBindName": "widget.pm.main_gain",
             "propertyName": "value"
         },
         {
             "widgetId": "input_5",
             "serverBindName": "widget.pm.sineinput",
+            "propertyName": "value"
+        },
+        {
+            "widgetId": "input_6",
+            "serverBindName": "widget.pm.dcoffset",
             "propertyName": "value"
         },
         {
@@ -34,11 +39,6 @@
             "widgetId": "input",
             "serverBindName": "widget.pm.mainoutput",
             "propertyName": "point"
-        },
-        {
-            "widgetId": "knob",
-            "serverBindName": "widget.pm.mainoutput",
-            "propertyName": "value"
         }
     ]
 }
