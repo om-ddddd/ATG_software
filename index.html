@@ -25,7 +25,7 @@
 <!--gist-begin-->
 <script type="module" src="./components/@ti/build/gc-components.esm.js"></script>
 <script type="module" src="./index.js"></script>
-
+<script type="module" src="./script.js"></script>
 <style>
       body {
         margin: 0;
@@ -100,11 +100,6 @@
         border-style: solid;
         border-width: 1px;
     }
-    #listbox {
-        position: absolute;
-        left: 0.1vw;
-        top: 2vh;
-    }
     #tides_per_screen {
         position: absolute;
         left: 675px;
@@ -148,7 +143,17 @@
         top: 115px;
         width: 76px;
         height: 27px;
-    }
+    }const slider = document.getElementById('scale');
+const osc1 = document.getElementById('input_1');
+const osc2 = document.getElementById('input');
+
+slider.addEventListener('input', function () {
+  const value = this.value;
+
+  // Update the vertical-scale attribute
+  osc1.setAttribute('vertical-scale', value);
+  osc2.setAttribute('vertical-scale', value);
+});
     #main_tab {
         --gc-padding: 0;
         margin: 0;
@@ -161,46 +166,35 @@
         height: 699px;
         width: 1281px;
         position: absolute;
-        left: 45px;
-        top: -37px}
+        left: 33px;
+        top: -7px}
     #container_1 {
-        width: 200px;
+        width: 204px;
         height: 61px;
         position: absolute;
-        left: 12px;
-        top: 32px;
+        left: 10px;
+        top: 12px;
         border-style: solid;
         border-width: 1px;
-        display: flex;
-        align-items: center;
-        justify-content:center;
-        background: #f8f8f8;
-        padding-left: 10px;
-        gap: 24px;
-        padding-top: 10px;
     }
-    #actual_wl_span, #required_wl_span {
-        font-size: 15px;
-        font-weight: 500;
-        color: #1a237e;
-        margin-right: 18px;
-        
+    #label {
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 180px
     }
-    #actual_wl_value, #required_wl_value {
-        font-size: 15px;
-        font-weight: bold;
-        color: #388e3c;
-        margin-left: 8px;
-        min-width: 48px;
-        display: inline-block;
-        text-align: right;
+    #label_1 {
+        position: absolute;
+        left: 5px;
+        top: 24px;
+        width: 180px;
     }
     #container_2 {
         width: 120px;
         height: 59px;
         position: absolute;
-        left: 220px;
-        top: 35px;
+        left: 225px;
+        top: 14px;
         border-style: solid;
         border-width: 1PX;
     }
@@ -222,8 +216,8 @@
         width: 158px;
         height: 58px;
         position: absolute;
-        left: 346px;
-        top: 36px;
+        left: 357px;
+        top: 13px;
         border-style: solid;
         border-width: 1PX;
         display: flex;
@@ -262,15 +256,15 @@
     }
     #label_7 {
         position: absolute;
-        left: 556px;
-        top: 37px;
+        left: 558px;
+        top: 15px;
         width: 115px;
         height: 24px
     }
     #label_8 {
         position: absolute;
-        left: 557px;
-        top: 66px;
+        left: 559px;
+        top: 41px;
         width: 115px;
         height: 24px;
     }
@@ -290,12 +284,14 @@
     #input_1 {
         position: absolute;
         left: 1038px;
-        top: 357px
+        top: 357px;
+        z-index: -1
     }
     #input {
         position: absolute;
         left: 1039px;
-        top: 507px
+        top: 507px;
+        z-index: -1
     }
     #label_3 {
         position: absolute;
@@ -308,6 +304,57 @@
         top: 147px;
         width: 1154px
     }
+    /* From Uiverse.io by satisshTechie */ 
+.PB-range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 5px;
+  background: #D5DBE1;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.PB-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #000000;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.PB-range-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.16);
+  transition: 0.3s ease-in-out;
+}
+
+.PB-range-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #000000;
+  cursor: pointer;
+}
+
+.PB-range-slider-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #C6CACE;
+  box-shadow: 0px 1px 2px 0px #1F1E241F;
+}
+
+.PB-range-slidervalue {
+  font-weight: 600;
+}
 </style>
 
 <div id="editorRoot" layout vertical one flex>
@@ -385,8 +432,16 @@
                     </gc-widget-container>
                     <gc-widget-label id="label_7" label="Green - Feedback "></gc-widget-label>
                     <gc-widget-label id="label_8" label="Orange - Input"></gc-widget-label>
-                    <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" " vertical-units-per-division="13" vertical-pos="-4"></gc-widget-virtual-oscilloscope-input>
-                    <gc-widget-virtual-oscilloscope-input id="input" legend-name=" " vertical-units-per-division="13" vertical-pos="-4"></gc-widget-virtual-oscilloscope-input>
+                     <div class="PB-range-slider-div" style="position: absolute; left: 1034px; top: 389px;">
+                        <input type="range" min="-4" max="4" value="1" class="PB-range-slider" id="scale">
+                        <p class="PB-range-slidervalue">Scale</p>
+                    </div>
+                     <div class="PB-range-slider-div" style="position: absolute; left: 1030px; top: 495px; width: 188px;">
+                        <input type="range" min="-4" max="4" value="1" class="PB-range-slider" id="position">
+                        <p class="PB-range-slidervalue">Position</p>
+                    </div>
+                    <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" " vertical-units-per-division="13" vertical-pos="-4" vertical-scale = "1"></gc-widget-virtual-oscilloscope-input>
+                    <gc-widget-virtual-oscilloscope-input id="input" legend-name=" " vertical-units-per-division="13" vertical-pos="-4"  vertical-scale = "1"></gc-widget-virtual-oscilloscope-input>
                 </gc-widget-virtual-oscilloscope>
             </gc-widget-tab-panel>
         </gc-widget-tab-container>
