@@ -468,8 +468,22 @@ const init = () => {
 
                 if (mainTabIndex >= 0) {
                     tabContainer.index = mainTabIndex;
-                    // window.pmVars.cum_sineinput = 10; 
+                    
+                    // Start updating water level values after accept button is clicked
                     startSineWaveGenerator();
+                    
+                    // Start listening for changes in water level values
+                    if (window.pmVars && window.pmVars.addListener) {
+                        // Update water level values immediately
+                        updateActualWLSpan();
+                        updateRequiredWLSpan();
+                        
+                        // Add listeners for future changes
+                        window.pmVars.addListener('mainoutput', updateActualWLSpan);
+                        window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
+                    } else {
+                        console.error('pmVars not available for adding listeners');
+                    }
                 }
             });
         });
@@ -546,28 +560,29 @@ function updateRequiredWLSpan() {
         }
     }
 }
-// Initial update after DOMContentLoaded
+
+// Initialize water level displays to "00"
+function initWaterLevelDisplays() {
+    const actualWLValue = document.getElementById('actual_wl_value');
+    const requiredWLValue = document.getElementById('required_wl_value');
+    
+    if (actualWLValue) {
+        actualWLValue.textContent = "00";
+    }
+    
+    if (requiredWLValue) {
+        requiredWLValue.textContent = "00";
+    }
+}
+// Initialize water level displays to "00" on page load
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    updateActualWLSpan();
-    updateRequiredWLSpan();
+    initWaterLevelDisplays();
 } else {
     document.addEventListener('DOMContentLoaded', () => {
-        updateActualWLSpan();
-        updateRequiredWLSpan();
+        initWaterLevelDisplays();
     });
 }
-// Listen for changes in pmVars
-(function listenPmVarsWL() {
-    function tryAddListener() {
-        if (window.pmVars && window.pmVars.addListener) {
-            window.pmVars.addListener('mainoutput', updateActualWLSpan);
-            window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
-        } else {
-            setTimeout(tryAddListener, 500);
-        }
-    }
-    tryAddListener();
-})();
+// We've moved the listener setup to the accept button click handler
 
 document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init);
 
