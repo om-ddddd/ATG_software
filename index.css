@@ -1,368 +1,444 @@
       body {
-        margin: 0;
-    }
-    header, footer {
-        width: 100%;
-    }
-    #editorRoot {
-        z-index: 0-1-11010;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-        opacity: 1;
-        margin: 0;
-    }
-    #viewport {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        --gc-overflow: auto;
-    }
-    .container {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-    }
-    .tile {
-        margin: 10px;
-    }
-    .tile.instruments {
-        width: 300px;
-        min-width: 400px;
-        height: 320px;
-    }
-    .tile.info > * {
-        margin: 0;
-    }
-    #page_home {
-        --gc-overflow: hidden;
-    }
-    #page_home_product_container {
-        padding: 20px 0;
-        --gc-background-color: #118899;
-        --gc-overflow: hidden;
-    }
-    #page_home_product_name {
-        white-space: nowrap;
-        font-size: 36px;
-        font-weight: 400;
-        --gc-color: #ffffff;
-        --gc-text-align: center;
-        margin: 30px 0 0 0;
-    }
-    #run {
-        --gc-overflow: auto
-    }
-    #run > gc-widget-container {
-        margin : 0 auto;
-    }
-    #main_tab_container_navbar {
-        min-width: 41.6vw;
-    }
-    #container {
-        width: 876px;
-        height: 25vh;
-        position: absolute;
-        left: 19vw;
-        top: 1vh;
-        border-style: solid;
-        border-width: 1px;
-    }
-    #tides_per_screen {
-        position: absolute;
-        left: 675px;
-        top: 22px;
-        width: 5.8vw;
-    }
-    #tide_range {
-        width: auto;
-        position: absolute;
-        left: 10.8vw;
-        top: 2.6vh;
-    }
-    #label_tide {
-        position: absolute;
-        left: 71px;
-        top: 25px;
-        width: 4.2vw;
-        height: 2.2vh;
-    }
-    #label_tides_per_screen {
-        position: absolute;
-        left: 502px;
-        top: 22px;
-        width: 150px;
-        height: 33px;
-    }
-    #accept_button {
-        position: absolute;
-        left: 638px;
-        top: 225px;
-    }
-    #input_5 {
-        position: absolute;
-        left: 207px;
-        top: 114px;
-        width: 139px;
-    }
-    #label_4 {
-        position: absolute;
-        left: 109px;
-        top: 115px;
-        width: 76px;
+          margin: 0;
+      }
+
+      header,
+      footer {
+          width: 100%;
+      }
+
+      #editorRoot {
+          z-index: 0-1-11010;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          overflow: hidden;
+          opacity: 1;
+          margin: 0;
+      }
+
+      #viewport {
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          --gc-overflow: auto;
+      }
+
+      .container {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+      }
+
+      .tile {
+          margin: 10px;
+      }
+
+      .tile.instruments {
+          width: 300px;
+          min-width: 400px;
+          height: 320px;
+      }
+
+      .tile.info>* {
+          margin: 0;
+      }
+
+      #page_home {
+          --gc-overflow: hidden;
+      }
+
+      #page_home_product_container {
+          padding: 20px 0;
+          --gc-background-color: #118899;
+          --gc-overflow: hidden;
+      }
+
+      #page_home_product_name {
+          white-space: nowrap;
+          font-size: 36px;
+          font-weight: 400;
+          --gc-color: #ffffff;
+          --gc-text-align: center;
+          margin: 30px 0 0 0;
+      }
+
+      #run {
+          --gc-overflow: auto
+      }
+
+      #run>gc-widget-container {
+          margin: 0 auto;
+      }
+
+      #main_tab_container_navbar {
+          min-width: 41.6vw;
+      }
+
+      #container {
+          width: 876px;
+          height: 25vh;
+          position: absolute;
+          left: 19vw;
+          top: 1vh;
+          border-style: solid;
+          border-width: 1px;
+      }
+      #tide_range {
+          width: auto;
+          position: absolute;
+          left: 10.8vw;
+          top: 2.6vh;
+      }
+
+      #label_tide {
+          position: absolute;
+          left: 71px;
+          top: 30px;
+          width: 4.2vw;
+          height: 2.2vh;
+      }
+
+      #label_tides_per_screen {
+          position: absolute;
+          left: 502px;
+          top: 22px;
+          width: 150px;
+          height: 33px;
+      }
+
+      #accept_button {
+          position: absolute;
+          left: 638px;
+          top: 225px;
+      }
+
+      #input_5 {
+          position: absolute;
+          left: 105px;
+          top: 90px;
+          width: 143px;
+      }
+
+
+      #label_4 {
+          position: absolute;
+          left: 27px;
+          top: 91px;
+          width: 76px;
+          height: 27px;
+      }
+
+      #main_tab {
+          --gc-padding: 0;
+          margin: 0;
+          height: 868px
+      }
+
+      #main_tab_container {
+          margin: 0
+      }
+
+      #oscilloscope {
+          height: 701px;
+          width: 1386px;
+          position: absolute;
+          left: -42px;
+          top: -33px;
+          z-index: 0
+      }
+
+      #label {
+          position: absolute;
+          left: 5px;
+          top: 2px;
+          width: 180px
+      }
+
+      #label_1 {
+          position: absolute;
+          left: 5px;
+          top: 24px;
+          width: 180px;
+      }
+
+      #container_2 {
+          width: 156px;
+          height: 59px;
+          position: absolute;
+          left: 186px;
+          top: 26px;
+          border-style: solid;
+          border-width: 1PX;
+      }
+
+      #button {
+          position: absolute;
+          left: 4px;
+          top: 3px;
+          width: 53px;
+          height: 42px
+      }
+
+      #button_1 {
+          position: absolute;
+          left: 86px;
+          top: 4px;
+          width: 52px;
+          height: 40px
+      }
+
+      #container_3 {
+          width: 158px;
+          height: 58px;
+          position: absolute;
+          left: 51px;
+          top: 105px;
+          border-style: solid;
+          border-width: 1PX;
+          display: flex;
+      }
+
+      #label_2 {
+          position: absolute;
+          left: 35px;
+          top: 3px;
+          display: flex
+      }
+
+      #led {
+          width: 23px;
+          height: 24px;
+          --gc-off-color: #f9230b;
+          --gc-on-color: #17de63
+      }
+
+      #input_3 {
+          position: absolute;
+          left: 258px;
+          top: 107px
+      }
+
+      #input_4 {
+          position: absolute;
+          left: 863px;
+          top: 107px
+      }
+
+      #label_5 {
+          position: absolute;
+          left: 205px;
+          top: 115px
+      }
+
+      #label_6 {
+          position: absolute;
+          left: 777px;
+          top: 114px
+      }
+
+      #label_7 {
+          position: absolute;
+          left: 5px;
+          top: 3px;
+          width: 115px;
+          height: 24px
+      }
+
+      #label_8 {
+          position: absolute;
+          left: 9px;
+          top: 22px;
+          width: 98px;
+          height: 24px;
+      }
+
+   #input_6 {
+    position: absolute;
+    left: 661px;
+    top: 89px;
+    width: 142px;
+}
+
+   #label_9 {
+    position: absolute;
+    left: 586px;
+    top: 94px;
+    width: 81px;
+    height: 21px;
+}
+      #input_1 {
+          position: absolute;
+          left: 318px;
+          top: 203px;
+          z-index: -1
+      }
+
+      #input {
+          position: absolute;
+          left: 557px;
+          top: 204px;
+          opacity: 1;
+          z-index: -1
+      }
+
+      #label_3 {
+          position: absolute;
+          left: 82px;
+          top: 160px
+      }
+
+      #slider {
+          position: absolute;
+          left: 126px;
+          top: 147px;
+          width: 1154px
+      }
+
+      /* From Uiverse.io by satisshTechie */
+      .PB-range-slider {
+          -webkit-appearance: none;
+          width: 100%;
+          height: 4px;
+          border-radius: 5px;
+          background: #D5DBE1;
+          outline: none;
+          opacity: 0.7;
+          -webkit-transition: .2s;
+          transition: opacity .2s;
+      }
+
+      .PB-range-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          background-color: #000000;
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+      }
+
+      .PB-range-slider::-webkit-slider-thumb:hover {
+          box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.16);
+          transition: 0.3s ease-in-out;
+      }
+
+      .PB-range-slider::-moz-range-thumb {
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+          background-color: #000000;
+          cursor: pointer;
+      }
+
+      .PB-range-slider-div {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          padding: 1rem;
+          border-radius: 6px;
+          border: 1px solid #C6CACE;
+          box-shadow: 0px 1px 2px 0px #1F1E241F;
+      }
+
+      .PB-range-slidervalue {
+          font-weight: 600;
+      }
+
+      #labels_container {
+          width: 101px;
+          position: absolute;
+          left: 40px;
+          top: 28px;
+          height: 39px
+      }
+
+      #required_wl_span {
+          width: 125px;
+          height: 23px;
+          position: absolute;
+          left: 6px;
+          top: 37px
+      }
+
+      #container_4 {
+          width: 154px;
+          height: 60px;
+          position: absolute;
+          left: 54px;
+          top: 184px;
+          border-width: 1px;
+          border-style: solid;
+      }
+
+      #container_5 {
+          width: 359px;
+          height: 100px;
+          position: absolute;
+          left: 68px;
+          top: -28px;
+          border-width: 1px;
+          border-style: none;
+          z-index: 10;
+      }
+
+      #actual_wl_span {
+          width: 119px;
+          height: 27px;
+          position: absolute;
+          left: 5px;
+          top: 9px
+      }
+
+      #container_1 {
+          width: 161px;
+          height: 70px;
+          position: absolute;
+          left: 9px;
+          top: 20px;
+          border-width: 1px;
+          border-style: solid;
+      }
+
+      #container_6 {
+          width: 275px;
+          height: 334px;
+          position: absolute;
+          left: 1101px;
+          top: 19px;
+          z-index: 1;
+      }
+
+      #container_7 {
+          width: 200px;
+          height: 45px;
+          position: absolute;
+          left: 102px;
+          top: 14px;
+      }
+
+      #tide-range {
+          position: absolute;
+          left: 3px;
+          top: 12px;
+          width: 141px;
+          height: 29px
+      }
+      #no._of_waves {
         height: 27px;
-    }
-    #main_tab {
-        --gc-padding: 0;
-        margin: 0;
-        height: 868px
-    }
-    #main_tab_container {
-        margin: 0
-    }
-    #oscilloscope {
-        height: 701px;
-        width: 1386px;
-        position: absolute;
-        left: -42px;
-        top: -33px;
-        z-index: 0}
-    #label {
         position: absolute;
         left: 5px;
-        top: 2px;
-        width: 180px
+        top: 5px;
+        width: 102px
     }
-    #label_1 {
-        position: absolute;
-        left: 5px;
-        top: 24px;
-        width: 180px;
-    }
-    #container_2 {
-        width: 156px;
-        height: 59px;
-        position: absolute;
-        left: 186px;
-        top: 26px;
-        border-style: solid;
-        border-width: 1PX;
-    }
-    #button {
-        position: absolute;
-        left: 4px;
-        top: 3px;
-        width: 53px;
-        height: 42px
-    }
-    #button_1 {
-        position: absolute;
-        left: 86px;
-        top: 4px;
-        width: 52px;
-        height: 40px
-    }
-    #container_3 {
-        width: 158px;
-        height: 58px;
-        position: absolute;
-        left: 51px;
-        top: 105px;
-        border-style: solid;
-        border-width: 1PX;
-        display: flex;
-    }
-    #label_2 {
-        position: absolute;
-        left: 35px;
-        top: 3px;
-        display: flex
-    }
-    #led {
-        width: 23px;
-        height: 24px;
-        --gc-off-color: #f9230b;
-        --gc-on-color: #17de63
-    }
-    #input_3 {
-        position: absolute;
-        left: 258px;
-        top: 107px
-    }
-    #input_4 {
-        position: absolute;
-        left: 863px;
-        top: 107px
-    }
-    #label_5 {
-        position: absolute;
-        left: 205px;
-        top: 115px
-    }
-    #label_6 {
-        position: absolute;
-        left: 777px;
-        top: 114px
-    }
-    #label_7 {
-        position: absolute;
-        left: 5px;
-        top: 3px;
-        width: 115px;
-        height: 24px
-    }
-    #label_8 {
-        position: absolute;
-        left: 9px;
-        top: 22px;
-        width: 98px;
-        height: 24px;
-    }
-    #input_6 {
-        position: absolute;
-        left: 499px;
-        top: 114px;
-        width: 142px
-    }
-    #label_9 {
-        position: absolute;
-        left: 407px;
-        top: 120px;
-        width: 81px;
-        height: 21px
-    }
-    #input_1 {
-        position: absolute;
-        left: 318px;
-        top: 203px;
-        z-index: -1
-    }
-    #input {
-        position: absolute;
-        left: 557px;
-        top: 204px;
-        opacity: 1;
-        z-index: -1
-    }
-    #label_3 {
-        position: absolute;
-        left: 82px;
-        top: 160px
-    }
-    #slider {
-        position: absolute;
-        left: 126px;
-        top: 147px;
-        width: 1154px
-    }
-    /* From Uiverse.io by satisshTechie */ 
-.PB-range-slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 5px;
-  background: #D5DBE1;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+   #container_9 {
+    width: 151px;
+    height: 40px;
+    position: absolute;
+    left: 662px;
+    top: 21px;
 }
-
-.PB-range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #000000;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
-}
-
-.PB-range-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.16);
-  transition: 0.3s ease-in-out;
-}
-
-.PB-range-slider::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #000000;
-  cursor: pointer;
-}
-
-.PB-range-slider-div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid #C6CACE;
-  box-shadow: 0px 1px 2px 0px #1F1E241F;
-}
-
-.PB-range-slidervalue {
-  font-weight: 600;
-}
-    #labels_container {
-        width: 101px;
-        position: absolute;
-        left: 40px;
-        top: 28px;
-        height: 39px
-    }
-    #required_wl_span {
-        width: 125px;
-        height: 23px;
-        position: absolute;
-        left: 6px;
-        top: 37px
-    }
-    #container_4 {
-        width: 154px;
-        height: 60px;
-        position: absolute;
-        left: 54px;
-        top: 184px;
-        border-width: 1px;
-        border-style: solid;
-    }
-    #container_5 {
-        width: 359px;
-        height: 100px;
-        position: absolute;
-        left: 68px;
-        top: -28px;
-        border-width: 1px;
-        border-style: none;
-        z-index: 10;
-    }
-    #actual_wl_span {
-        width: 119px;
-        height: 27px;
-        position: absolute;
-        left: 5px;
-        top: 9px
-    }
-    #container_1 {
-        width: 161px;
-        height: 70px;
-        position: absolute;
-        left: 9px;
-        top: 20px;
-        border-width: 1px;
-        border-style: solid;
-    }
-    #container_6 {
-        width: 275px;
-        height: 334px;
-        position: absolute;
-        left: 1101px;
-        top: 19px;
-        z-index: 1;
-    }

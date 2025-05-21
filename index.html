@@ -33,6 +33,7 @@
     <script type="module" src="./index.js"></script>
     <script type="module" src="./script.js"></script>
     <script type="module" src="./slider.js"></script>
+
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
         <gc-widget-about-dialog id="about_dialog"></gc-widget-about-dialog>
@@ -62,7 +63,7 @@
 
         <gc-widget-container id="viewport" flex one vertical layout>
             <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left"
-                index="4" initial-index="0" no-labels>
+                index="2" initial-index="0" no-labels>
                 <gc-widget-tab-panel id="page_home" class="container" label="Home" icon-name="round:action:home"
                     tooltip="Application home" center-justified layout vertical>
                     <gc-widget-container id="page_home_product_container" layout center class="container" vertical one
@@ -71,7 +72,6 @@
                     </gc-widget-container>
                     <gc-widget-tab-container-navbar id="main_tab_container_navbar"
                         excluded-tab-panel-ids="page_home"></gc-widget-tab-container-navbar>
-
                 </gc-widget-tab-panel>
 
                 <gc-widget-tab-panel id="page_settings" class="container" label="Settings"
@@ -85,32 +85,44 @@
                         labels="0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500"
                         max-value="500"></gc-widget-slider>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
-                    icon-name="round:action:info" has-heading layout vertical>
-                    <gc-widget-listbox id="listbox" labels="New Tide,Modify Tide,Delete Tide" selected-index="0"
-                        selected-label="Item 1" selected-value="1"></gc-widget-listbox>
-                </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:image" vertical
                     layout has-heading start-justified start>
                     <gc-widget-container id="page_data_top_container" horizontal layout center-justified>
                     </gc-widget-container>
                     <gc-widget-container id="container">
                         <gc-widget-label id="label_tide" label="Tide"></gc-widget-label>
-                        <gc-widget-select id="tide_range" labels="10,20,30,40,50,60"
-                            initial-index="0"></gc-widget-select>
+                        <gc-widget-container id="container_7">
+                            <select name="Tide Range" id="tide-range">
+                                <option value="">--Choose--</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="4in0">40</option>
+                                <option value="50">50</option>
+                                <option value="60">60</option>
+                            </select>
+                        </gc-widget-container>
+                        <gc-widget-container id="container_9">
+                            <input type="number" id="no._of_waves" name="tentacles" min="0" style=" width: 133px;height: 23px;">
+                        </gc-widget-container>
                         <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
-                        <gc-widget-input id="tides_per_screen"></gc-widget-input>
-                        <gc-widget-input id="input_5"></gc-widget-input>
+                        <input type="checkbox" name="checkbox"
+                            style="width: 20px; position: absolute; left: 629px; top: 68px; height: 16px;" />
+                        <input type="checkbox" name="checkbox"
+                            style="width: 20px; position: absolute; left: 74px; top: 69px; height: 16px;" />
+                        <gc-widget-input id="input_5" placeholder="Enter Manually"></gc-widget-input>
+
+                        <gc-widget-label id="label_9" label="DC offset"></gc-widget-label>
                         <gc-widget-input id="input_6"></gc-widget-input>
-                        <gc-widget-label id="label_4" label="Sine Range"></gc-widget-label>
-                        <gc-widget-label id="label_9" label="DC OFFSET"></gc-widget-label>
+                        <gc-widget-label id="label_4" label="Tide Range"></gc-widget-label>
                     </gc-widget-container>
                     <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="main_tab" class="container" label=" " icon-name="round:action:article" vertical
                     layout has-heading>
-                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100 " sample-rate= "6.5" trigger-level="-4" plot-title=" "
-                        x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1" trigger-timeout="1">
+                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100 " sample-rate="7.09"
+                        trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
+                        trigger-timeout="1">
                         <gc-widget-container id="container_6">
                             <gc-widget-container id="container_3" horizontal layout center-justified end>
                                 <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
@@ -128,27 +140,30 @@
                         <gc-widget-virtual-oscilloscope-input id="input" legend-name=" "
                             vertical-units-per-division="13" vertical-pos="-4"
                             vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
-                            <div class="PB-range-slider-div" style="position: absolute; left: 1136px; top: 359px; z-index: 11111; width: 176px; height: 35px;">
-                                <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
-                                        id="h_scale">
-                                <p class="PB-range-slidervalue">H. Scale</p>
-                            </div>
-                        <div class="PB-range-slider-div" style="position: absolute; left: 1136px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
+                        <div class="PB-range-slider-div"
+                            style="position: absolute; left: 1136px; top: 359px; z-index: 11111; width: 176px; height: 35px;">
+                            <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
+                                id="h_scale">
+                            <p class="PB-range-slidervalue">H. Scale</p>
+                        </div>
+                        <div class="PB-range-slider-div"
+                            style="position: absolute; left: 1136px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
                             <input type="range" min="0" max="10" value="1" class="PB-range-slider" step="0.1"
                                 id="h_position">
                             <p class="PB-range-slidervalue">H. Position</p>
                         </div>
-                             <div class="PB-range-slider-div"
-                                     style="position: absolute; left: 1136px; top: 515px; z-index: 11111; width: 176px; height: 35px;">
-                                 <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
-                                         id="v_scale">
-                                 <p class="PB-range-slidervalue">V. Scale</p>
-                             </div>
-                            <div class="PB-range-slider-div" style="position: absolute; left: 1136px; top: 594px; width: 176px; z-index: 1111; height: 35px;">
-                                <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
-                                    id="v_position">
-                                <p class="PB-range-slidervalue">V. Position</p>
-                            </div>
+                        <div class="PB-range-slider-div"
+                            style="position: absolute; left: 1136px; top: 515px; z-index: 11111; width: 176px; height: 35px;">
+                            <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
+                                id="v_scale">
+                            <p class="PB-range-slidervalue">V. Scale</p>
+                        </div>
+                        <div class="PB-range-slider-div"
+                            style="position: absolute; left: 1136px; top: 594px; width: 176px; z-index: 1111; height: 35px;">
+                            <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
+                                id="v_position">
+                            <p class="PB-range-slidervalue">V. Position</p>
+                        </div>
                     </gc-widget-virtual-oscilloscope>
                     <gc-widget-container id="container_5">
                         <gc-widget-container id="container_1">
