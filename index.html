@@ -3,466 +3,185 @@
  -->
 <!doctype html>
 <html>
+
 <head>
-<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-<meta name="keywords" content="GUI Composer, GC, Gallery">
-<meta name="description" content="This application is powered by GUI Composer, visit https://dev.ti.com/gc for more detail.">
-<meta name="root-win">
-<link rel="icon" href="assets/app.ico">
-<title>main</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css">
-<script src="https://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript"></script>
-<script> if (typeof nw != 'undefined') {window.$ti_nw_main_window = true;} </script>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta name="keywords" content="GUI Composer, GC, Gallery">
+    <meta name="description"
+        content="This application is powered by GUI Composer, visit https://dev.ti.com/gc for more detail.">
+    <meta name="root-win">
+    <link rel="icon" href="assets/app.ico">
+    <title>main</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript"></script>
+    <script> if (typeof nw != 'undefined') { window.$ti_nw_main_window = true; } </script>
 </head>
 
 <body>
-<div id="progressDiv" style='width:100%; height:100%; z-index: 999999; background-color: #f7f7f7; position: absolute;'>
-    <div style="width: 100%; height: 100%; background: url('components/@ti/assets/images/progress.svg') no-repeat center"></div>
-</div>
+    <div id="progressDiv"
+        style='width:100%; height:100%; z-index: 999999; background-color: #f7f7f7; position: absolute;'>
+        <div
+            style="width: 100%; height: 100%; background: url('components/@ti/assets/images/progress.svg') no-repeat center">
+        </div>
+    </div>
 
-<!--gist-begin-->
-<script type="module" src="./components/@ti/build/gc-components.esm.js"></script>
-<script type="module" src="./index.js"></script>
-<script type="module" src="./script.js"></script>
-<style>
-      body {
-        margin: 0;
-    }
-    header, footer {
-        width: 100%;
-    }
-    #editorRoot {
-        z-index: 0;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: hidden;
-        opacity: 1;
-        margin: 0;
-    }
-    #viewport {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        --gc-overflow: auto;
-    }
-    .container {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-    }
-    .tile {
-        margin: 10px;
-    }
-    .tile.instruments {
-        width: 300px;
-        min-width: 400px;
-        height: 320px;
-    }
-    .tile.info > * {
-        margin: 0;
-    }
-    #page_home {
-        --gc-overflow: hidden;
-    }
-    #page_home_product_container {
-        padding: 20px 0;
-        --gc-background-color: #118899;
-        --gc-overflow: hidden;
-    }
-    #page_home_product_name {
-        white-space: nowrap;
-        font-size: 36px;
-        font-weight: 400;
-        --gc-color: #ffffff;
-        --gc-text-align: center;
-        margin: 30px 0 0 0;
-    }
-    #run {
-        --gc-overflow: auto
-    }
-    #run > gc-widget-container {
-        margin : 0 auto;
-    }
-    #main_tab_container_navbar {
-        min-width: 41.6vw;
-    }
-    #container {
-        width: 876px;
-        height: 25vh;
-        position: absolute;
-        left: 19vw;
-        top: 1vh;
-        border-style: solid;
-        border-width: 1px;
-    }
-    #tides_per_screen {
-        position: absolute;
-        left: 675px;
-        top: 22px;
-        width: 5.8vw;
-    }
-    #tide_range {
-        width: auto;
-        position: absolute;
-        left: 10.8vw;
-        top: 2.6vh;
-    }
-    #label_tide {
-        position: absolute;
-        left: 71px;
-        top: 25px;
-        width: 4.2vw;
-        height: 2.2vh;
-    }
-    #label_tides_per_screen {
-        position: absolute;
-        left: 502px;
-        top: 22px;
-        width: 150px;
-        height: 33px;
-    }
-    #accept_button {
-        position: absolute;
-        left: 638px;
-        top: 225px;
-    }
-    #input_5 {
-        position: absolute;
-        left: 207px;
-        top: 114px;
-        width: 139px;
-    }
-    #label_4 {
-        position: absolute;
-        left: 109px;
-        top: 115px;
-        width: 76px;
-        height: 27px;
-    }const slider = document.getElementById('scale');
-const osc1 = document.getElementById('input_1');
-const osc2 = document.getElementById('input');
+    <!--gist-begin-->
+    <script type="module" src="./components/@ti/build/gc-components.esm.js"></script>
+    <script type="module" src="./index.js"></script>
+    <script type="module" src="./script.js"></script>
+    <script type="module" src="./slider.js"></script>
+    <div id="editorRoot" layout vertical one flex>
+        <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
+        <gc-widget-about-dialog id="about_dialog"></gc-widget-about-dialog>
+        <gc-widget-cloudagent-dialog id="cloudagent_dialog"></gc-widget-cloudagent-dialog>
 
-slider.addEventListener('input', function () {
-  const value = this.value;
+        <!-- Add target communication configuration below this line -->
+        <gc-target-connection-manager id="connection_manager" auto-connect active-configuration="xds+pm">
+            <gc-transport-xds id="xds" device-name="TMS320F280049C"
+                connection-name="Texas Instruments XDS110 USB Debug Probe"></gc-transport-xds>
+            <gc-model-program id="pm" program-or-bin-path="./firmware/atg_main.out"></gc-model-program>
+        </gc-target-connection-manager>
 
-  // Update the vertical-scale attribute
-  osc1.setAttribute('vertical-scale', value);
-  osc2.setAttribute('vertical-scale', value);
-});
-    #main_tab {
-        --gc-padding: 0;
-        margin: 0;
-        height: 747px
-    }
-    #main_tab_container {
-        margin: 0
-    }
-    #oscilloscope {
-        height: 699px;
-        width: 1281px;
-        position: absolute;
-        left: 33px;
-        top: -7px}
-    #container_1 {
-        width: 204px;
-        height: 61px;
-        position: absolute;
-        left: 10px;
-        top: 12px;
-        border-style: solid;
-        border-width: 1px;
-    }
-    #label {
-        position: absolute;
-        left: 5px;
-        top: 2px;
-        width: 180px
-    }
-    #label_1 {
-        position: absolute;
-        left: 5px;
-        top: 24px;
-        width: 180px;
-    }
-    #container_2 {
-        width: 120px;
-        height: 59px;
-        position: absolute;
-        left: 225px;
-        top: 14px;
-        border-style: solid;
-        border-width: 1PX;
-    }
-    #button {
-        position: absolute;
-        left: 4px;
-        top: 3px;
-        width: 44px;
-        height: 42px
-    }
-    #button_1 {
-        position: absolute;
-        left: 60px;
-        top: 4px;
-        width: 45px;
-        height: 40px
-    }
-    #container_3 {
-        width: 158px;
-        height: 58px;
-        position: absolute;
-        left: 357px;
-        top: 13px;
-        border-style: solid;
-        border-width: 1PX;
-        display: flex;
-    }
-    #label_2 {
-        position: absolute;
-        left: 40px;
-        top: 0px;
-        display: flex
-    }
-    #led {
-        width: 23px;
-        height: 24px;
-        --gc-off-color: #f9230b;
-        --gc-on-color: #17de63
-    }
-    #input_3 {
-        position: absolute;
-        left: 258px;
-        top: 107px
-    }
-    #input_4 {
-        position: absolute;
-        left: 863px;
-        top: 107px
-    }
-    #label_5 {
-        position: absolute;
-        left: 205px;
-        top: 115px
-    }
-    #label_6 {
-        position: absolute;
-        left: 777px;
-        top: 114px
-    }
-    #label_7 {
-        position: absolute;
-        left: 558px;
-        top: 15px;
-        width: 115px;
-        height: 24px
-    }
-    #label_8 {
-        position: absolute;
-        left: 559px;
-        top: 41px;
-        width: 115px;
-        height: 24px;
-    }
-    #input_6 {
-        position: absolute;
-        left: 499px;
-        top: 114px;
-        width: 142px
-    }
-    #label_9 {
-        position: absolute;
-        left: 407px;
-        top: 120px;
-        width: 81px;
-        height: 21px
-    }
-    #input_1 {
-        position: absolute;
-        left: 1038px;
-        top: 357px;
-        z-index: -1
-    }
-    #input {
-        position: absolute;
-        left: 1039px;
-        top: 507px;
-        z-index: -1
-    }
-    #label_3 {
-        position: absolute;
-        left: 82px;
-        top: 160px
-    }
-    #slider {
-        position: absolute;
-        left: 126px;
-        top: 147px;
-        width: 1154px
-    }
-    /* From Uiverse.io by satisshTechie */ 
-.PB-range-slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 5px;
-  background: #D5DBE1;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
+        <header>
+            <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
+                <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
+                    <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x"
+                        icon="round:action:exit_to_app"></gc-widget-menuaction>
+                </gc-widget-menuitem>
+                <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
+                    <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog"
+                        icon="round:action:help"></gc-widget-menuaction>
+                    <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme"
+                        icon="round:action:description"></gc-widget-menuaction>
+                </gc-widget-menuitem>
+            </gc-widget-menubar>
+        </header>
 
-.PB-range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #000000;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
-}
-
-.PB-range-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.16);
-  transition: 0.3s ease-in-out;
-}
-
-.PB-range-slider::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #000000;
-  cursor: pointer;
-}
-
-.PB-range-slider-div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid #C6CACE;
-  box-shadow: 0px 1px 2px 0px #1F1E241F;
-}
-
-.PB-range-slidervalue {
-  font-weight: 600;
-}
-</style>
-
-<div id="editorRoot" layout vertical one flex>
-    <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
-    <gc-widget-about-dialog id="about_dialog"></gc-widget-about-dialog>
-    <gc-widget-cloudagent-dialog id="cloudagent_dialog"></gc-widget-cloudagent-dialog>
-
-    <!-- Add target communication configuration below this line -->
-    <gc-target-connection-manager id="connection_manager" auto-connect active-configuration="xds+pm">
-    <gc-transport-xds id="xds" device-name="TMS320F280049C" connection-name="Texas Instruments XDS110 USB Debug Probe"></gc-transport-xds>
-    <gc-model-program id="pm" program-or-bin-path="./firmware/atg_main.out"></gc-model-program>
-</gc-target-connection-manager>
-
-    <header>
-        <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
-            <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
-                <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x" icon="round:action:exit_to_app"></gc-widget-menuaction>
-            </gc-widget-menuitem>
-            <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
-                <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog" icon="round:action:help"></gc-widget-menuaction>
-                <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme" icon="round:action:description"></gc-widget-menuaction>
-            </gc-widget-menuitem>
-        </gc-widget-menubar>
-    </header>
-
-    <gc-widget-container id="viewport" flex one vertical layout>
-        <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left" index="4" initial-index="0" no-labels>
-            <gc-widget-tab-panel id="page_home" class="container" label="Home" icon-name="round:action:home" tooltip="Application home" center-justified layout vertical>
-                <gc-widget-container id="page_home_product_container" layout center class="container" vertical one flex>
-                    <gc-widget-label id="page_home_product_name" label="ATG"></gc-widget-label>
-                </gc-widget-container>
-                <gc-widget-tab-container-navbar id="main_tab_container_navbar" excluded-tab-panel-ids="page_home"></gc-widget-tab-container-navbar>
-
-            </gc-widget-tab-panel>
-          
-            <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="round:action:settings" vertical layout has-heading tooltip="Calibration and settings">
-                <gc-widget-input id="input_4"></gc-widget-input>
-                <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
-                <gc-widget-input id="input_3"></gc-widget-input>
-                <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
-                <gc-widget-label id="label_3" label="Gain"></gc-widget-label>
-                <gc-widget-slider id="slider" step="0.1" labels="0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500" max-value="500"></gc-widget-slider>
-            </gc-widget-tab-panel>
-              <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation" icon-name="round:action:info" has-heading layout vertical>
-              <gc-widget-listbox id="listbox" labels="New Tide,Modify Tide,Delete Tide" selected-index="0" selected-label="Item 1" selected-value="1"></gc-widget-listbox>
-            </gc-widget-tab-panel>
-            <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:image" vertical layout has-heading start-justified start>
-                <gc-widget-container id="page_data_top_container" horizontal layout center-justified>
-                </gc-widget-container>
-                <gc-widget-container id="container">
-                    <gc-widget-label id="label_tide" label="Tide"></gc-widget-label>
-                    <gc-widget-select id="tide_range" labels="10,20,30,40,50,60" initial-index="0"></gc-widget-select>
-                    <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
-                    <gc-widget-input id="tides_per_screen"></gc-widget-input>
-                    <gc-widget-input id="input_5"></gc-widget-input>
-                    <gc-widget-input id="input_6"></gc-widget-input>
-                    <gc-widget-label id="label_4" label="Sine Range"></gc-widget-label>
-                    <gc-widget-label id="label_9" label="DC OFFSET"></gc-widget-label>
-                </gc-widget-container>
-                <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
-            </gc-widget-tab-panel>
-            <gc-widget-tab-panel id="main_tab" class="container" label=" " icon-name="round:action:article" vertical layout has-heading>
-                <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="10000" trigger-level="-4" plot-title=" " x-axis-title="Time" trigger-timeout = "1">
-                    <gc-widget-container id="container_1">
-                    <span id="actual_wl_span">Actual WL: <span id="actual_wl_value"></span></span>
-                    <span id="required_wl_span">Requi. WL: <span id="required_wl_value"></span></span>
+        <gc-widget-container id="viewport" flex one vertical layout>
+            <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left"
+                index="4" initial-index="0" no-labels>
+                <gc-widget-tab-panel id="page_home" class="container" label="Home" icon-name="round:action:home"
+                    tooltip="Application home" center-justified layout vertical>
+                    <gc-widget-container id="page_home_product_container" layout center class="container" vertical one
+                        flex>
+                        <gc-widget-label id="page_home_product_name" label="ATG"></gc-widget-label>
                     </gc-widget-container>
-                    <gc-widget-container id="container_2">
-                        <gc-widget-button id="button" label="H"></gc-widget-button>
-                        <gc-widget-button id="button_1" label="R"></gc-widget-button>
+                    <gc-widget-tab-container-navbar id="main_tab_container_navbar"
+                        excluded-tab-panel-ids="page_home"></gc-widget-tab-container-navbar>
+
+                </gc-widget-tab-panel>
+
+                <gc-widget-tab-panel id="page_settings" class="container" label="Settings"
+                    icon-name="round:action:settings" vertical layout has-heading tooltip="Calibration and settings">
+                    <gc-widget-input id="input_4"></gc-widget-input>
+                    <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
+                    <gc-widget-input id="input_3"></gc-widget-input>
+                    <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
+                    <gc-widget-label id="label_3" label="Gain"></gc-widget-label>
+                    <gc-widget-slider id="slider" step="0.1"
+                        labels="0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500"
+                        max-value="500"></gc-widget-slider>
+                </gc-widget-tab-panel>
+                <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
+                    icon-name="round:action:info" has-heading layout vertical>
+                    <gc-widget-listbox id="listbox" labels="New Tide,Modify Tide,Delete Tide" selected-index="0"
+                        selected-label="Item 1" selected-value="1"></gc-widget-listbox>
+                </gc-widget-tab-panel>
+                <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:image" vertical
+                    layout has-heading start-justified start>
+                    <gc-widget-container id="page_data_top_container" horizontal layout center-justified>
                     </gc-widget-container>
-                    <gc-widget-container id="container_3" horizontal layout center-justified end>
-                        <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
-                        <gc-widget-led id="led"></gc-widget-led>
+                    <gc-widget-container id="container">
+                        <gc-widget-label id="label_tide" label="Tide"></gc-widget-label>
+                        <gc-widget-select id="tide_range" labels="10,20,30,40,50,60"
+                            initial-index="0"></gc-widget-select>
+                        <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
+                        <gc-widget-input id="tides_per_screen"></gc-widget-input>
+                        <gc-widget-input id="input_5"></gc-widget-input>
+                        <gc-widget-input id="input_6"></gc-widget-input>
+                        <gc-widget-label id="label_4" label="Sine Range"></gc-widget-label>
+                        <gc-widget-label id="label_9" label="DC OFFSET"></gc-widget-label>
                     </gc-widget-container>
-                    <gc-widget-label id="label_7" label="Green - Feedback "></gc-widget-label>
-                    <gc-widget-label id="label_8" label="Orange - Input"></gc-widget-label>
-                     <div class="PB-range-slider-div" style="position: absolute; left: 1034px; top: 389px;">
-                        <input type="range" min="-4" max="4" value="1" class="PB-range-slider" id="scale">
-                        <p class="PB-range-slidervalue">Scale</p>
-                    </div>
-                     <div class="PB-range-slider-div" style="position: absolute; left: 1030px; top: 495px; width: 188px;">
-                        <input type="range" min="-4" max="4" value="1" class="PB-range-slider" id="position">
-                        <p class="PB-range-slidervalue">Position</p>
-                    </div>
-                    <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" " vertical-units-per-division="13" vertical-pos="-4" vertical-scale = "1"></gc-widget-virtual-oscilloscope-input>
-                    <gc-widget-virtual-oscilloscope-input id="input" legend-name=" " vertical-units-per-division="13" vertical-pos="-4"  vertical-scale = "1"></gc-widget-virtual-oscilloscope-input>
-                </gc-widget-virtual-oscilloscope>
-            </gc-widget-tab-panel>
-        </gc-widget-tab-container>
-    </gc-widget-container>
+                    <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
+                </gc-widget-tab-panel>
+                <gc-widget-tab-panel id="main_tab" class="container" label=" " icon-name="round:action:article" vertical
+                    layout has-heading>
+                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100 " sample-rate= "6.5" trigger-level="-4" plot-title=" "
+                        x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1" trigger-timeout="1">
+                        <gc-widget-container id="container_6">
+                            <gc-widget-container id="container_3" horizontal layout center-justified end>
+                                <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
+                                <gc-widget-led id="led"></gc-widget-led>
+                            </gc-widget-container>
 
-    <footer>
-        <gc-widget-statusbar id="statusbar" show-connections show-branding-image show-progress-bar show-progress-string>
-            <gc-widget-statusitem-connections slot="left"></gc-widget-statusitem-connections>
-        </gc-widget-statusbar>
-    </footer>
-</div>
-<gc-widget-firmware-update-dialog id="firmwareUpdate"></gc-widget-firmware-update-dialog><!--gist-end-->
+                            <gc-widget-container id="container_4">
+                                <gc-widget-label id="label_7" label="Green - Feedback "></gc-widget-label>
+                                <gc-widget-label id="label_8" label="Orange - Input"></gc-widget-label>
+                            </gc-widget-container>
+                        </gc-widget-container>
+                        <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" "
+                            vertical-units-per-division="13" vertical-pos="-4"
+                            vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
+                        <gc-widget-virtual-oscilloscope-input id="input" legend-name=" "
+                            vertical-units-per-division="13" vertical-pos="-4"
+                            vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
+                            <div class="PB-range-slider-div" style="position: absolute; left: 1136px; top: 359px; z-index: 11111; width: 176px; height: 35px;">
+                                <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
+                                        id="h_scale">
+                                <p class="PB-range-slidervalue">H. Scale</p>
+                            </div>
+                        <div class="PB-range-slider-div" style="position: absolute; left: 1136px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
+                            <input type="range" min="0" max="10" value="1" class="PB-range-slider" step="0.1"
+                                id="h_position">
+                            <p class="PB-range-slidervalue">H. Position</p>
+                        </div>
+                             <div class="PB-range-slider-div"
+                                     style="position: absolute; left: 1136px; top: 515px; z-index: 11111; width: 176px; height: 35px;">
+                                 <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
+                                         id="v_scale">
+                                 <p class="PB-range-slidervalue">V. Scale</p>
+                             </div>
+                            <div class="PB-range-slider-div" style="position: absolute; left: 1136px; top: 594px; width: 176px; z-index: 1111; height: 35px;">
+                                <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
+                                    id="v_position">
+                                <p class="PB-range-slidervalue">V. Position</p>
+                            </div>
+                    </gc-widget-virtual-oscilloscope>
+                    <gc-widget-container id="container_5">
+                        <gc-widget-container id="container_1">
+                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value"></span></div>
+                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value"></span></div>
+                        </gc-widget-container>
+                        <gc-widget-container id="container_2">
+                            <gc-widget-button id="button" label="H"></gc-widget-button>
+                            <gc-widget-button id="button_1" label="R"></gc-widget-button>
+                        </gc-widget-container>
+                    </gc-widget-container>
+                </gc-widget-tab-panel>
+            </gc-widget-tab-container>
+        </gc-widget-container>
+
+        <footer>
+            <gc-widget-statusbar id="statusbar" show-connections show-branding-image show-progress-bar
+                show-progress-string>
+                <gc-widget-statusitem-connections slot="left"></gc-widget-statusitem-connections>
+            </gc-widget-statusbar>
+        </footer>
+    </div>
+    <gc-widget-firmware-update-dialog id="firmwareUpdate"></gc-widget-firmware-update-dialog>
 
 
-<script type="module">
-    addEventListener('DOMContentLoaded', () => {
-        var progressDiv = document.querySelector('#progressDiv')
-        if (progressDiv) {
-            setTimeout(() => progressDiv.parentNode.removeChild(progressDiv), 1000);
-        }
-    });
-</script>
+    <script type="module">
+        addEventListener('DOMContentLoaded', () => {
+            var progressDiv = document.querySelector('#progressDiv')
+            if (progressDiv) {
+                setTimeout(() => progressDiv.parentNode.removeChild(progressDiv), 1000);
+            }
+        });
+    </script>
 </body>
+
 </html>
