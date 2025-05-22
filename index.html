@@ -33,6 +33,7 @@
     <script type="module" src="./index.js"></script>
     <script type="module" src="./script.js"></script>
     <script type="module" src="./slider.js"></script>
+    <script type="module" src="./start_from_0.js"></script>
 
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -46,20 +47,19 @@
             <gc-model-program id="pm" program-or-bin-path="./firmware/atg_main.out"></gc-model-program>
         </gc-target-connection-manager>
 
-        <header>
-            <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
-                <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
-                    <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x"
-                        icon="round:action:exit_to_app"></gc-widget-menuaction>
-                </gc-widget-menuitem>
-                <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
-                    <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog"
-                        icon="round:action:help"></gc-widget-menuaction>
-                    <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme"
-                        icon="round:action:description"></gc-widget-menuaction>
-                </gc-widget-menuitem>
-            </gc-widget-menubar>
-        </header>
+ <header>
+        <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
+            <gc-widget-menuitem id="mm_administration" label="Administration" layout vertical>
+            </gc-widget-menuitem>
+            <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
+                <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog" icon="round:action:help"></gc-widget-menuaction>
+                <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme" icon="round:action:description"></gc-widget-menuaction>
+            </gc-widget-menuitem>
+            <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
+                <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x" icon="round:action:exit_to_app"></gc-widget-menuaction>
+            </gc-widget-menuitem>
+        </gc-widget-menubar>
+    </header>
 
         <gc-widget-container id="viewport" flex one vertical layout>
             <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left"
@@ -85,7 +85,7 @@
                         labels="0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,420,440,460,480,500"
                         max-value="500"></gc-widget-slider>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:image" vertical
+                <gc-widget-tab-panel id="run" class="container" label="Tide Manipulation" icon-name="round:image:image" vertical
                     layout has-heading start-justified start>
                     <gc-widget-container id="page_data_top_container" horizontal layout center-justified>
                     </gc-widget-container>
@@ -118,11 +118,11 @@
                     </gc-widget-container>
                     <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="main_tab" class="container" label=" " icon-name="round:action:article" vertical
+                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:action:article" vertical
                     layout has-heading>
-                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100 " sample-rate="7.09"
+                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="10000" sample-rate="7.09"
                         trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
-                        trigger-timeout="1">
+                        trigger-timeout="0.1">
                         <gc-widget-container id="container_6">
                             <gc-widget-container id="container_3" horizontal layout center-justified end>
                                 <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
@@ -148,7 +148,7 @@
                         </div>
                         <div class="PB-range-slider-div"
                             style="position: absolute; left: 1136px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
-                            <input type="range" min="0" max="10" value="1" class="PB-range-slider" step="0.1"
+                            <input type="range" min="0" max="100" value="1" class="PB-range-slider" step="0.01"
                                 id="h_position">
                             <p class="PB-range-slidervalue">H. Position</p>
                         </div>
