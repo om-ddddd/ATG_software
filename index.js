@@ -446,15 +446,6 @@ const init = () => {
     // });
 
     // Get the tide range selector
-    GcWidget.querySelector('#tide_range').then(tideRangeSelector => {
-        tideRangeSelector.addEventListener('change', (event) => {
-            // Update the tide range when selection changes
-            const selectedIndex = event.target.selectedIndex;
-            const selectedLabels = event.target.labels.split(',');
-            tideRange = parseInt(selectedLabels[selectedIndex], 10);
-            console.info(`Tide range selected: ${tideRange}`);
-        });
-    });
 
     // Get the accept button and add click listener
     GcWidget.querySelector('#accept_button').then(acceptButton => {
@@ -468,16 +459,19 @@ const init = () => {
 
                 if (mainTabIndex >= 0) {
                     tabContainer.index = mainTabIndex;
-                    
+
                     // Start updating water level values after accept button is clicked
                     startSineWaveGenerator();
                     
+                    // Setup the oscilloscope with proper configuration
+                    setupOscilloscope();
+               
                     // Start listening for changes in water level values
                     if (window.pmVars && window.pmVars.addListener) {
                         // Update water level values immediately
                         updateActualWLSpan();
                         updateRequiredWLSpan();
-                        
+
                         // Add listeners for future changes
                         window.pmVars.addListener('mainoutput', updateActualWLSpan);
                         window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
@@ -524,14 +518,89 @@ function startSineWaveGenerator() {
 
     function updateSineValue(timestamp) {
         // Calculate elapsed time
-    
-        
+
+
 
         animationId = requestAnimationFrame(updateSineValue);
     }
 
     animationId = requestAnimationFrame(updateSineValue);
 }
+let capValue = 707; // Default to capacity for 1 wave (1 * sampleRate * 707)
+
+/**
+ * Configure the oscilloscope and set up input listeners
+ */
+function setupOscilloscope() {
+  const osc = document.getElementById('oscilloscope');
+  const waveInput = document.getElementById('no._of_waves');
+  
+  if (!osc) {
+    console.error('Oscilloscope element not found');
+    return;
+  }
+  
+  // Get sample rate from oscilloscope
+  const sampleRate = parseFloat(osc.getAttribute('sample-rate') || 7.09);
+  console.log(`Using oscilloscope sample rate: ${sampleRate}`);
+  
+  // Set initial default value if wave input has a value
+  if (waveInput && waveInput.value) {
+    const value = parseFloat(waveInput.value);
+    if (!isNaN(value)) {
+      capValue = Math.round(value * sampleRate * 707);
+    }
+  }
+  
+  // Initialize oscilloscope with current capValue
+  console.log('Initializing oscilloscope...');
+  osc.setAttribute('capacity', 1);
+  osc.setAttribute('trigger-mode', 'manual');
+  osc.setAttribute('trigger-armed', true);
+  
+  // Short delay before applying final settings
+  setTimeout(() => {
+    osc.setAttribute('capacity', capValue);
+    osc.setAttribute('trigger-mode', 'auto');
+    
+    // Update horizontal position slider max value to match the capacity
+    const hPositionSlider = document.getElementById('h_position');
+    if (hPositionSlider) {
+      hPositionSlider.setAttribute('max', capValue);
+      console.log(`Updated h_position slider max value to: ${capValue}`);
+    }
+    
+    console.log(`Oscilloscope initialized with capacity: ${capValue}`);
+  }, 100);
+  
+  // Configure input listener for future changes
+  if (waveInput) {
+    waveInput.addEventListener('input', function () {
+      const value = parseFloat(this.value);
+      if (isNaN(value)) return;
+      
+      console.log('User entered wave count:', value);
+      
+      // Calculate new capacity based on wave count
+      capValue = Math.round(value * sampleRate * 707);
+      console.log(`Updating capacity to: ${capValue}`);
+      
+      // Apply new capacity to oscilloscope
+      osc.setAttribute('capacity', capValue);
+      
+      // Update horizontal position slider max value to match the capacity
+      const hPositionSlider = document.getElementById('h_position');
+      if (hPositionSlider) {
+        hPositionSlider.setAttribute('max', capValue);
+        console.log(`Updated h_position slider max value to: ${capValue}`);
+      }
+    });
+    console.log('Wave input listener configured');
+  } else {
+    console.warn('Wave input element not found');
+  }
+}
+
 
 // Update Actual WL and Required WL spans in container_1
 function updateActualWLSpan() {
@@ -565,11 +634,11 @@ function updateRequiredWLSpan() {
 function initWaterLevelDisplays() {
     const actualWLValue = document.getElementById('actual_wl_value');
     const requiredWLValue = document.getElementById('required_wl_value');
-    
+
     if (actualWLValue) {
         actualWLValue.textContent = "00";
     }
-    
+
     if (requiredWLValue) {
         requiredWLValue.textContent = "00";
     }

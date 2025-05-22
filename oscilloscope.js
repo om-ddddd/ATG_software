@@ -41,14 +41,14 @@ function initializeOscilloscopeControls() {
     
     // Validate that all required elements exist
     if (!validateElements(sliders, oscilloscopeElements)) {
-        console.error('Oscilloscope controls initialization failed: Missing required elements');
+        // console.error('Oscilloscope controls initialization failed: Missing required elements');
         return;
     }
     
     // Attach event listeners to sliders
     attachSliderEventListeners(sliders, oscilloscopeElements);
     
-    console.log('Oscilloscope controls initialized successfully');
+    // console.log('Oscilloscope controls initialized successfully');
 }
 
 /**
@@ -61,7 +61,7 @@ function validateElements(sliders, oscilloscopeElements) {
     // Check slider elements
     for (const [key, element] of Object.entries(sliders)) {
         if (!element) {
-            console.error(`Missing slider element: ${key}`);
+            // console.error(`Missing slider element: ${key}`);
             return false;
         }
     }
@@ -69,7 +69,7 @@ function validateElements(sliders, oscilloscopeElements) {
     // Check oscilloscope elements
     for (const [key, element] of Object.entries(oscilloscopeElements)) {
         if (!element) {
-            console.error(`Missing oscilloscope element: ${key}`);
+            // console.error(`Missing oscilloscope element: ${key}`);
             return false;
         }
     }
@@ -89,7 +89,7 @@ function attachSliderEventListeners(sliders, oscilloscopeElements) {
     // Vertical scale control
     verticalScale.addEventListener('input', function() {
         const value = parseFloat(this.value);
-        console.log(`Setting vertical scale to ${value}`);
+        // console.log(`Setting vertical scale to ${value}`);
         
         // Apply vertical scale to both input channels
         inputChannel1.setAttribute('vertical-scale', value);
@@ -99,7 +99,7 @@ function attachSliderEventListeners(sliders, oscilloscopeElements) {
     // Vertical position control
     verticalPosition.addEventListener('input', function() {
         const value = parseFloat(this.value);
-        console.log(`Setting vertical position to ${value}`);
+        // console.log(`Setting vertical position to ${value}`);
         
         // Apply vertical position to both input channels
         inputChannel1.setAttribute('vertical-pos', value);
@@ -109,7 +109,7 @@ function attachSliderEventListeners(sliders, oscilloscopeElements) {
     // Horizontal scale (zoom) control
     horizontalScale.addEventListener('input', function() {
         const value = parseFloat(this.value);
-        console.log(`Setting horizontal zoom to ${value}`);
+        // console.log(`Setting horizontal zoom to ${value}`);
         
         // Apply horizontal zoom to main oscilloscope
         mainOscilloscope.setAttribute('horizontal-zoom', value);
@@ -118,7 +118,7 @@ function attachSliderEventListeners(sliders, oscilloscopeElements) {
     // Horizontal position control
     horizontalPosition.addEventListener('input', function() {
         const value = parseFloat(this.value);
-        console.log(`Setting horizontal position to ${value}`);
+        // console.log(`Setting horizontal position to ${value}`);
         
         // Apply horizontal position to main oscilloscope
         mainOscilloscope.setAttribute('horizontal-pos', value);
