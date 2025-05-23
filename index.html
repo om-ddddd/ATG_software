@@ -5,6 +5,8 @@
 <html>
 
 <head>
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta name="keywords" content="GUI Composer, GC, Gallery">
     <meta name="description"
@@ -189,6 +191,40 @@
     <gc-widget-firmware-update-dialog id="firmwareUpdate"></gc-widget-firmware-update-dialog>
 
 
+    <!-- Change User Name/Password Dialog -->
+<div id="changeUserDialog" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" id="closeChangeUserDialog">&times;</span>
+    <form id="changeUserForm">
+      <h3>ChangeUser Name/Password</h3>
+      <div class="radio-group">
+        <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
+        <label><input type="radio" name="userType" value="user"> User</label>
+      </div>
+      <div class="form-group">
+        <label for="newUserName">New User Name:</label>
+        <input type="text" id="newUserName" name="newUserName">
+      </div>
+      <div class="form-group">
+        <label for="currentPassword">Current Password:</label>
+        <input type="password" id="currentPassword" name="currentPassword">
+      </div>
+      <div class="form-group">
+        <label for="newPassword">New Password:<br><span class="hint">(Min. 3 Charecters)</span></label>
+        <input type="password" id="newPassword" name="newPassword">
+      </div>
+      <div class="form-group">
+        <label for="retypePassword">Re-Type Password:</label>
+        <input type="password" id="retypePassword" name="retypePassword">
+      </div>
+      <div class="button-group">
+        <button type="button" id="okChangeUser">Ok</button>
+        <button type="button" id="cancelChangeUser">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
             var progressDiv = document.querySelector('#progressDiv')
@@ -196,6 +232,31 @@
                 setTimeout(() => progressDiv.parentNode.removeChild(progressDiv), 1000);
             }
         });
+
+        // Show the Change User dialog when Administration menu is clicked
+addEventListener('DOMContentLoaded', () => {
+  const adminMenu = document.getElementById('mm_administration');
+  const dialog = document.getElementById('changeUserDialog');
+  const closeBtn = document.getElementById('closeChangeUserDialog');
+  const cancelBtn = document.getElementById('cancelChangeUser');
+  if (adminMenu && dialog) {
+    adminMenu.addEventListener('click', () => {
+      dialog.style.display = 'block';
+    });
+  }
+  if (closeBtn) {
+    closeBtn.onclick = () => dialog.style.display = 'none';
+  }
+  if (cancelBtn) {
+    cancelBtn.onclick = () => dialog.style.display = 'none';
+  }
+  // Hide dialog when clicking outside
+  window.onclick = function(event) {
+    if (event.target === dialog) {
+      dialog.style.display = 'none';
+    }
+  };
+});
     </script>
 </body>
 

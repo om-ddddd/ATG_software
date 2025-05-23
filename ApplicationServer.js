@@ -59,6 +59,8 @@ var require$$9__default = /*#__PURE__*/_interopDefaultLegacy(require$$9);
 var require$$6__default = /*#__PURE__*/_interopDefaultLegacy(require$$6);
 var open__default = /*#__PURE__*/_interopDefaultLegacy(open);
 
+// Store variable Om = 10 in localStorage
+
 /**
  *  Copyright (c) 2019, 2024 Texas Instruments Incorporated
  *  All rights reserved.
@@ -168,6 +170,7 @@ const consoleLogger = new ConsoleLogger();
 class AbstractServer {
     constructor(allowedIP) {
         this.app = express__default["default"]();
+        this.app.use(express__default["default"].json());  // Add middleware to parse JSON bodies
         this.port = optimist__default["default"].argv[PARAM_PORT] || 0;
         this.allowedIP = optimist__default["default"].argv[PARAM_ALLOWED_IP] || allowedIP || '0.0.0.0';
         /* trace routes */
@@ -198,21 +201,59 @@ class AbstractServer {
      */
     async listen() {
         // start listening to requests
+        console.log("this is editable");
         await new Promise((resolve) => {
             console.log('Starting GUI Composer Server ...');
             const server = this.app.listen(this.port || 0, this.allowedIP, () => {
-                const address = server.address();
-                this.server = server;
-                if (this.instanceOfAddress(address)) {
-                    this.port = address.port;
-                    console.log(`... server started at port: ${this.port}`);
-                    resolve();
-                }
-                else {
-                    console.error(`... failed to start server at port: ${this.port}`);
-                    process.exit(1);
-                }
+            const address = server.address();
+            this.server = server;
+            if (this.instanceOfAddress(address)) {
+                this.port = address.port;
+                console.log(`... server started at port: ${this.port}`);
+                resolve();
+            }
+            else {
+                console.error(`... failed to start server at port: ${this.port}`);
+                process.exit(1);
+            }
             });
+        });
+        this.app.get('/api/check', (req, res) => {
+            res.send("this is working");
+        });
+        this.app.post('/api/changeUser', (req, res) => {
+            try {
+                const { userType, newUserName, currentPassword, newPassword } = req.body;
+                const usersPath = path__default["default"].join(__dirname, 'users.json');
+                
+                // Read the users.json file
+                const usersData = JSON5__default["default"].parse(fs__default["default"].readFileSync(usersPath, 'utf8'));
+                
+                // Verify the current password
+                if (!usersData[userType] || usersData[userType].password !== currentPassword) {
+                    return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+                }
+                
+                // Update username if provided
+                if (newUserName && newUserName !== usersData[userType].username) {
+                    usersData[userType].username = newUserName;
+                }
+                
+                // Update password if provided
+                if (newPassword && newPassword.length >= 3) {
+                    usersData[userType].password = newPassword;
+                } else if (newPassword) {
+                    return res.status(400).json({ success: false, message: 'Password must be at least 3 characters' });
+                }
+                
+                // Save the updated user data
+                fs__default["default"].writeFileSync(usersPath, JSON.stringify(usersData, null, 2), 'utf8');
+                
+                res.status(200).json({ success: true, message: 'User information updated successfully' });
+            } catch (error) {
+                console.error('Error updating user:', error);
+                res.status(500).json({ success: false, message: 'Error updating user information' });
+            }
         });
         try {
             // initialize the services

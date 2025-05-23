@@ -24,6 +24,345 @@ let animationId = null;
 
 /**
  -------------------------------------------------------------------------------------------------------------------------------
+Boilerplate code for working with webcomponents in the application
+-------------------------------------------------------------------------------------------------------------------------------
+**/
+
+const init = () => {
+    // Add menubar product-name-clicked event listener
+    // GcWidget.querySelector('gc-widget-menubar').then(menubar => {
+    //     menubar.addEventListener('product-name-clicked', () => window.open('https://dev.ti.com/', 'Dev Zone'));
+    // });
+
+    // Get the tide range selector
+
+    // Get the accept button and add click listener
+    GcWidget.querySelector('#accept_button').then(acceptButton => {
+        acceptButton.addEventListener('click', () => {
+            // Navigate to main_tab when accept is clicked
+            GcWidget.querySelector('#main_tab_container').then(tabContainer => {
+                // Get the index of the main_tab
+                const mainTabIndex = Array.from(tabContainer.querySelectorAll('gc-widget-tab-panel')).findIndex(
+                    panel => panel.id === 'main_tab'
+                );
+
+                if (mainTabIndex >= 0) {
+                    tabContainer.index = mainTabIndex;
+
+                    // Start updating water level values after accept button is clicked
+                    startSineWaveGenerator();
+                    
+                    // Setup the oscilloscope with proper configuration
+                    setupOscilloscope();
+               
+                    // Start listening for changes in water level values
+                    if (window.pmVars && window.pmVars.addListener) {
+                        // Update water level values immediately
+                        updateActualWLSpan();
+                        updateRequiredWLSpan();
+
+                        // Add listeners for future changes
+                        window.pmVars.addListener('mainoutput', updateActualWLSpan);
+                        window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
+                    } else {
+                        console.error('pmVars not available for adding listeners');
+                    }
+                }
+            });
+        });
+    });
+
+    // Add event listeners for H and R buttons
+    GcWidget.querySelector('#button').then(hButton => {
+        if (hButton) {
+            hButton.addEventListener('click', () => {
+                if (window.pmVars) {
+                    window.pmVars.hold_status = 1;
+                }
+            });
+        }
+    });
+    GcWidget.querySelector('#button_1').then(rButton => {
+        if (rButton) {
+            rButton.addEventListener('click', () => {
+                if (window.pmVars) {
+                    window.pmVars.hold_status = 0;
+                }
+            });
+        }
+    });
+
+};
+
+
+/**
+ * Start generating the sine wave values when the accept button is clicked
+ */
+function startSineWaveGenerator() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+    }
+
+    startTime = performance.now();
+
+    function updateSineValue(timestamp) {
+        // Calculate elapsed time
+
+
+
+        animationId = requestAnimationFrame(updateSineValue);
+    }
+
+    animationId = requestAnimationFrame(updateSineValue);
+}
+let capValue = 707; // Default to capacity for 1 wave (1 * sampleRate * 707)
+
+/**
+ * Configure the oscilloscope and set up input listeners
+ */
+function setupOscilloscope() {
+  const osc = document.getElementById('oscilloscope');
+  const waveInput = document.getElementById('no._of_waves');
+  
+  if (!osc) {
+    console.error('Oscilloscope element not found');
+    return;
+  }
+  
+  // Get sample rate from oscilloscope
+  const sampleRate = parseFloat(osc.getAttribute('sample-rate') || 7.09);
+  console.log(`Using oscilloscope sample rate: ${sampleRate}`);
+  
+  // Set initial default value if wave input has a value
+  if (waveInput && waveInput.value) {
+    const value = parseFloat(waveInput.value);
+    if (!isNaN(value)) {
+      capValue = Math.round(value * sampleRate * 707);
+    }
+  }
+  
+  // Initialize oscilloscope with current capValue
+  console.log('Initializing oscilloscope...');
+  osc.setAttribute('capacity', 1);
+  osc.setAttribute('trigger-mode', 'manual');
+  osc.setAttribute('trigger-armed', true);
+  
+  // Short delay before applying final settings
+  setTimeout(() => {
+    osc.setAttribute('capacity', capValue);
+    osc.setAttribute('trigger-mode', 'auto');
+    
+    // Update horizontal position slider max value to match the capacity
+    const hPositionSlider = document.getElementById('h_position');
+    if (hPositionSlider) {
+      hPositionSlider.setAttribute('max', capValue);
+      console.log(`Updated h_position slider max value to: ${capValue}`);
+    }
+    
+    console.log(`Oscilloscope initialized with capacity: ${capValue}`);
+  }, 100);
+  
+  // Configure input listener for future changes
+  if (waveInput) {
+    waveInput.addEventListener('input', function () {
+      const value = parseFloat(this.value);
+      if (isNaN(value)) return;
+      
+      console.log('User entered wave count:', value);
+      
+      // Calculate new capacity based on wave count
+      capValue = Math.round(value * sampleRate * 707);
+      console.log(`Updating capacity to: ${capValue}`);
+      
+      // Apply new capacity to oscilloscope
+      osc.setAttribute('capacity', capValue);
+      
+      // Update horizontal position slider max value to match the capacity
+      const hPositionSlider = document.getElementById('h_position');
+      if (hPositionSlider) {
+        hPositionSlider.setAttribute('max', capValue);
+        console.log(`Updated h_position slider max value to: ${capValue}`);
+      }
+    });
+    console.log('Wave input listener configured');
+  } else {
+    console.warn('Wave input element not found');
+  }
+}
+
+
+// Update Actual WL and Required WL spans in container_1
+function updateActualWLSpan() {
+    const actualWLValue = document.getElementById('actual_wl_value');
+    if (actualWLValue && window.pmVars) {
+        let val = window.pmVars.mainoutput;
+        if (typeof val === 'number') {
+            actualWLValue.textContent = val.toFixed(2);
+        } else if (!isNaN(parseFloat(val))) {
+            actualWLValue.textContent = parseFloat(val).toFixed(2);
+        } else {
+            actualWLValue.textContent = val ?? '';
+        }
+    }
+}
+function updateRequiredWLSpan() {
+    const requiredWLValue = document.getElementById('required_wl_value');
+    if (requiredWLValue && window.pmVars) {
+        let val = window.pmVars.cum_sineinput;
+        if (typeof val === 'number') {
+            requiredWLValue.textContent = val.toFixed(2);
+        } else if (!isNaN(parseFloat(val))) {
+            requiredWLValue.textContent = parseFloat(val).toFixed(2);
+        } else {
+            requiredWLValue.textContent = val ?? '';
+        }
+    }
+}
+
+// Initialize water level displays to "00"
+function initWaterLevelDisplays() {
+    const actualWLValue = document.getElementById('actual_wl_value');
+    const requiredWLValue = document.getElementById('required_wl_value');
+
+    if (actualWLValue) {
+        actualWLValue.textContent = "00";
+    }
+
+    if (requiredWLValue) {
+        requiredWLValue.textContent = "00";
+    }
+}
+// Initialize water level displays to "00" on page load
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initWaterLevelDisplays();
+} else {
+    document.addEventListener('DOMContentLoaded', () => {
+        initWaterLevelDisplays();
+    });
+}
+
+// Handle Change User Dialog
+document.addEventListener('DOMContentLoaded', () => {
+  const okButton = document.getElementById('okChangeUser');
+  const formElement = document.getElementById('changeUserForm');
+  
+  if (okButton) {
+    okButton.addEventListener('click', async () => {
+      // Get form values
+      const userType = document.querySelector('input[name="userType"]:checked').value;
+      const newUserName = document.getElementById('newUserName').value;
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const retypePassword = document.getElementById('retypePassword').value;
+      
+      // Simple validation
+      if (currentPassword.trim() === '') {
+        showError('Current password is required.');
+        return;
+      }
+      
+      if (newPassword !== retypePassword) {
+        showError('New password and retyped password do not match.');
+        return;
+      }
+      
+      if (newPassword && newPassword.length < 3) {
+        showError('New password must be at least 3 characters.');
+        return;
+      }
+      
+      try {
+        // Create the request body
+        const requestBody = {
+          userType: userType,
+          newUserName: newUserName,
+          currentPassword: currentPassword,
+          newPassword: newPassword
+        };
+        
+        // Send the API request
+        const response = await fetch('/api/changeUser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          // Show success message
+          showSuccess(result.message || 'User information updated successfully');
+          
+          // Clear form fields
+          document.getElementById('newUserName').value = '';
+          document.getElementById('currentPassword').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('retypePassword').value = '';
+          
+          // Close dialog after a delay
+          setTimeout(() => {
+            document.getElementById('changeUserDialog').style.display = 'none';
+          }, 1500);
+        } else {
+          // Show error message
+          showError(result.message || 'Failed to update user information');
+        }
+      } catch (error) {
+        showError('An error occurred while updating user information');
+        console.error('Change user API error:', error);
+      }
+    });
+  }
+  
+  // Helper function to show error messages
+  function showError(message) {
+    let errorElement = document.querySelector('.error-message');
+    if (!errorElement) {
+      errorElement = document.createElement('div');
+      errorElement.className = 'error-message';
+      formElement.appendChild(errorElement);
+    }
+    
+    // Hide success message if any
+    const successElement = document.querySelector('.success-message');
+    if (successElement) successElement.style.display = 'none';
+    
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+    
+    // Hide error after 3 seconds
+    setTimeout(() => {
+      errorElement.style.display = 'none';
+    }, 3000);
+  }
+  
+  // Helper function to show success messages
+  function showSuccess(message) {
+    let successElement = document.querySelector('.success-message');
+    if (!successElement) {
+      successElement = document.createElement('div');
+      successElement.className = 'success-message';
+      formElement.appendChild(successElement);
+    }
+    
+    // Hide error message if any
+    const errorElement = document.querySelector('.error-message');
+    if (errorElement) errorElement.style.display = 'none';
+    
+    successElement.textContent = message;
+    successElement.style.display = 'block';
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      successElement.style.display = 'none';
+    }, 3000);
+  }
+});
+
+/**
+ -------------------------------------------------------------------------------------------------------------------------------
 Boilerplate code for databinding
 
 Add custom computed value databindings here, using the following method:
@@ -432,228 +771,6 @@ console.info('================================================================')
 //     );
 // })();
 
-
-/**
- -------------------------------------------------------------------------------------------------------------------------------
-Boilerplate code for working with webcomponents in the application
--------------------------------------------------------------------------------------------------------------------------------
-**/
-
-const init = () => {
-    // Add menubar product-name-clicked event listener
-    // GcWidget.querySelector('gc-widget-menubar').then(menubar => {
-    //     menubar.addEventListener('product-name-clicked', () => window.open('https://dev.ti.com/', 'Dev Zone'));
-    // });
-
-    // Get the tide range selector
-
-    // Get the accept button and add click listener
-    GcWidget.querySelector('#accept_button').then(acceptButton => {
-        acceptButton.addEventListener('click', () => {
-            // Navigate to main_tab when accept is clicked
-            GcWidget.querySelector('#main_tab_container').then(tabContainer => {
-                // Get the index of the main_tab
-                const mainTabIndex = Array.from(tabContainer.querySelectorAll('gc-widget-tab-panel')).findIndex(
-                    panel => panel.id === 'main_tab'
-                );
-
-                if (mainTabIndex >= 0) {
-                    tabContainer.index = mainTabIndex;
-
-                    // Start updating water level values after accept button is clicked
-                    startSineWaveGenerator();
-                    
-                    // Setup the oscilloscope with proper configuration
-                    setupOscilloscope();
-               
-                    // Start listening for changes in water level values
-                    if (window.pmVars && window.pmVars.addListener) {
-                        // Update water level values immediately
-                        updateActualWLSpan();
-                        updateRequiredWLSpan();
-
-                        // Add listeners for future changes
-                        window.pmVars.addListener('mainoutput', updateActualWLSpan);
-                        window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
-                    } else {
-                        console.error('pmVars not available for adding listeners');
-                    }
-                }
-            });
-        });
-    });
-
-    // Add event listeners for H and R buttons
-    GcWidget.querySelector('#button').then(hButton => {
-        if (hButton) {
-            hButton.addEventListener('click', () => {
-                if (window.pmVars) {
-                    window.pmVars.hold_status = 1;
-                }
-            });
-        }
-    });
-    GcWidget.querySelector('#button_1').then(rButton => {
-        if (rButton) {
-            rButton.addEventListener('click', () => {
-                if (window.pmVars) {
-                    window.pmVars.hold_status = 0;
-                }
-            });
-        }
-    });
-
-};
-
-
-/**
- * Start generating the sine wave values when the accept button is clicked
- */
-function startSineWaveGenerator() {
-    if (animationId) {
-        cancelAnimationFrame(animationId);
-    }
-
-    startTime = performance.now();
-
-    function updateSineValue(timestamp) {
-        // Calculate elapsed time
-
-
-
-        animationId = requestAnimationFrame(updateSineValue);
-    }
-
-    animationId = requestAnimationFrame(updateSineValue);
-}
-let capValue = 707; // Default to capacity for 1 wave (1 * sampleRate * 707)
-
-/**
- * Configure the oscilloscope and set up input listeners
- */
-function setupOscilloscope() {
-  const osc = document.getElementById('oscilloscope');
-  const waveInput = document.getElementById('no._of_waves');
-  
-  if (!osc) {
-    console.error('Oscilloscope element not found');
-    return;
-  }
-  
-  // Get sample rate from oscilloscope
-  const sampleRate = parseFloat(osc.getAttribute('sample-rate') || 7.09);
-  console.log(`Using oscilloscope sample rate: ${sampleRate}`);
-  
-  // Set initial default value if wave input has a value
-  if (waveInput && waveInput.value) {
-    const value = parseFloat(waveInput.value);
-    if (!isNaN(value)) {
-      capValue = Math.round(value * sampleRate * 707);
-    }
-  }
-  
-  // Initialize oscilloscope with current capValue
-  console.log('Initializing oscilloscope...');
-  osc.setAttribute('capacity', 1);
-  osc.setAttribute('trigger-mode', 'manual');
-  osc.setAttribute('trigger-armed', true);
-  
-  // Short delay before applying final settings
-  setTimeout(() => {
-    osc.setAttribute('capacity', capValue);
-    osc.setAttribute('trigger-mode', 'auto');
-    
-    // Update horizontal position slider max value to match the capacity
-    const hPositionSlider = document.getElementById('h_position');
-    if (hPositionSlider) {
-      hPositionSlider.setAttribute('max', capValue);
-      console.log(`Updated h_position slider max value to: ${capValue}`);
-    }
-    
-    console.log(`Oscilloscope initialized with capacity: ${capValue}`);
-  }, 100);
-  
-  // Configure input listener for future changes
-  if (waveInput) {
-    waveInput.addEventListener('input', function () {
-      const value = parseFloat(this.value);
-      if (isNaN(value)) return;
-      
-      console.log('User entered wave count:', value);
-      
-      // Calculate new capacity based on wave count
-      capValue = Math.round(value * sampleRate * 707);
-      console.log(`Updating capacity to: ${capValue}`);
-      
-      // Apply new capacity to oscilloscope
-      osc.setAttribute('capacity', capValue);
-      
-      // Update horizontal position slider max value to match the capacity
-      const hPositionSlider = document.getElementById('h_position');
-      if (hPositionSlider) {
-        hPositionSlider.setAttribute('max', capValue);
-        console.log(`Updated h_position slider max value to: ${capValue}`);
-      }
-    });
-    console.log('Wave input listener configured');
-  } else {
-    console.warn('Wave input element not found');
-  }
-}
-
-
-// Update Actual WL and Required WL spans in container_1
-function updateActualWLSpan() {
-    const actualWLValue = document.getElementById('actual_wl_value');
-    if (actualWLValue && window.pmVars) {
-        let val = window.pmVars.mainoutput;
-        if (typeof val === 'number') {
-            actualWLValue.textContent = val.toFixed(2);
-        } else if (!isNaN(parseFloat(val))) {
-            actualWLValue.textContent = parseFloat(val).toFixed(2);
-        } else {
-            actualWLValue.textContent = val ?? '';
-        }
-    }
-}
-function updateRequiredWLSpan() {
-    const requiredWLValue = document.getElementById('required_wl_value');
-    if (requiredWLValue && window.pmVars) {
-        let val = window.pmVars.cum_sineinput;
-        if (typeof val === 'number') {
-            requiredWLValue.textContent = val.toFixed(2);
-        } else if (!isNaN(parseFloat(val))) {
-            requiredWLValue.textContent = parseFloat(val).toFixed(2);
-        } else {
-            requiredWLValue.textContent = val ?? '';
-        }
-    }
-}
-
-// Initialize water level displays to "00"
-function initWaterLevelDisplays() {
-    const actualWLValue = document.getElementById('actual_wl_value');
-    const requiredWLValue = document.getElementById('required_wl_value');
-
-    if (actualWLValue) {
-        actualWLValue.textContent = "00";
-    }
-
-    if (requiredWLValue) {
-        requiredWLValue.textContent = "00";
-    }
-}
-// Initialize water level displays to "00" on page load
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initWaterLevelDisplays();
-} else {
-    document.addEventListener('DOMContentLoaded', () => {
-        initWaterLevelDisplays();
-    });
-}
-// We've moved the listener setup to the accept button click handler
-
-document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init);
 
 /**
  -------------------------------------------------------------------------------------------------------------------------------
