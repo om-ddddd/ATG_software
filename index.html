@@ -41,6 +41,7 @@
     <script type="module" src="./start_from_0.js"></script>
     <script type="module" src="./admin-auth.js"></script>
     <script type="module" src="./tide-management.js"></script>
+    <script type="module" src="./auth.js"></script>
 
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -315,41 +316,42 @@
             </form>
         </div>
     </div>
+    <!-- Administration Button -->
 
-    <!-- Change User Name/Password Dialog -->
-    <div id="changeUserDialog" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" id="closeChangeUserDialog">&times;</span>
-            <form id="changeUserForm">
-                <h3>ChangeUser Name/Password</h3>
-                <div class="radio-group">
-                    <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
-                    <label><input type="radio" name="userType" value="user"> User</label>
-                </div>
-                <div class="form-group">
-                    <label for="newUserName">New User Name:</label>
-                    <input type="text" id="newUserName" name="newUserName">
-                </div>
-                <div class="form-group">
-                    <label for="currentPassword">Current Password:</label>
-                    <input type="password" id="currentPassword" name="currentPassword">
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">New Password:<br><span class="hint">(Min. 3 Charecters)</span></label>
-                    <input type="password" id="newPassword" name="newPassword">
-                </div>
-                <div class="form-group">
-                    <label for="retypePassword">Re-Type Password:</label>
-                    <input type="password" id="retypePassword" name="retypePassword">
-                </div>
-                <div class="button-group">
-                    <button type="button" id="okChangeUser">Ok</button>
-                    <button type="button" id="cancelChangeUser">Cancel</button>
-                </div>
-            </form>
-        </div>
+
+<!-- Change User Dialog -->
+<div id="changeUserDialog" class="auth-modal" style="display:none;">
+    <div class="auth-modal-content">
+        <span class="auth-close" id="closeChangeUserDialog">&times;</span>
+        <form id="changeUserForm">
+            <h3>Change User Name/Password</h3>
+            <div class="auth-radio-group">
+                <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
+                <label><input type="radio" name="userType" value="user"> User</label>
+            </div>
+            <div class="auth-form-group">
+                <label for="newUserName">New User Name:</label>
+                <input type="text" id="newUserName" name="newUserName">
+            </div>
+            <div class="auth-form-group">
+                <label for="currentPassword">Current Password:</label>
+                <input type="password" id="currentPassword" name="currentPassword">
+            </div>
+            <div class="auth-form-group">
+                <label for="newPassword">New Password:<br><span class="auth-hint">(Min. 3 Characters)</span></label>
+                <input type="password" id="newPassword" name="newPassword">
+            </div>
+            <div class="auth-form-group">
+                <label for="retypePassword">Re-Type Password:</label>
+                <input type="password" id="retypePassword" name="retypePassword">
+            </div>
+            <div class="auth-button-group">
+                <button type="button" id="okChangeUser">Ok</button>
+                <button type="button" id="cancelChangeUser">Cancel</button>
+            </div>
+        </form>
     </div>
-
+</div>
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
             var progressDiv = document.querySelector('#progressDiv')

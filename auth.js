@@ -1,204 +1,209 @@
 /**
- * Authentication module for handling user credentials and authentication dialog
+ * Administration Dialog Module
+ * This module provides functionality for the user/admin credential management dialog
  */
 
-// Export function to initialize authentication
-export function initializeAuth() {
-    // Handle Change User Dialog
-    document.addEventListener('DOMContentLoaded', () => {
-        const okButton = document.getElementById('okChangeUser');
-        const formElement = document.getElementById('changeUserForm');
-        
-        if (okButton) {
-            okButton.addEventListener('click', async () => {
-                // Get form values
-                const userType = document.querySelector('input[name="userType"]:checked').value;
-                const newUserName = document.getElementById('newUserName').value;
-                const currentPassword = document.getElementById('currentPassword').value;
-                const newPassword = document.getElementById('newPassword').value;
-                const retypePassword = document.getElementById('retypePassword').value;
-                
-                // Simple validation
-                if (currentPassword.trim() === '') {
-                    showError('Current password is required.');
-                    return;
-                }
-                
-                if (newPassword !== retypePassword) {
-                    showError('New password and retyped password do not match.');
-                    return;
-                }
-                
-                if (newPassword && newPassword.length < 3) {
-                    showError('New password must be at least 3 characters.');
-                    return;
-                }
-                
-                try {
-                    // Create the request body
-                    const requestBody = {
-                        userType: userType,
-                        newUserName: newUserName,
-                        currentPassword: currentPassword,
-                        newPassword: newPassword
-                    };
-                    
-                    // Send the API request
-                    const response = await fetch('/api/changeUser', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        // Get appropriate message based on user type
-                        const userTypeText = userType === 'admin' ? 'Administrator' : 'User';
-                        
-                        // Customize success message
-                        let successMsg = `${userTypeText} information updated successfully`;
-                        if (newUserName && newPassword) {
-                            successMsg = `${userTypeText} name and password updated successfully`;
-                        } else if (newUserName) {
-                            successMsg = `${userTypeText} name updated successfully`;
-                        } else if (newPassword) {
-                            successMsg = `${userTypeText} password updated successfully`;
-                        }
-                        
-                        // Show success message with confirmation button
-                        showSuccess(successMsg);
-                        
-                        // Clear form fields
-                        document.getElementById('newUserName').value = '';
-                        document.getElementById('currentPassword').value = '';
-                        document.getElementById('newPassword').value = '';
-                        document.getElementById('retypePassword').value = '';
-                        
-                        // No auto-close - user must click OK button
-                    } else {
-                        // Show error message
-                        showError(result.message || 'Failed to update user information');
-                    }
-                } catch (error) {
-                    showError('An error occurred while updating user information');
-                    console.error('Change user API error:', error);
-                }
-            });
+// Function to initialize the administration functionality
+export function initAdministration() {
+    // Add event listener for the administration button
+    const adminButton = document.getElementById('mm_administration');
+    if (adminButton) {
+        adminButton.addEventListener('click', openChangeUserDialog);
+    }
+    
+    // Initialize the change user dialog functionality
+    initChangeUserDialog();
+}
+
+// Initialize the change user dialog functionality
+function initChangeUserDialog() {
+    // Add event listeners for dialog actions
+    document.getElementById('okChangeUser').addEventListener('click', handleChangeUser);
+    document.getElementById('cancelChangeUser').addEventListener('click', closeChangeUserDialog);
+    document.getElementById('closeChangeUserDialog').addEventListener('click', closeChangeUserDialog);
+    
+    // Form validation
+    document.getElementById('newPassword').addEventListener('input', validatePassword);
+    document.getElementById('retypePassword').addEventListener('input', validatePasswordMatch);
+}
+
+// Function to handle the change user form submission
+function handleChangeUser() {
+    // Get form values
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+    const newUserName = document.getElementById('newUserName').value.trim();
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const retypePassword = document.getElementById('retypePassword').value;
+    
+    // Basic validation
+    if (currentPassword === '') {
+        showMessage('Please enter your current password', 'error');
+        return;
+    }
+    
+    // Check if either username or password is being changed
+    if (newUserName === '' && newPassword === '') {
+        showMessage('Please enter a new username or password to change', 'error');
+        return;
+    }
+    
+    // Password validation if the user is attempting to change it
+    if (newPassword !== '') {
+        if (newPassword.length < 3) {
+            showMessage('New password must be at least 3 characters long', 'error');
+            return;
         }
         
-        // Helper function to show error messages
-        function showError(message) {
-            let errorElement = document.querySelector('.error-message');
-            if (!errorElement) {
-                errorElement = document.createElement('div');
-                errorElement.className = 'error-message';
-                formElement.appendChild(errorElement);
+        if (newPassword !== retypePassword) {
+            showMessage('New passwords do not match', 'error');
+            return;
+        }
+    }
+    
+    // Prepare request payload
+    const payload = {
+        userType: userType,
+        currentPassword: currentPassword
+    };
+    
+    // Only add new username and password if they are provided
+    if (newUserName !== '') {
+        payload.newUserName = newUserName;
+    }
+    
+    if (newPassword !== '') {
+        payload.newPassword = newPassword;
+    }
+    
+    // Show loading message
+    showMessage('Updating user information...', 'info');
+    
+    // Call the API
+    fetch('/api/changeUser', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage(data.message, 'success');
+            // Update the UI with new username if it was changed
+            if (newUserName !== '') {
+                updateDisplayedUsername(newUserName, userType);
             }
-            
-            // Hide success message if any
-            const successElement = document.querySelector('.success-message');
-            if (successElement && successElement.style.display !== 'none') {
-                successElement.classList.add('message-hiding');
-                setTimeout(() => {
-                    successElement.style.display = 'none';
-                    successElement.classList.remove('message-hiding');
-                }, 300);
-            }
-            
-            // Create and display enhanced error message with icon
-            errorElement.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="white"/>
-                    </svg>
-                    <span style="font-weight: 500;">${message}</span>
-                </div>
-            `;
-            errorElement.style.display = 'block';
-            errorElement.classList.add('message-showing');
-            
-            // Hide error after 4 seconds
+            // Close the dialog after a short delay
             setTimeout(() => {
-                errorElement.classList.remove('message-showing');
-                errorElement.classList.add('message-hiding');
-                
-                setTimeout(() => {
-                    errorElement.style.display = 'none';
-                    errorElement.classList.remove('message-hiding');
-                }, 300);
-            }, 4000);
+                closeChangeUserDialog();
+                // Clear the form
+                document.getElementById('changeUserForm').reset();
+            }, 2000);
+        } else {
+            showMessage(data.message, 'error');
         }
-        
-        // Helper function to show success messages
-        function showSuccess(message) {
-            let successElement = document.querySelector('.success-message');
-            if (!successElement) {
-                successElement = document.createElement('div');
-                successElement.className = 'success-message';
-                formElement.appendChild(successElement);
-            }
-            
-            // Hide error message if any
-            const errorElement = document.querySelector('.error-message');
-            if (errorElement && errorElement.style.display !== 'none') {
-                errorElement.classList.add('message-hiding');
-                setTimeout(() => {
-                    errorElement.style.display = 'none';
-                    errorElement.classList.remove('message-hiding');
-                }, 300);
-            }
-            
-            // Create and display enhanced message with icon and button
-            successElement.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="white"/>
-                    </svg>
-                    <span style="font-weight: 500;">${message}</span>
-                </div>
-                <button type="button" class="confirm-btn" style="margin-top: 12px; padding: 6px 16px; background: rgba(255,255,255,0.3); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; transition: background 0.2s;">OK</button>
-            `;
-            successElement.style.display = 'block';
-            successElement.classList.add('message-showing');
-            
-            // Add event listener to the OK button
-            const confirmBtn = successElement.querySelector('.confirm-btn');
-            if (confirmBtn) {
-                // Add hover effect
-                confirmBtn.addEventListener('mouseover', () => {
-                    confirmBtn.style.background = 'rgba(255,255,255,0.5)';
-                });
-                confirmBtn.addEventListener('mouseout', () => {
-                    confirmBtn.style.background = 'rgba(255,255,255,0.3)';
-                });
-                
-                confirmBtn.addEventListener('click', () => {
-                    // Apply fade-out animation
-                    successElement.classList.remove('message-showing');
-                    successElement.classList.add('message-hiding');
-                    
-                    // Hide elements after animation completes
-                    setTimeout(() => {
-                        successElement.style.display = 'none';
-                        successElement.classList.remove('message-hiding');
-                        
-                        // Close the dialog with fade effect
-                        const dialog = document.getElementById('changeUserDialog');
-                        dialog.style.opacity = '0';
-                        
-                        setTimeout(() => {
-                            dialog.style.display = 'none';
-                            dialog.style.opacity = '1'; // Reset for next time
-                        }, 300);
-                    }, 300);
-                });
-            }
-        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('An error occurred while updating user information. Please try again later.', 'error');
     });
 }
 
-// Auto-initialize when module is loaded
-initializeAuth();
+// Function to display messages to the user
+function showMessage(message, type) {
+    // Create message element if it doesn't exist
+    let messageElement = document.getElementById('auth_changeUserMessage');
+    
+    if (!messageElement) {
+        messageElement = document.createElement('div');
+        messageElement.id = 'auth_changeUserMessage';
+        const form = document.getElementById('changeUserForm');
+        form.insertBefore(messageElement, form.querySelector('.auth-button-group'));
+    }
+    
+    // Set message content and style
+    messageElement.textContent = message;
+    messageElement.className = 'auth_message ' + type;
+    
+    // For success messages, automatically hide after some time
+    if (type === 'success') {
+        setTimeout(() => {
+            messageElement.style.opacity = '0';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 500);
+        }, 3000);
+    }
+}
+
+// Function to open the dialog
+export function openChangeUserDialog() {
+    document.getElementById('changeUserDialog').style.display = 'block';
+    // Clear any previous form data and messages
+    document.getElementById('changeUserForm').reset();
+    
+    const messageElement = document.getElementById('auth_changeUserMessage');
+    if (messageElement) {
+        messageElement.style.display = 'none';
+    }
+}
+
+// Function to close the dialog
+export function closeChangeUserDialog() {
+    document.getElementById('changeUserDialog').style.display = 'none';
+    
+    // Remove any displayed messages
+    const messageElement = document.getElementById('auth_changeUserMessage');
+    if (messageElement) {
+        messageElement.style.display = 'none';
+    }
+}
+
+// Function to validate password as user types
+function validatePassword() {
+    const password = document.getElementById('newPassword').value;
+    const hint = document.querySelector('.auth-hint');
+    
+    if (password.length > 0 && password.length < 3) {
+        hint.style.color = 'red';
+    } else {
+        hint.style.color = '';
+    }
+}
+
+// Function to validate password match as user types
+function validatePasswordMatch() {
+    const password = document.getElementById('newPassword').value;
+    const retypePassword = document.getElementById('retypePassword').value;
+    const retypeField = document.getElementById('retypePassword');
+    
+    if (password && retypePassword && password !== retypePassword) {
+        retypeField.classList.add('auth_error');
+    } else {
+        retypeField.classList.remove('auth_error');
+    }
+}
+
+// Function to update displayed username in the app
+function updateDisplayedUsername(newUsername, userType) {
+    // Update any UI elements that display the username
+    const userDisplayElements = document.querySelectorAll(`.${userType}-username-display`);
+    if (userDisplayElements.length) {
+        userDisplayElements.forEach(elem => {
+            elem.textContent = newUsername;
+        });
+    }
+    
+    // If the current user's login matches the changed user type, update the login display
+    const currentUserType = document.querySelector('.current-user-type')?.dataset?.userType;
+    if (currentUserType === userType) {
+        const loginDisplayElements = document.querySelectorAll('.current-user-name');
+        if (loginDisplayElements.length) {
+            loginDisplayElements.forEach(elem => {
+                elem.textContent = newUsername;
+            });
+        }
+    }
+}

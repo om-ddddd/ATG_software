@@ -237,7 +237,7 @@ body {
           from { transform: translateX(100%); }
           to { transform: translateX(0); }
       }
-      }
+      
       
       /* Tide Management Styles */
       .tide-manipulation-container {
@@ -425,7 +425,7 @@ body {
           from { transform: translateX(100%); }
           to { transform: translateX(0); }
       }
-      }
+      
 
       .close:hover,
       .close:focus {
@@ -1238,7 +1238,146 @@ body {
     left: 7px;
     width: 24px;
 }
+/* Modal Dialog Styling */
+.auth-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
+.auth-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Close Button */
+.auth-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.auth-close:hover,
+.auth-close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Form Elements */
+.auth-form-group {
+    margin-bottom: 15px;
+}
+
+.auth-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.auth-form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.auth-radio-group {
+    margin-bottom: 15px;
+}
+
+.auth-radio-group label {
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.auth-button-group {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.auth-button-group button {
+    padding: 8px 15px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#okChangeUser {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#cancelChangeUser {
+    background-color: #f44336;
+    color: white;
+}
+
+.auth-hint {
+    font-size: 0.8em;
+    color: #666;
+    font-weight: normal;
+}
+
+.admin-button {
+    padding: 8px 15px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.admin-button:hover {
+    background-color: #0b7dda;
+}
+
+/* Message styling */
+.auth_message {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: center;
+    transition: opacity 0.5s ease;
+}
+
+.auth_message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.auth_message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.auth_message.info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+}
+
+/* Highlight for form fields with errors */
+input.auth_error {
+    border-color: red !important;
+}
 
 
 

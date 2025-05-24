@@ -1,12 +1,12 @@
 {
   "admin": {
-    "username": "ryr",
-    "password": "1234",
+    "username": "abc",
+    "password": "111",
     "type": "admin"
   },
   "user": {
-    "username": "abc",
-    "password": "1234",
+    "username": "111",
+    "password": "aaa",
     "type": "user"
   }
 }

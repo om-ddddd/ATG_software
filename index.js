@@ -7,11 +7,13 @@ For further information, see the available options under the Help main menu in t
 
 import { GcUtils } from './components/@ti/gc-core-assets/lib/GcUtils';
 import { GcConsole } from './components/@ti/gc-core-assets/lib/GcConsole';
-import { bindingRegistry, valueChangedEventType } from './components/@ti/gc-core-databind/lib/CoreDatabind';
 import { GcWidget } from './components/@ti/gc-widget-base/lib/GcWidget';
 import { ActionRegistry } from './components/@ti/gc-widget-menu/lib/ActionRegistry';
 import { initializePmVars } from './pm-variables.js';
-import { initializeAuth } from './auth.js';
+import { initAdministration } from './auth.js';
+
+// Initialize the application when the DOM is fully loaded
+
 import {initAdminAuth} from './admin-auth.js';
 
 
@@ -34,7 +36,7 @@ const init = () => {
 
     // Get the tide range selector
     initializePmVars(); // Initialize pmVars
-  
+    initAdministration();
     // Get the accept button and add click listener
     GcWidget.querySelector('#accept_button').then(acceptButton => {
         acceptButton.addEventListener('click', () => {
