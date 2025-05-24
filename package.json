@@ -5,8 +5,8 @@
         "title": "",
         "frame": false,
         "position": "center",
-        "width": 1280,
-        "height": 800,
+        "width": 2400,
+        "height": 1600,
         "min_width": 600,
         "min_height": 200,
         "show_in_taskbar": true

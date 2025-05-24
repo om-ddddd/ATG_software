@@ -14,17 +14,17 @@ import { initializePmVars } from './pm-variables.js';
 import { initializeAuth } from './auth.js';
 import {initAdminAuth} from './admin-auth.js';
 
+
+
+let startTime = null;
+
 const console = new GcConsole('myapp'); // creates a console instance with name 'myapp'
 GcConsole.setLevel('myapp', 4);         // enable console output for myapp console instance
 console.info('index.js is loaded...');
 
 let animationId = null;
 
-/**
- -------------------------------------------------------------------------------------------------------------------------------
-Boilerplate code for working with webcomponents in the application
--------------------------------------------------------------------------------------------------------------------------------
-**/
+
 
 const init = () => {
     // Add menubar product-name-clicked event listener
@@ -33,7 +33,8 @@ const init = () => {
     // });
 
     // Get the tide range selector
-
+    initializePmVars(); // Initialize pmVars
+  
     // Get the accept button and add click listener
     GcWidget.querySelector('#accept_button').then(acceptButton => {
         acceptButton.addEventListener('click', () => {
@@ -93,12 +94,7 @@ const init = () => {
 };
 
 // Call the init function to set up event listeners
-init();
-
-
-/**
- * Start generating the sine wave values when the accept button is clicked
- */
+// init();
 function startSineWaveGenerator() {
     if (animationId) {
         cancelAnimationFrame(animationId);
@@ -241,7 +237,9 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
         initWaterLevelDisplays();
     });
 }
+// We've moved the listener setup to the accept button click handler
 
+document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init);
 // Authentication code has been moved to auth.js
 
 /**
@@ -341,7 +339,7 @@ function setupTabPanelObservers() {
           if (isVisible) {
             console.log('Run tab panel visibility detected!');
             runTabPanelFunction();
-          //  initAdminAuth(); // Initialize admin authentication if needed
+            initAdminAuth(); // Initialize admin authentication if needed
             
             // Optional: Stop observing after it's visible once
             // runObserver.disconnect();
@@ -376,7 +374,7 @@ function setupTabPanelObservers() {
           if (isVisible) {
             console.log('Settings tab panel visibility detected!');
             settingsTabPanelFunction();
-            //initAdminAuth(); // Initialize admin authentication if needed
+            initAdminAuth(); // Initialize admin authentication if needed
             // Optional: Stop observing after it's visible once
             // settingsObserver.disconnect();
           }
@@ -402,3 +400,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Or add this line to your existing init function:
 // setupTabPanelObservers();
+
