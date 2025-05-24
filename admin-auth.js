@@ -44,6 +44,15 @@ function setupLoginDialog() {
    * Show the login dialog and disable access to the application
    */
   function showLoginDialog() {
+    // Clear the username and password fields
+    usernameInput.value = '';
+    passwordInput.value = '';
+    
+    // Hide any error messages that might be displayed
+    if(loginError) {
+      loginError.style.display = 'none';
+    }
+    
     loginDialog.style.display = 'block';
     // Disable clicks on the main application while login dialog is shown
     document.getElementById('editorRoot').style.pointerEvents = 'none';

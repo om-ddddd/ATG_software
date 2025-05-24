@@ -12,6 +12,7 @@ import { GcWidget } from './components/@ti/gc-widget-base/lib/GcWidget';
 import { ActionRegistry } from './components/@ti/gc-widget-menu/lib/ActionRegistry';
 import { initializePmVars } from './pm-variables.js';
 import { initializeAuth } from './auth.js';
+import {initAdminAuth} from './admin-auth.js';
 
 const console = new GcConsole('myapp'); // creates a console instance with name 'myapp'
 GcConsole.setLevel('myapp', 4);         // enable console output for myapp console instance
@@ -271,3 +272,109 @@ syntax: bindingRegistry.bind(targetBinding, sourceBinding, [getter], [setter]);
 ActionRegistry.registerAction('cmd_exit', {
     run() { GcUtils.isNW ? require('nw.gui').Window.get().close() : window.close(); }
 });
+
+/**
+ * Setup MutationObservers to detect when specific tab panels become visible
+ */
+function setupTabPanelObservers() {
+  // Target elements
+  const runTabPanel = document.getElementById('run');
+  const settingsTabPanel = document.getElementById('page_settings');
+  
+  // Function to run when the 'run' tab panel becomes visible
+  function runTabPanelFunction() {
+    console.log('Run tab panel is now visible!');
+    // Add your custom code here for when the 'run' tab panel becomes visible
+    // For example:
+    // - Initialize components 
+    // - Load data
+    // - Set default values
+  }
+  
+  // Function to run when the 'page_settings' tab panel becomes visible
+  function settingsTabPanelFunction() {
+    console.log('Settings tab panel is now visible!');
+    // Add your custom code here for when the 'page_settings' tab panel becomes visible
+    // For example:
+    // - Load settings
+    // - Update configuration UI
+    // - Fetch calibration values
+  }
+  
+  // Set up observer for the 'run' tab panel
+  if (runTabPanel) {
+    const runObserver = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (
+          mutation.attributeName === 'style' || 
+          mutation.attributeName === 'class' ||
+          mutation.attributeName === 'hidden'
+        ) {
+          // Check if the panel is visible using computed style
+          const isVisible = window.getComputedStyle(runTabPanel).display !== 'none' && 
+                           !runTabPanel.hasAttribute('hidden');
+          
+          if (isVisible) {
+            console.log('Run tab panel visibility detected!');
+            runTabPanelFunction();
+            initAdminAuth(); // Initialize admin authentication if needed
+            
+            // Optional: Stop observing after it's visible once
+            // runObserver.disconnect();
+          }
+        }
+      });
+    });
+    
+    // Start observing
+    runObserver.observe(runTabPanel, { 
+      attributes: true, 
+      attributeFilter: ['style', 'class', 'hidden'] 
+    });
+    console.log('Run tab panel observer initialized');
+  } else {
+    console.warn('Run tab panel element not found');
+  }
+  
+  // Set up observer for the 'page_settings' tab panel
+  if (settingsTabPanel) {
+    const settingsObserver = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (
+          mutation.attributeName === 'style' || 
+          mutation.attributeName === 'class' ||
+          mutation.attributeName === 'hidden'
+        ) {
+          // Check if the panel is visible using computed style
+          const isVisible = window.getComputedStyle(settingsTabPanel).display !== 'none' && 
+                           !settingsTabPanel.hasAttribute('hidden');
+          
+          if (isVisible) {
+            console.log('Settings tab panel visibility detected!');
+            settingsTabPanelFunction();
+            initAdminAuth(); // Initialize admin authentication if needed
+            // Optional: Stop observing after it's visible once
+            // settingsObserver.disconnect();
+          }
+        }
+      });
+    });
+    
+    // Start observing
+    settingsObserver.observe(settingsTabPanel, { 
+      attributes: true, 
+      attributeFilter: ['style', 'class', 'hidden'] 
+    });
+    console.log('Settings tab panel observer initialized');
+  } else {
+    console.warn('Settings tab panel element not found');
+  }
+}
+
+// Add this to your init function or call it directly
+document.addEventListener('DOMContentLoaded', () => {
+  setupTabPanelObservers();
+});
+
+// Or add this line to your existing init function:
+// setupTabPanelObservers();

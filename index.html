@@ -51,19 +51,22 @@
             <gc-model-program id="pm" program-or-bin-path="./firmware/atg_main.out"></gc-model-program>
         </gc-target-connection-manager>
 
- <header>
-        <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
-            <gc-widget-menuitem id="mm_administration" label="Administration" layout vertical>
-            </gc-widget-menuitem>
-            <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
-                <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog" icon="round:action:help"></gc-widget-menuaction>
-                <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme" icon="round:action:description"></gc-widget-menuaction>
-            </gc-widget-menuitem>
-            <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
-                <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x" icon="round:action:exit_to_app"></gc-widget-menuaction>
-            </gc-widget-menuitem>
-        </gc-widget-menubar>
-    </header>
+        <header>
+            <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
+                <gc-widget-menuitem id="mm_administration" label="Administration" layout vertical>
+                </gc-widget-menuitem>
+                <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
+                    <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog"
+                        icon="round:action:help"></gc-widget-menuaction>
+                    <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme"
+                        icon="round:action:description"></gc-widget-menuaction>
+                </gc-widget-menuitem>
+                <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
+                    <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x"
+                        icon="round:action:exit_to_app"></gc-widget-menuaction>
+                </gc-widget-menuitem>
+            </gc-widget-menubar>
+        </header>
 
         <gc-widget-container id="viewport" flex one vertical layout>
             <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left"
@@ -85,12 +88,11 @@
                     <gc-widget-input id="input_3"></gc-widget-input>
                     <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
                     <gc-widget-label id="label_3" label="Gain"></gc-widget-label>
-                    <gc-widget-slider id="slider" step="0.1"
-                        labels="0,10,20,30,40,50,60,70,80,90,100"
+                    <gc-widget-slider id="slider" step="0.1" labels="0,10,20,30,40,50,60,70,80,90,100"
                         max-value="100"></gc-widget-slider>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="run" class="container" label="Tide Manipulation" icon-name="round:image:image" vertical
-                    layout has-heading start-justified start>
+                <gc-widget-tab-panel id="run" class="container" label="Tide Manipulation" icon-name="round:image:image"
+                    vertical layout has-heading start-justified start>
                     <gc-widget-container id="page_data_top_container" horizontal layout center-justified>
                     </gc-widget-container>
                     <gc-widget-container id="container">
@@ -107,7 +109,8 @@
                             </select>
                         </gc-widget-container>
                         <gc-widget-container id="container_9">
-                            <input type="number" id="no._of_waves" name="tentacles" min="0" style=" width: 133px;height: 23px;">
+                            <input type="number" id="no._of_waves" name="tentacles" min="0"
+                                style=" width: 133px;height: 23px;">
                         </gc-widget-container>
                         <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
                         <input type="checkbox" name="checkbox"
@@ -193,59 +196,60 @@
     <gc-widget-firmware-update-dialog id="firmwareUpdate"></gc-widget-firmware-update-dialog>
 
     <!-- Login Dialog -->
-<div id="loginDialog" class="modal" style="display:block;">
-  <div class="modal-content">
-    <form id="loginForm">
-      <h3>Administrator Login</h3>
-      <div class="form-group">
-        <label for="loginUsername">Username:</label>
-        <input type="text" id="loginUsername" name="loginUsername" required autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="loginPassword" required autocomplete="current-password">
-      </div>
-      <div class="error-message" id="loginError" style="display: none;"></div>
-      <div class="button-group">
-        <button type="button" id="loginButton">Login</button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div id="loginDialog" class="modal" style="display:block;">
+        <div class="modal-content">
+            <form id="loginForm">
+                <h3>Administrator Credentials Required</h3>
+                <div class="form-group">
+                    <label for="loginUsername">Username:</label>
+                    <input type="text" id="loginUsername" name="loginUsername" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" name="loginPassword" required
+                        autocomplete="current-password">
+                </div>
+                <div class="error-message" id="loginError" style="display: none;"></div>
+                <div class="button-group">
+                    <button type="button" id="loginButton">Enter</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Change User Name/Password Dialog -->
-<div id="changeUserDialog" class="modal" style="display:none;">
-  <div class="modal-content">
-    <span class="close" id="closeChangeUserDialog">&times;</span>
-    <form id="changeUserForm">
-      <h3>ChangeUser Name/Password</h3>
-      <div class="radio-group">
-        <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
-        <label><input type="radio" name="userType" value="user"> User</label>
-      </div>
-      <div class="form-group">
-        <label for="newUserName">New User Name:</label>
-        <input type="text" id="newUserName" name="newUserName">
-      </div>
-      <div class="form-group">
-        <label for="currentPassword">Current Password:</label>
-        <input type="password" id="currentPassword" name="currentPassword">
-      </div>
-      <div class="form-group">
-        <label for="newPassword">New Password:<br><span class="hint">(Min. 3 Charecters)</span></label>
-        <input type="password" id="newPassword" name="newPassword">
-      </div>
-      <div class="form-group">
-        <label for="retypePassword">Re-Type Password:</label>
-        <input type="password" id="retypePassword" name="retypePassword">
-      </div>
-      <div class="button-group">
-        <button type="button" id="okChangeUser">Ok</button>
-        <button type="button" id="cancelChangeUser">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
+    <div id="changeUserDialog" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeChangeUserDialog">&times;</span>
+            <form id="changeUserForm">
+                <h3>ChangeUser Name/Password</h3>
+                <div class="radio-group">
+                    <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
+                    <label><input type="radio" name="userType" value="user"> User</label>
+                </div>
+                <div class="form-group">
+                    <label for="newUserName">New User Name:</label>
+                    <input type="text" id="newUserName" name="newUserName">
+                </div>
+                <div class="form-group">
+                    <label for="currentPassword">Current Password:</label>
+                    <input type="password" id="currentPassword" name="currentPassword">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password:<br><span class="hint">(Min. 3 Charecters)</span></label>
+                    <input type="password" id="newPassword" name="newPassword">
+                </div>
+                <div class="form-group">
+                    <label for="retypePassword">Re-Type Password:</label>
+                    <input type="password" id="retypePassword" name="retypePassword">
+                </div>
+                <div class="button-group">
+                    <button type="button" id="okChangeUser">Ok</button>
+                    <button type="button" id="cancelChangeUser">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
@@ -256,29 +260,29 @@
         });
 
         // Show the Change User dialog when Administration menu is clicked
-addEventListener('DOMContentLoaded', () => {
-  const adminMenu = document.getElementById('mm_administration');
-  const dialog = document.getElementById('changeUserDialog');
-  const closeBtn = document.getElementById('closeChangeUserDialog');
-  const cancelBtn = document.getElementById('cancelChangeUser');
-  if (adminMenu && dialog) {
-    adminMenu.addEventListener('click', () => {
-      dialog.style.display = 'block';
-    });
-  }
-  if (closeBtn) {
-    closeBtn.onclick = () => dialog.style.display = 'none';
-  }
-  if (cancelBtn) {
-    cancelBtn.onclick = () => dialog.style.display = 'none';
-  }
-  // Hide dialog when clicking outside
-  window.onclick = function(event) {
-    if (event.target === dialog) {
-      dialog.style.display = 'none';
-    }
-  };
-});
+        addEventListener('DOMContentLoaded', () => {
+            const adminMenu = document.getElementById('mm_administration');
+            const dialog = document.getElementById('changeUserDialog');
+            const closeBtn = document.getElementById('closeChangeUserDialog');
+            const cancelBtn = document.getElementById('cancelChangeUser');
+            if (adminMenu && dialog) {
+                adminMenu.addEventListener('click', () => {
+                    dialog.style.display = 'block';
+                });
+            }
+            if (closeBtn) {
+                closeBtn.onclick = () => dialog.style.display = 'none';
+            }
+            if (cancelBtn) {
+                cancelBtn.onclick = () => dialog.style.display = 'none';
+            }
+            // Hide dialog when clicking outside
+            window.onclick = function (event) {
+                if (event.target === dialog) {
+                    dialog.style.display = 'none';
+                }
+            };
+        });
     </script>
 </body>
 
