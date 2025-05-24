@@ -94,6 +94,9 @@ const init = () => {
 
 };
 
+// Call the init function to set up event listeners
+init();
+
 
 /**
  * Start generating the sine wave values when the accept button is clicked
@@ -292,8 +295,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
         
         if (response.ok) {
-          // Show success message
-          showSuccess(result.message || 'User information updated successfully');
+          // Get appropriate message based on user type
+          const userTypeText = userType === 'admin' ? 'Administrator' : 'User';
+          
+          // Customize success message
+          let successMsg = `${userTypeText} information updated successfully`;
+          if (newUserName && newPassword) {
+            successMsg = `${userTypeText} name and password updated successfully`;
+          } else if (newUserName) {
+            successMsg = `${userTypeText} name updated successfully`;
+          } else if (newPassword) {
+            successMsg = `${userTypeText} password updated successfully`;
+          }
+          
+          // Show success message with confirmation button
+          showSuccess(successMsg);
           
           // Clear form fields
           document.getElementById('newUserName').value = '';
@@ -301,10 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('newPassword').value = '';
           document.getElementById('retypePassword').value = '';
           
-          // Close dialog after a delay
-          setTimeout(() => {
-            document.getElementById('changeUserDialog').style.display = 'none';
-          }, 1500);
+          // No auto-close - user must click OK button
         } else {
           // Show error message
           showError(result.message || 'Failed to update user information');
@@ -327,15 +340,36 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Hide success message if any
     const successElement = document.querySelector('.success-message');
-    if (successElement) successElement.style.display = 'none';
+    if (successElement && successElement.style.display !== 'none') {
+      successElement.classList.add('message-hiding');
+      setTimeout(() => {
+        successElement.style.display = 'none';
+        successElement.classList.remove('message-hiding');
+      }, 300);
+    }
     
-    errorElement.textContent = message;
+    // Create and display enhanced error message with icon
+    errorElement.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM11 15H9V13H11V15ZM11 11H9V5H11V11Z" fill="white"/>
+        </svg>
+        <span style="font-weight: 500;">${message}</span>
+      </div>
+    `;
     errorElement.style.display = 'block';
+    errorElement.classList.add('message-showing');
     
-    // Hide error after 3 seconds
+    // Hide error after 4 seconds
     setTimeout(() => {
-      errorElement.style.display = 'none';
-    }, 3000);
+      errorElement.classList.remove('message-showing');
+      errorElement.classList.add('message-hiding');
+      
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+        errorElement.classList.remove('message-hiding');
+      }, 300);
+    }, 4000);
   }
   
   // Helper function to show success messages
@@ -349,15 +383,59 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Hide error message if any
     const errorElement = document.querySelector('.error-message');
-    if (errorElement) errorElement.style.display = 'none';
+    if (errorElement && errorElement.style.display !== 'none') {
+      errorElement.classList.add('message-hiding');
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+        errorElement.classList.remove('message-hiding');
+      }, 300);
+    }
     
-    successElement.textContent = message;
+    // Create and display enhanced message with icon and button
+    successElement.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="white"/>
+        </svg>
+        <span style="font-weight: 500;">${message}</span>
+      </div>
+      <button type="button" class="confirm-btn" style="margin-top: 12px; padding: 6px 16px; background: rgba(255,255,255,0.3); color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: 500; transition: background 0.2s;">OK</button>
+    `;
     successElement.style.display = 'block';
+    successElement.classList.add('message-showing');
     
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      successElement.style.display = 'none';
-    }, 3000);
+    // Add event listener to the OK button
+    const confirmBtn = successElement.querySelector('.confirm-btn');
+    if (confirmBtn) {
+      // Add hover effect
+      confirmBtn.addEventListener('mouseover', () => {
+        confirmBtn.style.background = 'rgba(255,255,255,0.5)';
+      });
+      confirmBtn.addEventListener('mouseout', () => {
+        confirmBtn.style.background = 'rgba(255,255,255,0.3)';
+      });
+      
+      confirmBtn.addEventListener('click', () => {
+        // Apply fade-out animation
+        successElement.classList.remove('message-showing');
+        successElement.classList.add('message-hiding');
+        
+        // Hide elements after animation completes
+        setTimeout(() => {
+          successElement.style.display = 'none';
+          successElement.classList.remove('message-hiding');
+          
+          // Close the dialog with fade effect
+          const dialog = document.getElementById('changeUserDialog');
+          dialog.style.opacity = '0';
+          
+          setTimeout(() => {
+            dialog.style.display = 'none';
+            dialog.style.opacity = '1'; // Reset for next time
+          }, 300);
+        }, 300);
+      });
+    }
   }
 });
 
@@ -659,124 +737,11 @@ syntax: bindingRegistry.bind(targetBinding, sourceBinding, [getter], [setter]);
 
         console.info('PM variables are now accessible via the global "pmVars" object in the browser console.');
         console.info('================================================================');
-        //     console.info('PM Variables now available in browser console via global "pmVars" object');
-        //     console.info('================================================================');
-        //     console.info('Getting/Setting Values:');
-        //     console.info('  - Get value: pmVars.switchinput');
-        //     console.info('  - Set value: pmVars.switchinput = true');
-        //     console.info('  - Get all values: pmVars.getAll()');
-        //     console.info('');
-        //     console.info('Monitoring:');
-        //     console.info('  - Start monitoring: pmVars.monitor("switchinput", 500) // 500ms interval');
-        //     console.info('  - Stop specific monitor: pmVars.stopMonitor("switchinput")');
-        //     console.info('  - Stop all monitors: pmVars.stopAllMonitors()');
-        //     console.info('');
-        //     console.info('Custom Event Listeners:');
-        //     console.info('  - Add listener: const myCallback = (newVal, oldVal) => console.log(`Changed: ${oldVal} → ${newVal}`);');
-        //     console.info('    pmVars.addListener("switchinput", myCallback);');
-        //     console.info('  - Remove specific listener: pmVars.removeListener("switchinput", myCallback);');
-        //     console.info('================================================================');
+
     } catch (err) {
         console.error('Error setting up PM model access:', err);
     }
 })();
-window.appVars = {
-    // Getter and setter for sineValue
-    get sineValue() {
-        return sineValue;
-    },
-    set sineValue(value) {
-        sineValue = Number(value);
-        // Update the UI if input component exists
-        GcWidget.querySelector('#input_2').then(sineValueInput => {
-            if (sineValueInput) {
-                sineValueInput.value = sineValue.toFixed(2);
-            }
-        });
-        // Update the oscilloscope if it exists
-        GcWidget.querySelector('#input').then(input => {
-            if (input && input.addDataPoint) {
-                input.addDataPoint(sineValue);
-            }
-        });
-        return sineValue;
-    },
-
-    // Getter and setter for tideRange
-    get tideRange() {
-        return tideRange;
-    },
-    set tideRange(value) {
-        tideRange = Number(value);
-        return tideRange;
-    },
-
-    // Getter and setter for angularFrequency
-    get angularFrequency() {
-        return angularFrequency;
-    },
-    set angularFrequency(value) {
-        angularFrequency = Number(value);
-        return angularFrequency;
-    },
-
-    // Restart the sine wave generator
-    restartGenerator() {
-        if (animationId) {
-            cancelAnimationFrame(animationId);
-        }
-        startSineWaveGenerator();
-        return 'Sine wave generator restarted';
-    }
-};
-
-console.info('Application variables are accessible via the global "appVars" object in the browser console.');
-console.info('================================================================');
-// console.info('Example usage:');
-// console.info('  - Get current sine value: appVars.sineValue');
-// console.info('  - Set sine value: appVars.sineValue = 25.5');
-// console.info('  - Change tide range: appVars.tideRange = 20');
-// console.info('  - Restart generator: appVars.restartGenerator()');
-
-// Example code:
-//
-// (async () => {
-//     /* Wait for widget and target models to be ready */
-//     await bindingRegistry.waitForModelReady('widget');
-//     await bindingRegistry.waitForModelReady('targetModelId');
-//
-//     /* A simple computed values based on simple expression */
-//     bindingRegistry.bind('widget.id.propertyName', "targetModelId.targetVariable == 1 ? 'binding is one' : 'binding is not one'");
-//
-//     /* A custom two-way binding with custom getter and setter functions */
-//     /* (setter is optional and getter only indicates one-way binding)   */
-//     bindingRegistry.bind('widget.id.propertyName', 'targetModelId.targetVariable',
-//         value => { return value*5/9 + 32; }, /* getter */
-//         value => { return (value-32)*9/5; }  /* setter */
-//     );
-//
-//     /* 1 to n bindings */
-//     bindingRegistry.bind('widget.date.value', {
-//         /* Dependant bindings needed in order to compute the date, in name/value pairs */
-//             weekday: 'widget.dayOfWeek.selectedLabel',
-//             day: 'widget.dayOfMonth.value',
-//             month: 'widget.month.selectedLabel',
-//             year: 'widget.year.value'
-//         },
-//         /* Getter for date computation */
-//         function(values) {
-//             /* compute and return the string value to bind to the widget with id 'date' */
-//             return values.weekday + ', ' + values.month + ' ' + values.day + ', ' + values.year;
-//         }
-//     );
-// })();
-
-
-/**
- -------------------------------------------------------------------------------------------------------------------------------
-Boilerplate code for registering menu and toolbar action callback
--------------------------------------------------------------------------------------------------------------------------------
-**/
 
 ActionRegistry.registerAction('cmd_exit', {
     run() { GcUtils.isNW ? require('nw.gui').Window.get().close() : window.close(); }

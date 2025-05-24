@@ -454,6 +454,7 @@ body {
   height: 100vh;
   overflow: auto;
   background-color: rgba(0,0,0,0.3);
+  transition: opacity 0.3s ease;
 }
 .modal-content {
   background-color: #fff;
@@ -464,6 +465,8 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.2);
   position: relative;
+  transition: transform 0.3s ease;
+  transform: scale(1);
 }
 .close {
   color: #aaa;
@@ -544,6 +547,7 @@ body {
   height: 100%;
   background-color: rgba(0,0,0,0.4);
   overflow: auto;
+  transition: opacity 0.3s ease;
 }
 
 .modal-content {
@@ -555,6 +559,8 @@ body {
   width: 400px;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   border-radius: 5px;
+  transform: scale(1);
+  transition: transform 0.3s ease;
 }
 
 .close {
@@ -612,15 +618,62 @@ body {
 
 /* Error message styles */
 .error-message {
-  color: #d9534f;
-  margin-top: 5px;
-  font-size: 12px;
+  color: white;
+  background-color: rgba(217, 83, 79, 0.9);
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-weight: 500;
   display: none;
+  animation: fadeIn 0.3s ease-in;
+  border-left: 4px solid #c9302c;
 }
 
 .success-message {
-  color: #5cb85c;
-  margin-top: 5px;
-  font-size: 12px;
+  color: white;
+  background-color: rgba(92, 184, 92, 0.9);
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-weight: 500;
   display: none;
+  animation: fadeIn 0.3s ease-in;
+  border-left: 4px solid #449d44;
+}
+
+/* Animation keyframes for message appearance and disappearance */
+@keyframes messageSlideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes messageSlideOut {
+  from { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to { 
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+}
+
+.message-showing {
+  animation: messageSlideIn 0.3s ease forwards;
+}
+
+.message-hiding {
+  animation: messageSlideOut 0.3s ease forwards;
 }
