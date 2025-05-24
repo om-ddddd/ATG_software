@@ -37,6 +37,7 @@
     <script type="module" src="./oscilloscope.js"></script>
     <script type="module" src="./start_from_0.js"></script>
     <script type="module" src="./pm-variables.js"></script>
+    <script type="module" src="./admin-auth.js"></script>
 
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -191,6 +192,26 @@
     </div>
     <gc-widget-firmware-update-dialog id="firmwareUpdate"></gc-widget-firmware-update-dialog>
 
+    <!-- Login Dialog -->
+<div id="loginDialog" class="modal" style="display:block;">
+  <div class="modal-content">
+    <form id="loginForm">
+      <h3>Administrator Login</h3>
+      <div class="form-group">
+        <label for="loginUsername">Username:</label>
+        <input type="text" id="loginUsername" name="loginUsername" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password:</label>
+        <input type="password" id="loginPassword" name="loginPassword" required autocomplete="current-password">
+      </div>
+      <div class="error-message" id="loginError" style="display: none;"></div>
+      <div class="button-group">
+        <button type="button" id="loginButton">Login</button>
+      </div>
+    </form>
+  </div>
+</div>
 
     <!-- Change User Name/Password Dialog -->
 <div id="changeUserDialog" class="modal" style="display:none;">
