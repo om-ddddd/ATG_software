@@ -126,7 +126,7 @@ function loadTides() {
             // Don't show error notification on initial page load, but handle quietly
             const tideList = document.getElementById('tide-list');
             if (tideList) {
-                tideList.innerHTML = '<tr><td colspan="4">No tides available or server error. Create a new tide to get started.</td></tr>';
+                tideList.innerHTML = '<tr><td colspan="3">No tides available or server error. Create a new tide to get started.</td></tr>';
             }
         });
 }
@@ -141,7 +141,7 @@ function displayTides(tides) {
     
     // Create table header
     const headerRow = document.createElement('tr');
-    ['Name', 'Range', 'Offset', 'Actions'].forEach(headerText => {
+    ['Name', 'Range', 'Offset'].forEach(headerText => {
         const header = document.createElement('th');
         header.textContent = headerText;
         headerRow.appendChild(header);
@@ -167,35 +167,7 @@ function displayTides(tides) {
         offsetCell.textContent = tide.offset;
         row.appendChild(offsetCell);
         
-        // Actions cell
-        const actionsCell = document.createElement('td');
-        
-        // Edit button
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.classList.add('action-btn', 'edit-btn');
-        editButton.addEventListener('click', () => {
-            const modifyTideDialog = document.getElementById('modify-tide-dialog');
-            const tideSelect = document.getElementById('tide-select');
-            tideSelect.value = tide.name;
-            updateModifyForm({ target: tideSelect });
-            modifyTideDialog.style.display = 'block';
-        });
-        actionsCell.appendChild(editButton);
-        
-        // Delete button
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.classList.add('action-btn', 'delete-btn');
-        deleteButton.addEventListener('click', () => {
-            const deleteTideDialog = document.getElementById('delete-tide-dialog');
-            const deleteTideSelect = document.getElementById('delete-tide-select');
-            deleteTideSelect.value = tide.name;
-            deleteTideDialog.style.display = 'block';
-        });
-        actionsCell.appendChild(deleteButton);
-        
-        row.appendChild(actionsCell);
+        // Add the row to the table
         tideList.appendChild(row);
     });
 }
