@@ -67,22 +67,28 @@
                 </gc-widget-menuitem>
             </gc-widget-menubar>
         </header>
+        <div>
+            <img class="svg" id="home_svg" src="./home_svg.svg" alt="Tide Manipulation">
+            <img class="svg" id="settings_svg" src="./settings_svg.svg" alt="Tide Manipulation">
+            <img class="svg" id="tide_svg" src="./tide_manipulation.svg" alt="Tide Manipulation">
+            <img class="svg" id="run_svg" src="./run_svg.svg" alt="Tide Manipulation">
+            <img class="svg" id="main_svg" src="./main.svg" alt="Tide Manipulation">
+        </div>
+
 
         <gc-widget-container id="viewport" flex one vertical layout>
             <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left"
                 index="2" initial-index="0" no-labels>
-                <gc-widget-tab-panel id="page_home" class="container" label="Home" icon-name="round:action:home"
+                <gc-widget-tab-panel id="page_home" class="container" label="Home" icon-name="round:action:sdgt"
                     tooltip="Application home" center-justified layout vertical>
                     <gc-widget-container id="page_home_product_container" layout center class="container" vertical one
                         flex>
                         <gc-widget-label id="page_home_product_name" label="ATG"></gc-widget-label>
                     </gc-widget-container>
-                    <gc-widget-tab-container-navbar id="main_tab_container_navbar"
-                        excluded-tab-panel-ids="page_home"></gc-widget-tab-container-navbar>
                 </gc-widget-tab-panel>
 
                 <gc-widget-tab-panel id="page_settings" class="container" label="Settings"
-                    icon-name="round:action:settings" vertical layout has-heading tooltip="Calibration and settings">
+                    icon-name="routnd:aifrjsi" vertical layout has-heading tooltip="Calibration and settings">
                     <gc-widget-input id="input_4"></gc-widget-input>
                     <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
                     <gc-widget-input id="input_3"></gc-widget-input>
@@ -91,8 +97,14 @@
                     <gc-widget-slider id="slider" step="0.1" labels="0,10,20,30,40,50,60,70,80,90,100"
                         max-value="100"></gc-widget-slider>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="run" class="container" label="Tide Manipulation" icon-name="round:image:image"
-                    vertical layout has-heading start-justified start>
+                <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
+                    icon-name="round:act" vertical layout has-heading tooltip="Calibration and settings">
+                    <div class="tide-manipulation-container" style="text-align: center; padding: 20px;">
+
+                    </div>
+                </gc-widget-tab-panel>
+                <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:" vertical layout
+                    has-heading start-justified start>
                     <gc-widget-container id="page_data_top_container" horizontal layout center-justified>
                     </gc-widget-container>
                     <gc-widget-container id="container">
@@ -125,7 +137,7 @@
                     </gc-widget-container>
                     <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:action:article" vertical
+                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:actione" vertical
                     layout has-heading>
                     <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="7.09"
                         trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"

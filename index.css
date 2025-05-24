@@ -817,3 +817,54 @@ body {
 .message-hiding {
   animation: messageSlideOut 0.3s ease forwards;
 }
+.svg{
+     z-index: 100;
+    width: 2%;
+    max-width: 600px;
+    position: absolute;
+    left: 6px;
+    top: 148px;
+    pointer-events: none;
+}
+#tide_svg{
+      z-index: 100;
+    width: 24px;
+    max-width: 600px;
+    position: absolute;
+    left: 6px;
+    top: 148px;
+}
+#run_svg{
+    z-index: 10;
+    position: fixed;
+    top: 199px;
+    left: 7px;
+    width: 24px;
+}
+#home_svg{
+    z-index: 10;
+    position: fixed;
+    top: 50px;
+    left: 7px;
+    width: 24px;
+}
+#main_svg{
+    z-index: 10;
+    position: fixed;
+    top: 244px;
+    left: 7px;
+    width: 24px;
+}
+#settings_svg{
+    z-index: 10;
+    position: fixed;
+    top: 101px;
+    left: 7px;
+    width: 24px;
+}
+
+
+
+
+
+
