@@ -287,6 +287,32 @@ function setupTabPanelObservers() {
     // - Initialize components 
     // - Load data
     // - Set default values
+    
+    // Update the tide dropdown with current tide options
+    fetch('/api/getAllTides')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const dropdown = document.getElementById('tide-range');
+          if (dropdown) {
+            // Clear existing options except the first one (--Choose--)
+            while (dropdown.options.length > 1) {
+              dropdown.remove(1);
+            }
+            
+            // Add tide options
+            data.tides.forEach(tide => {
+              const option = document.createElement('option');
+              option.value = tide.name;
+              option.textContent = `${tide.name} (Range: ${tide.range}, Offset: ${tide.offset})`;
+              dropdown.appendChild(option);
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error loading tides for Run tab:', error);
+      });
   }
   
   // Function to run when the 'page_settings' tab panel becomes visible

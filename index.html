@@ -18,6 +18,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css">
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="tide-management.css">
     <script src="https://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript"></script>
     <script> if (typeof nw != 'undefined') { window.$ti_nw_main_window = true; } </script>
 </head>
@@ -38,6 +39,7 @@
     <script type="module" src="./start_from_0.js"></script>
     <script type="module" src="./pm-variables.js"></script>
     <script type="module" src="./admin-auth.js"></script>
+    <script type="module" src="./tide-management.js"></script>
 
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -99,8 +101,97 @@
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
                     icon-name="round:act" vertical layout has-heading tooltip="Calibration and settings">
-                    <div class="tide-manipulation-container" style="text-align: center; padding: 20px;">
-
+                    <div class="tide-manipulation-container">
+                        <h2>Tide Management</h2>
+                        <div class="button-container">
+                            <button id="create-tide-btn" class="tide-btn">Create New Tide</button>
+                            <button id="modify-tide-btn" class="tide-btn">Modify Tide</button>
+                            <button id="delete-tide-btn" class="tide-btn">Delete Tide</button>
+                        </div>
+                        
+                        <div class="tide-table-container">
+                            <h3>Available Tides</h3>
+                            <table id="tide-list" class="tide-table">
+                                <!-- Tide data will be dynamically inserted here -->
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Create Tide Dialog -->
+                    <div id="create-tide-dialog" class="modal">
+                        <div class="modal-content">
+                            <span class="close close-dialog">&times;</span>
+                            <h3>Create New Tide</h3>
+                            <form id="create-tide-form">
+                                <div class="form-group">
+                                    <label for="tide-name">Tide Name:</label>
+                                    <input type="text" id="tide-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tide-range-input">Range:</label>
+                                    <input type="number" id="tide-range-input" required step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tide-offset">Offset:</label>
+                                    <input type="number" id="tide-offset" required step="0.1">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn">Create</button>
+                                    <button type="button" class="cancel-btn close-dialog">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Modify Tide Dialog -->
+                    <div id="modify-tide-dialog" class="modal">
+                        <div class="modal-content">
+                            <span class="close close-dialog">&times;</span>
+                            <h3>Modify Tide</h3>
+                            <form id="modify-tide-form">
+                                <div class="form-group">
+                                    <label for="tide-select">Select Tide:</label>
+                                    <select id="tide-select" required>
+                                        <option value="">Select a tide</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="modify-range">Range:</label>
+                                    <input type="number" id="modify-range" required step="0.1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="modify-offset">Offset:</label>
+                                    <input type="number" id="modify-offset" required step="0.1">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn">Update</button>
+                                    <button type="button" class="cancel-btn close-dialog">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Delete Tide Dialog -->
+                    <div id="delete-tide-dialog" class="modal">
+                        <div class="modal-content">
+                            <span class="close close-dialog">&times;</span>
+                            <h3>Delete Tide</h3>
+                            <form id="delete-tide-form">
+                                <div class="form-group">
+                                    <label for="delete-tide-select">Select Tide to Delete:</label>
+                                    <select id="delete-tide-select" required>
+                                        <option value="">Select a tide</option>
+                                    </select>
+                                </div>
+                                <div class="warning-message">
+                                    Warning: This action cannot be undone.
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="submit-btn delete-confirm-btn">Delete</button>
+                                    <button type="button" class="cancel-btn close-dialog">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:" vertical layout
@@ -112,12 +203,7 @@
                         <gc-widget-container id="container_7">
                             <select name="Tide Range" id="tide-range">
                                 <option value="">--Choose--</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="4in0">40</option>
-                                <option value="50">50</option>
-                                <option value="60">60</option>
+                                <!-- Tide options will be populated dynamically from tide.json -->
                             </select>
                         </gc-widget-container>
                         <gc-widget-container id="container_9">
