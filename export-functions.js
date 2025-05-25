@@ -42,24 +42,38 @@ export function initializeExportFunctions() {
     console.error('Element #save_btn not found');
   }
   
-  // Function to start autosave timer
-  function startAutoSave() {
+  // Function to start autosave timer - with proper calculation and buffer
+  async function startAutoSave() {
     // Stop any existing interval
     if (autoSaveInterval) {
       clearInterval(autoSaveInterval);
     }
     
-    // Get oscilloscope capacity and sample rate to calculate auto-save interval
-    const capacity = (parseInt(osc?.getAttribute('capacity')) || 100) - 100;
+    console.log('Getting oscilloscope attributes for autosave...');
+    
+    // Wait to ensure oscilloscope has its capacity fully set
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    
+    // Get oscilloscope capacity and sample rate to calculate auto-save interval after waiting
+    const capacity = parseInt(osc?.getAttribute('capacity')) || 100; 
     const sampleRate = parseFloat(osc?.getAttribute('sample-rate')) || 7.09;
+    
+    console.log(`Oscilloscope capacity: ${capacity}, sample rate: ${sampleRate}`);
     
     // Calculate the time it takes for the oscilloscope to complete one full cycle
     // The formula is (capacity / sample rate) * 1000 to convert to milliseconds
-    const cycleTimeMs = Math.max(Math.floor((capacity / sampleRate) * 1000), 5000); // At least 5 seconds
+    const fullCycleTimeMs = Math.floor((capacity / sampleRate) * 1000);
+    
+    // Apply a 2-second buffer so screenshots happen 2 seconds before cycle completion
+    const bufferMs = 2000; // 2 seconds buffer
+    const cycleTimeMs = Math.max(fullCycleTimeMs - bufferMs, 3000); // At least 3 seconds minimum
+    
+    console.log(`Full cycle time: ${fullCycleTimeMs}ms (${fullCycleTimeMs/1000} seconds)`);
+    console.log(`With 2-second buffer: ${cycleTimeMs}ms (${cycleTimeMs/1000} seconds)`);
     
     // Start auto-saving at the calculated interval based on oscilloscope cycle time
     autoSaveInterval = setInterval(() => {
-      console.log('Auto-saving screenshot...');
+      console.log(`Auto-saving screenshot at ${new Date().toISOString()}...`);
       captureScreenshot(false); // Pass false to indicate it's an auto-save
     }, cycleTimeMs);
     
@@ -88,6 +102,7 @@ export function initializeExportFunctions() {
     
     // If checkbox is initially checked, start auto-save immediately
     if (autoSaveCheckbox.checked) {
+      console.log('Autosave checkbox is checked, starting autosave...');
       startAutoSave();
     }
   }
