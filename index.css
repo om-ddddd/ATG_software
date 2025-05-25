@@ -1562,3 +1562,51 @@ input.auth_error {
     left: 104px;
     top: 100px;
 }
+
+/* Export controls styles */
+#export_options_container {
+    width: 250px;
+   height: 60px;
+    position: absolute;
+    right: 108px;
+    top: 2px;
+    z-index: 100;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.export-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.export-btn {
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    margin-right: 8px;
+}
+
+.export-btn:hover {
+    background-color: #005fa3;
+}
+
+.export-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.export-checkbox input {
+    margin-right: 5px;
+}

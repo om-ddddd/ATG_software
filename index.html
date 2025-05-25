@@ -42,6 +42,7 @@
     <script type="module" src="./admin-auth.js"></script>
     <script type="module" src="./tide-management.js"></script>
     <script type="module" src="./auth.js"></script>
+    <script type="module" src="./export-functions.js"></script>
 
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -300,7 +301,20 @@
                             <gc-widget-button id="button" label="H"></gc-widget-button>
                             <gc-widget-button id="button_1" label="R"></gc-widget-button>
                         </gc-widget-container>
+                        
+                        <!-- Export Options Container -->
+                        
                     </gc-widget-container>
+                    <gc-widget-container id="export_options_container">
+                            <div class="export-controls">
+                                <button id="print_btn" class="export-btn">Print</button>
+                                <button id="save_btn" class="export-btn">Save</button>
+                                <div class="export-checkbox">
+                                    <input type="checkbox" id="autosave_checkbox">
+                                    <label for="autosave_checkbox">Auto Save</label>
+                                </div>
+                            </div>
+                        </gc-widget-container>
                 </gc-widget-tab-panel>
             </gc-widget-tab-container>
         </gc-widget-container>
