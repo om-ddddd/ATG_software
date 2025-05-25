@@ -55,6 +55,16 @@ const init = () => {
                     
                     // Setup the oscilloscope with proper configuration
                     setupOscilloscope();
+                    
+                    // Initialize export functions after oscilloscope is set up
+                    import('./export-functions.js').then(module => {
+                        if (typeof module.initializeExportFunctions === 'function') {
+                            console.log('Initializing export functions...');
+                            module.initializeExportFunctions();
+                        }
+                    }).catch(error => {
+                        console.error('Failed to initialize export functions:', error);
+                    });
                
                     // Start listening for changes in water level values
                     if (window.pmVars && window.pmVars.addListener) {

@@ -1,21 +1,19 @@
 import html2canvas from "./node_modules/html2canvas/dist/html2canvas.esm.js";
 
-// Placeholder comment - this is removed since the enhanced capture screenshot function is now in the DOMContentLoaded event handler
+// This file handles export functionality like screenshots and printing
+// Functions will be initialized when the accept button is clicked
 
-// Configuration variables
-//const AUTO_SAVE_INTERVAL = 1000; // 10 seconds default, can be adjusted as needed
-
-// Hook to the DOM content loaded event
-document.addEventListener('DOMContentLoaded', () => {
+// Function to set up export functionality - will be called from index.js after accept button is clicked
+export function initializeExportFunctions() {
   // Get UI elements
   const saveBtn = document.getElementById('save_btn');
   const printBtn = document.getElementById('print_btn');
   const autoSaveCheckbox = document.getElementById('autosave_checkbox');
   const osc = document.getElementById('oscilloscope');
-  autoSaveCheckbox.checked = true; // Ensure checkbox is unchecked by default
+  autoSaveCheckbox.checked = true; // Start with autosave enabled
   
   // Variable to store the interval ID for auto-save feature
-  let autoSaveInterval = osc.getAttribute('capacity') || 707; // Default to 10 seconds if not set
+  let autoSaveInterval = null;
   
   // Set up file naming with timestamp
   function generateFilename() {
@@ -44,22 +42,54 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('Element #save_btn not found');
   }
   
+  // Function to start autosave timer
+  function startAutoSave() {
+    // Stop any existing interval
+    if (autoSaveInterval) {
+      clearInterval(autoSaveInterval);
+    }
+    
+    // Get oscilloscope capacity and sample rate to calculate auto-save interval
+    const capacity = (parseInt(osc?.getAttribute('capacity')) || 100) - 100;
+    const sampleRate = parseFloat(osc?.getAttribute('sample-rate')) || 7.09;
+    
+    // Calculate the time it takes for the oscilloscope to complete one full cycle
+    // The formula is (capacity / sample rate) * 1000 to convert to milliseconds
+    const cycleTimeMs = Math.max(Math.floor((capacity / sampleRate) * 1000), 5000); // At least 5 seconds
+    
+    // Start auto-saving at the calculated interval based on oscilloscope cycle time
+    autoSaveInterval = setInterval(() => {
+      console.log('Auto-saving screenshot...');
+      captureScreenshot(false); // Pass false to indicate it's an auto-save
+    }, cycleTimeMs);
+    
+    console.log(`Auto save enabled (every ${cycleTimeMs / 1000} seconds, aligned with oscilloscope cycle)`);
+  }
+  
+  // Function to stop autosave timer
+  function stopAutoSave() {
+    if (autoSaveInterval) {
+      clearInterval(autoSaveInterval);
+      autoSaveInterval = null;
+      console.log('Auto save disabled');
+    }
+  }
+
   // Configure auto-save functionality
   if (autoSaveCheckbox) {
+    // Set up the change event listener
     autoSaveCheckbox.addEventListener('change', () => {
       if (autoSaveCheckbox.checked) {
-        // Start auto-saving at the specified interval
-        autoSaveInterval = setInterval(() => {
-          console.log('Auto-saving screenshot...');
-          captureScreenshot(false); // Pass false to indicate it's an auto-save
-        }, AUTO_SAVE_INTERVAL);
-        console.log(`Auto save enabled (every ${AUTO_SAVE_INTERVAL/1000} seconds)`);
+        startAutoSave();
       } else {
-        // Stop auto-saving
-        clearInterval(autoSaveInterval);
-        console.log('Auto save disabled');
+        stopAutoSave();
       }
     });
+    
+    // If checkbox is initially checked, start auto-save immediately
+    if (autoSaveCheckbox.checked) {
+      startAutoSave();
+    }
   }
 
   // Enhanced screenshot function that accepts a parameter to distinguish between auto and manual saves
@@ -88,12 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     html2canvas(element, options).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      
-      // For manual saves, open in new window
-      if (isManualSave) {
-        const newWindow = window.open();
-        newWindow.document.write(`<img src="${imgData}" alt="Screenshot" style="max-width: 100%">`);
-      }
 
       // Download the image with timestamp in filename
       const link = document.createElement('a');
@@ -106,4 +130,4 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error capturing screenshot:', error);
     });
   }
-});
+}
