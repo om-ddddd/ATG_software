@@ -234,10 +234,64 @@ function initWaterLevelDisplays() {
 // Initialize water level displays to "00" on page load
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     initWaterLevelDisplays();
+    setupTideRangeListener();
 } else {
     document.addEventListener('DOMContentLoaded', () => {
         initWaterLevelDisplays();
+        setupTideRangeListener();
     });
+}
+
+// Setup tide range dropdown change event listener
+function setupTideRangeListener() {
+    const tideRangeDropdown = document.getElementById('tide-range');
+    if (tideRangeDropdown) {
+        tideRangeDropdown.addEventListener('change', (event) => {
+            const selectedTideName = event.target.value;
+            if (selectedTideName) {
+                // Create and dispatch a custom event when a tide is selected
+                const tideSelectedEvent = new CustomEvent('tideSelected', {
+                    detail: { tideName: selectedTideName },
+                    bubbles: true,
+                    cancelable: true
+                });
+                
+                tideRangeDropdown.dispatchEvent(tideSelectedEvent);
+                console.log(`Tide selected: ${selectedTideName}`);
+                
+                // Fetch the selected tide details from tide.json
+                fetch('/api/getAllTides')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const selectedTide = data.tides.find(tide => tide.name === selectedTideName);
+                            if (selectedTide) {
+                                console.log('Selected tide details:', selectedTide);
+                                
+                                // Update offset input value with selected tide offset
+                                const offsetInput = document.getElementById('input_6');
+                                if (offsetInput) {
+                                    offsetInput.value = selectedTide.offset || '';
+                                }
+                                
+                                // Update required water level display
+                                if (window.pmVars) {
+                                    window.pmVars.sineinput = selectedTide.range;
+                                    updateRequiredWLSpan();
+                                }
+                                
+                                // You can add more UI updates based on the selected tide here
+                            }
+                        } else {
+                            console.error('Failed to get tide details:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching tide details:', error);
+                    });
+            }
+        });
+    }
 }
 // We've moved the listener setup to the accept button click handler
 
