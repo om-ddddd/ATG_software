@@ -350,7 +350,7 @@ this.app.post('/api/deleteTide', (req, res) => {
                 // Save the updated user data
                 fs__default["default"].writeFileSync(usersPath, JSON.stringify(usersData, null, 2), 'utf8');
                 
-                res.status(200).json({ success: true, message: 'User information updated successfully' });
+                res.status(200).json({ success: true, message: 'Credentials updated successfully' });
             } catch (error) {
                 console.error('Error updating user:', error);
                 res.status(500).json({ success: false, message: 'Error updating user information' });

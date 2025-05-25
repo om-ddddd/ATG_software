@@ -1,11 +1,11 @@
 {
   "admin": {
-    "username": "aaa",
+    "username": "aa",
     "password": "aaa",
     "type": "admin"
   },
   "user": {
-    "username": "111",
+    "username": "aa",
     "password": "aaa",
     "type": "user"
   }
