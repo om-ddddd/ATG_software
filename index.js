@@ -342,7 +342,7 @@ function setupTabPanelObservers() {
   // Target elements
   const runTabPanel = document.getElementById('run');
   const settingsTabPanel = document.getElementById('page_settings');
-  
+  const tideManipulationTabPanel = document.getElementById('tide_manipulation');  
   // Function to run when the 'run' tab panel becomes visible
   function runTabPanelFunction() {
     console.log('Run tab panel is now visible!');
@@ -457,6 +457,67 @@ function setupTabPanelObservers() {
   } else {
     console.warn('Settings tab panel element not found');
   }
+  
+  // Set up observer for the 'tide_manipulation' tab panel
+  if (tideManipulationTabPanel) {
+    // Function to run when the 'tide_manipulation' tab panel becomes visible
+    function tideManipulationTabPanelFunction() {
+      console.log('Tide Manipulation tab panel is now visible!');
+      // Add custom code here for when the tide manipulation panel becomes visible
+      // For example:
+      // - Load existing tide data
+      // - Initialize tide manipulation controls
+      // - Set up form validation
+      
+      // Fetch all tides to populate any dropdown or list in this panel
+      fetch('/api/getAllTides')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Loaded tides for manipulation:', data.tides.length);
+            // Update UI with tide data if needed
+          }
+        })
+        .catch(error => {
+          console.error('Error loading tides for manipulation:', error);
+        });
+        
+      // Initialize admin authentication if needed
+      initAdminAuth();
+    }
+    
+    const tideManipulationObserver = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (
+          mutation.attributeName === 'style' || 
+          mutation.attributeName === 'class' ||
+          mutation.attributeName === 'hidden'
+        ) {
+          // Check if the panel is visible using computed style
+          const isVisible = window.getComputedStyle(tideManipulationTabPanel).display !== 'none' && 
+                           !tideManipulationTabPanel.hasAttribute('hidden');
+          
+          if (isVisible) {
+            console.log('Tide Manipulation tab panel visibility detected!');
+            tideManipulationTabPanelFunction();
+            
+            // Optional: Stop observing after it's visible once
+            // tideManipulationObserver.disconnect();
+          }
+        }
+      });
+    });
+    
+    // Start observing
+    tideManipulationObserver.observe(tideManipulationTabPanel, { 
+      attributes: true, 
+      attributeFilter: ['style', 'class', 'hidden'] 
+    });
+    console.log('Tide Manipulation tab panel observer initialized');
+  } else {
+    console.warn('Tide Manipulation tab panel element not found');
+  }
+  
 }
 
 // Add this to your init function or call it directly
