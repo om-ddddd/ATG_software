@@ -224,11 +224,11 @@ function initWaterLevelDisplays() {
     const requiredWLValue = document.getElementById('required_wl_value');
 
     if (actualWLValue) {
-        actualWLValue.textContent = "00";
+        actualWLValue.textContent = "00.00";
     }
 
     if (requiredWLValue) {
-        requiredWLValue.textContent = "00";
+        requiredWLValue.textContent = "00.00";
     }
 }
 // Initialize water level displays to "00" on page load

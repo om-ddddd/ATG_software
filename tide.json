@@ -3,5 +3,10 @@
     "name": "kokata",
     "range": 10,
     "offset": 10
+  },
+  {
+    "name": "new",
+    "range": 10,
+    "offset": 10
   }
 ]
