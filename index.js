@@ -49,7 +49,7 @@ const init = () => {
 
                 if (mainTabIndex >= 0) {
                     tabContainer.index = mainTabIndex;
-
+                    
                     // Start updating water level values after accept button is clicked
                     startSineWaveGenerator();
                     

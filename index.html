@@ -230,14 +230,15 @@
                                 style=" width: 133px;height: 23px;">
                         </gc-widget-container>
                         <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
-                        <input type="checkbox" name="checkbox"
-                            style="width: 20px; position: absolute; left: 629px; top: 68px; height: 16px;" />
-                        <input type="checkbox" name="checkbox"
+                        <gc-widget-label id="manual_check" label="Enter Range and Offset Manually"></gc-widget-label>
+                        <input type="checkbox" name="checkbox" id="m_check"
                             style="width: 20px; position: absolute; left: 74px; top: 69px; height: 16px;" />
-                        <gc-widget-input id="input_5" placeholder="Enter Manually"></gc-widget-input>
-                        <gc-widget-label id="label_9" label="Offset"></gc-widget-label>
-                        <gc-widget-input id="input_6"></gc-widget-input>
-                        <gc-widget-label id="label_4" label="Tide Range"></gc-widget-label>
+                        <gc-widget-container id="container_90">
+                            <gc-widget-input id="input_5" placeholder="Enter Manually"></gc-widget-input>
+                            <gc-widget-label id="label_9" label="Offset"></gc-widget-label>
+                            <gc-widget-input id="input_6"></gc-widget-input>
+                            <gc-widget-label id="label_4" label="Tide Range"></gc-widget-label>
+                        </gc-widget-container>
                     </gc-widget-container>
                     <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                 </gc-widget-tab-panel>
@@ -290,8 +291,10 @@
                     </gc-widget-virtual-oscilloscope>
                     <gc-widget-container id="container_5">
                         <gc-widget-container id="container_1">
-                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value"style="position: fixed;left: 127px;">00.00</span></div>
-                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value" style="position: fixed;left: 127px;">00.00</span></div>
+                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value"
+                                    style="position: fixed;left: 127px;">00.00</span></div>
+                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value"
+                                    style="position: fixed;left: 127px;">00.00</span></div>
                         </gc-widget-container>
                         <gc-widget-container id="container_2">
                             <gc-widget-button id="button" label="H"></gc-widget-button>
@@ -368,6 +371,22 @@
             </form>
         </div>
     </div>
+    <script>
+        const checkbox = document.getElementById('m_check');
+        const elem = document.getElementById('container_90')
+        checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+                elem.style.opacity = 1;
+                console.log('Checkbox is checked ✅');
+                // Trigger your custom logic here
+            } else {
+                 elem.style.opacity = 0;
+                console.log('Checkbox is unchecked ❌');
+                // Handle uncheck if needed
+            }
+        });
+    </script>
+
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
             var progressDiv = document.querySelector('#progressDiv')
