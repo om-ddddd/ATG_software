@@ -12,6 +12,7 @@
         "show_in_taskbar": true
     },
     "node-remote": "*://*/*",
-    "dependencies": {},
-    "devDependencies": {}
+    "dependencies": {
+        "html2canvas": "^1.4.1"
+    }
 }
