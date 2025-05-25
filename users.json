@@ -1,7 +1,7 @@
 {
   "admin": {
-    "username": "abc",
-    "password": "111",
+    "username": "aaa",
+    "password": "aaa",
     "type": "admin"
   },
   "user": {

@@ -1,0 +1,11 @@
+#main_tab {
+    --gc-padding: 0;
+    margin: 0;
+    height: 868px
+px
+;
+    position: fixed;
+    top: 42px;
+    left: 41px;
+}
+

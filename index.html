@@ -80,6 +80,7 @@
         </div>
 
 
+        <img id="main_img" src="/home/hp/guicomposer/runtime/gcruntime.v13/main/atgimg.jpg" alt="">
         <gc-widget-container id="viewport" flex one vertical layout>
             <gc-widget-tab-container id="main_tab_container" class="container" layout horizontal position="left"
                 index="2" initial-index="0" no-labels>
@@ -87,19 +88,35 @@
                     tooltip="Application home" center-justified layout vertical>
                     <gc-widget-container id="page_home_product_container" layout center class="container" vertical one
                         flex>
-                        <gc-widget-label id="page_home_product_name" label="ATG"></gc-widget-label>
+                        <gc-widget-image id="image" file-path="./atgimg.jpg"></gc-widget-image>
+                        <gc-widget-label id="page_home_product_name"
+                            label="AUTOMATIC TIDE GENERATION"></gc-widget-label>
                     </gc-widget-container>
                 </gc-widget-tab-panel>
 
-                <gc-widget-tab-panel id="page_settings" class="container" label="Settings"
-                    icon-name="routnd:aifrjsi" vertical layout has-heading tooltip="Calibration and settings">
-                    <gc-widget-input id="input_4"></gc-widget-input>
-                    <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
-                    <gc-widget-input id="input_3"></gc-widget-input>
-                    <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
-                    <gc-widget-label id="label_3" label="Gain"></gc-widget-label>
-                    <gc-widget-slider id="slider" step="0.1" labels="0,10,20,30,40,50,60,70,80,90,100"
-                        max-value="100"></gc-widget-slider>
+                <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="routnd:aifrjsi"
+                    vertical layout has-heading tooltip="Calibration and settings">
+                    <gc-widget-container id="scontainer_4">
+                        <gc-widget-label id="label_10" label="Hardware Settings"></gc-widget-label>
+                        <gc-widget-container id="scontainer_5">
+                            <gc-widget-label id="label_5" label="Offset"></gc-widget-label>
+                            <gc-widget-input id="input_3"></gc-widget-input>
+                        </gc-widget-container>
+                        <gc-widget-container id="scontainer_6">
+                            <gc-widget-label id="label_6" label="Fine Offset"></gc-widget-label>
+                            <gc-widget-input id="input_4"></gc-widget-input>
+                        </gc-widget-container>
+                        <gc-widget-label id="label_3" label="Calibration Factor"></gc-widget-label>
+                        <gc-widget-slider id="slider" step="0.1" labels="0,10,20,30,40,50,60,70,80,90,100"
+                            max-value="100"></gc-widget-slider>
+                        <gc-widget-label id="label_11"
+                            label="---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"></gc-widget-label>
+                        <gc-widget-label id="label_12" label="Software Settings"></gc-widget-label>
+                        <gc-widget-label id="label_50" label="Sample Rate"></gc-widget-label>
+                        <gc-widget-input id="input_40"></gc-widget-input>
+                        <gc-widget-label id="label_40" label="Angular Frequency"></gc-widget-label>
+                        <gc-widget-input id="input_50"></gc-widget-input>
+                    </gc-widget-container>
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
                     icon-name="round:act" vertical layout has-heading tooltip="Calibration and settings">
@@ -110,7 +127,7 @@
                             <button id="modify-tide-btn" class="tide-btn">Modify Tide</button>
                             <button id="delete-tide-btn" class="tide-btn">Delete Tide</button>
                         </div>
-                        
+
                         <div class="tide-table-container">
                             <h3>Available Tides</h3>
                             <table id="tide-list" class="tide-table">
@@ -118,7 +135,7 @@
                             </table>
                         </div>
                     </div>
-                    
+
                     <!-- Create Tide Dialog -->
                     <div id="create-tide-dialog" class="modal">
                         <div class="modal-content">
@@ -144,7 +161,7 @@
                             </form>
                         </div>
                     </div>
-                    
+
                     <!-- Modify Tide Dialog -->
                     <div id="modify-tide-dialog" class="modal">
                         <div class="modal-content">
@@ -172,7 +189,7 @@
                             </form>
                         </div>
                     </div>
-                    
+
                     <!-- Delete Tide Dialog -->
                     <div id="delete-tide-dialog" class="modal">
                         <div class="modal-content">
@@ -225,8 +242,8 @@
                     </gc-widget-container>
                     <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:actione" vertical
-                    layout has-heading>
+                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:actione" vertical layout
+                    has-heading>
                     <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="7.09"
                         trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
                         trigger-timeout="0.1">
@@ -248,25 +265,25 @@
                             vertical-units-per-division="13" vertical-pos="-4"
                             vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
                         <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1136px; top: 359px; z-index: 11111; width: 176px; height: 35px;">
+                            style="position: absolute; left: 1507px; top: 359px; z-index: 11111; width: 176px; height: 35px;">
                             <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
                                 id="h_scale">
                             <p class="PB-range-slidervalue">H. Scale</p>
                         </div>
                         <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1136px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
+                            style="position: absolute; left: 1507px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
                             <input type="range" min="0" max="100" value="1" class="PB-range-slider" step="0.01"
                                 id="h_position">
                             <p class="PB-range-slidervalue">H. Position</p>
                         </div>
                         <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1136px; top: 515px; z-index: 11111; width: 176px; height: 35px;">
+                            style="position: absolute; left: 1507px; top: 515px; z-index: 11111; width: 176px; height: 35px;">
                             <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
                                 id="v_scale">
                             <p class="PB-range-slidervalue">V. Scale</p>
                         </div>
                         <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1136px; top: 594px; width: 176px; z-index: 1111; height: 35px;">
+                            style="position: absolute; left: 1507px; top: 594px; width: 176px; z-index: 1111; height: 35px;">
                             <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
                                 id="v_position">
                             <p class="PB-range-slidervalue">V. Position</p>
@@ -274,8 +291,8 @@
                     </gc-widget-virtual-oscilloscope>
                     <gc-widget-container id="container_5">
                         <gc-widget-container id="container_1">
-                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value"></span></div>
-                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value"></span></div>
+                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value"style="position: fixed;left: 134px;">00.00</span></div>
+                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value" style="position: fixed;left: 134px;">00.00</span></div>
                         </gc-widget-container>
                         <gc-widget-container id="container_2">
                             <gc-widget-button id="button" label="H"></gc-widget-button>
@@ -319,39 +336,39 @@
     <!-- Administration Button -->
 
 
-<!-- Change User Dialog -->
-<div id="changeUserDialog" class="auth-modal" style="display:none;">
-    <div class="auth-modal-content">
-        <span class="auth-close" id="closeChangeUserDialog">&times;</span>
-        <form id="changeUserForm">
-            <h3>Change User Name/Password</h3>
-            <div class="auth-radio-group">
-                <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
-                <label><input type="radio" name="userType" value="user"> User</label>
-            </div>
-            <div class="auth-form-group">
-                <label for="newUserName">New User Name:</label>
-                <input type="text" id="newUserName" name="newUserName">
-            </div>
-            <div class="auth-form-group">
-                <label for="currentPassword">Current Password:</label>
-                <input type="password" id="currentPassword" name="currentPassword">
-            </div>
-            <div class="auth-form-group">
-                <label for="newPassword">New Password:<br><span class="auth-hint">(Min. 3 Characters)</span></label>
-                <input type="password" id="newPassword" name="newPassword">
-            </div>
-            <div class="auth-form-group">
-                <label for="retypePassword">Re-Type Password:</label>
-                <input type="password" id="retypePassword" name="retypePassword">
-            </div>
-            <div class="auth-button-group">
-                <button type="button" id="okChangeUser">Ok</button>
-                <button type="button" id="cancelChangeUser">Cancel</button>
-            </div>
-        </form>
+    <!-- Change User Dialog -->
+    <div id="changeUserDialog" class="auth-modal" style="display:none;">
+        <div class="auth-modal-content">
+            <span class="auth-close" id="closeChangeUserDialog">&times;</span>
+            <form id="changeUserForm">
+                <h3>Change User Name/Password</h3>
+                <div class="auth-radio-group">
+                    <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
+                    <label><input type="radio" name="userType" value="user"> User</label>
+                </div>
+                <div class="auth-form-group">
+                    <label for="newUserName">New User Name:</label>
+                    <input type="text" id="newUserName" name="newUserName">
+                </div>
+                <div class="auth-form-group">
+                    <label for="currentPassword">Current Password:</label>
+                    <input type="password" id="currentPassword" name="currentPassword">
+                </div>
+                <div class="auth-form-group">
+                    <label for="newPassword">New Password:<br><span class="auth-hint">(Min. 3 Characters)</span></label>
+                    <input type="password" id="newPassword" name="newPassword">
+                </div>
+                <div class="auth-form-group">
+                    <label for="retypePassword">Re-Type Password:</label>
+                    <input type="password" id="retypePassword" name="retypePassword">
+                </div>
+                <div class="auth-button-group">
+                    <button type="button" id="okChangeUser">Ok</button>
+                    <button type="button" id="cancelChangeUser">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
             var progressDiv = document.querySelector('#progressDiv')
