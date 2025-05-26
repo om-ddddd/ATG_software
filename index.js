@@ -440,7 +440,7 @@ function setupTabPanelObservers() {
           if (isVisible) {
             console.log('Settings tab panel visibility detected!');
             settingsTabPanelFunction();
-             initAdminAuth(); // Initialize admin authentication if needed
+            initAdminAuth(); // Initialize admin authentication if needed
             // Optional: Stop observing after it's visible once
             // settingsObserver.disconnect();
           }
