@@ -50,12 +50,12 @@ export async function initializePmVars() {
                     return undefined;
                 }
             },
-            get gatestatus() {
+            get gate_status() {
                 try {
-                    const binding = bindingRegistry.getBinding('pm.gatestatus');
+                    const binding = bindingRegistry.getBinding('pm.gate_status');
                     return binding?.getValue();
                 } catch (err) {
-                    console.error('Error getting gatestatus:', err);
+                    console.error('Error getting gate_status:', err);
                     return undefined;
                 }
             },
@@ -65,6 +65,96 @@ export async function initializePmVars() {
                     return binding?.getValue();
                 } catch (err) {
                     console.error('Error getting hold_status:', err);
+                    return undefined;
+                }
+            },
+            get pot_output() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.pot_output');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting pot_output:', err);
+                    return undefined;
+                }
+            },
+            get kp() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.kp');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting kp:', err);
+                    return undefined;
+                }
+            },
+            get ki() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.ki');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting ki:', err);
+                    return undefined;
+                }
+            },
+            get main_gain() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.main_gain');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting main_gain:', err);
+                    return undefined;
+                }
+            },
+            get offset() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.offset');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting offset:', err);
+                    return undefined;
+                }
+            },
+            get fine_offset() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.fine_offset');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting fine_offset:', err);
+                    return undefined;
+                }
+            },
+            get quick_hold() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.quick_hold');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting quick_hold:', err);
+                    return undefined;
+                }
+            },
+            get quick_input() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.quick_input');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting quick_input:', err);
+                    return undefined;
+                }
+            },
+            get frequency() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.frequency');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting frequency:', err);
+                    return undefined;
+                }
+            },
+            get stop() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.stop');
+                    return binding?.getValue();
+                } catch (err) {
+                    console.error('Error getting stop:', err);
                     return undefined;
                 }
             },
@@ -122,16 +212,16 @@ export async function initializePmVars() {
                 }
                 return value;
             },
-            set gatestatus(value) {
+            set gate_status(value) {
                 try {
-                    const binding = bindingRegistry.getBinding('pm.gatestatus');
+                    const binding = bindingRegistry.getBinding('pm.gate_status');
                     if (binding) {
                         binding.setValue(value);
                     } else {
-                        console.error('Error: PM binding for gatestatus not found');
+                        console.error('Error: PM binding for gate_status not found');
                     }
                 } catch (err) {
-                    console.error('Error setting gatestatus:', err);
+                    console.error('Error setting gate_status:', err);
                 }
                 return value;
             },
@@ -148,6 +238,136 @@ export async function initializePmVars() {
                 }
                 return value;
             },
+            set pot_output(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.pot_output');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for pot_output not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting pot_output:', err);
+                }
+                return value;
+            },
+            set kp(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.kp');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for kp not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting kp:', err);
+                }
+                return value;
+            },
+            set ki(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.ki');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for ki not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting ki:', err);
+                }
+                return value;
+            },
+            set main_gain(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.main_gain');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for main_gain not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting main_gain:', err);
+                }
+                return value;
+            },
+            set offset(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.offset');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for offset not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting offset:', err);
+                }
+                return value;
+            },
+            set fine_offset(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.fine_offset');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for fine_offset not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting fine_offset:', err);
+                }
+                return value;
+            },
+            set quick_hold(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.quick_hold');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for quick_hold not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting quick_hold:', err);
+                }
+                return value;
+            },
+            set quick_input(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.quick_input');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for quick_input not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting quick_input:', err);
+                }
+                return value;
+            },
+            set frequency(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.frequency');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for frequency not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting frequency:', err);
+                }
+                return value;
+            },
+            set stop(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.stop');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        console.error('Error: PM binding for stop not found');
+                    }
+                } catch (err) {
+                    console.error('Error setting stop:', err);
+                }
+                return value;
+            },
 
             // Helper function to get all PM variables at once
             getAll() {
@@ -157,8 +377,18 @@ export async function initializePmVars() {
                         sineinput: this.sineinput,
                         cum_sineinput: this.cum_sineinput,
                         mainoutput: this.mainoutput,
-                        gatestatus: this.gatestatus,
-                        hold_status: this.hold_status
+                        gate_status: this.gate_status,
+                        hold_status: this.hold_status,
+                        pot_output: this.pot_output,
+                        kp: this.kp,
+                        ki: this.ki,
+                        main_gain: this.main_gain,
+                        offset: this.offset,
+                        fine_offset: this.fine_offset,
+                        quick_hold: this.quick_hold,
+                        quick_input: this.quick_input,
+                        frequency: this.frequency,
+                        stop: this.stop
                     };
                 } catch (err) {
                     console.error('Error getting all PM variables:', err);
@@ -169,9 +399,9 @@ export async function initializePmVars() {
             // Helper function to monitor changes in a variable
             monitor(varName, intervalMs = 1000) {
                 // Check if variable name is valid
-                if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gatestatus', 'hold_status'].includes(varName)) {
+                if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop'].includes(varName)) {
                     console.error(`Error: Invalid PM variable name "${varName}"`);
-                    console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gatestatus, hold_status');
+                    console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gate_status, hold_status, pot_output, kp, ki, main_gain, offset, fine_offset, quick_hold, quick_input, frequency, stop');
                     return `Invalid variable name: ${varName}`;
                 }
 
@@ -223,7 +453,7 @@ export async function initializePmVars() {
         };
 
         // Add listener support to track changes in real-time
-        const pmVarNames = ['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gatestatus', 'hold_status'];
+        const pmVarNames = ['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop'];
         pmVarNames.forEach(varName => {
             const binding = bindingRegistry.getBinding(`pm.${varName}`);
             if (binding) {
@@ -247,9 +477,9 @@ export async function initializePmVars() {
 
         window.pmVars.addListener = function (varName, callback) {
             // Check if variable name is valid
-            if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gatestatus', 'hold_status'].includes(varName)) {
+            if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop'].includes(varName)) {
                 console.error(`Error: Invalid PM variable name "${varName}"`);
-                console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gatestatus, hold_status');
+                console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gate_status, hold_status, pot_output, kp, ki, main_gain, offset, fine_offset, quick_hold, quick_input, frequency, stop');
                 return `Invalid variable name: ${varName}`;
             }
 

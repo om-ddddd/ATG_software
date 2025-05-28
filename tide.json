@@ -5,19 +5,9 @@
     "offset": 10
   },
   {
-    "name": "new",
-    "range": 10,
-    "offset": 10
-  },
-  {
     "name": "asf",
     "range": 10,
     "offset": 100
-  },
-  {
-    "name": "test1 26-5",
-    "range": 30,
-    "offset": 20
   },
   {
     "name": "test2 26-5",
