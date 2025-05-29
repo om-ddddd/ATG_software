@@ -790,31 +790,7 @@ footer {
     --gc-on-color: #17de63
 }
 
-#input_3 {
-    position: absolute;
-    left: 126px;
-    top: 28px
-}
 
-#input_4 {
-    position: absolute;
-    left: 247px;
-    top: 26px
-}
-
-#label_5 {
-    position: absolute;
-    left: 29px;
-    top: 26px;
-    --gc-font-size: 30px
-}
-
-#label_6 {
-    position: absolute;
-    left: 66px;
-    top: 24px;
-    --gc-font-size: 30px
-}
 
 #label_7 {
     position: relative;
@@ -858,19 +834,6 @@ footer {
     z-index: -1
 }
 
-#label_3 {
-    position: absolute;
-    left: 461px;
-    top: 211px;
-    --gc-font-size: 30px
-}
-
-#slider {
-    position: absolute;
-    left: 24px;
-    top: 259px;
-    width: 1154px
-}
 
 /* From Uiverse.io by satisshTechie */
 .PB-range-slider {
@@ -1530,80 +1493,7 @@ input.auth_error {
 
 
 
-#label_10 {
-    position: absolute;
-    left: 436px;
-    top: 13px;
-    --gc-font-size: 35px
-}
 
-#label_11 {
-    position: absolute;
-    left: 16px;
-    top: 348px
-}
-
-#label_12 {
-    position: absolute;
-    left: 442px;
-    top: 367px;
-    --gc-font-size: 35px;
-    width: 291px;
-    height: 46px
-}
-
-#input_40 {
-    position: absolute;
-    left: 575px;
-    top: 433px
-}
-
-#input_50 {
-    position: absolute;
-    left: 575px;
-    top: 521px
-}
-
-#label_40 {
-    position: absolute;
-    left: 307px;
-    top: 517px;
-    --gc-font-size: 30px
-}
-
-#label_50 {
-    position: absolute;
-    left: 392px;
-    top: 432px;
-    --gc-font-size: 30px
-}
-
-
-#scontainer_4 {
-    width: 1218px;
-    height: 763px;
-    position: absolute;
-    left: 288px;
-    top: 30px;
-    scale: 0.8;
-    border: solid black 1px;
-}
-
-#scontainer_6 {
-    width: 469px;
-    height: 94px;
-    position: absolute;
-    left: 613px;
-    top: 100px;
-}
-
-#scontainer_5 {
-    width: 368px;
-    height: 94px;
-    position: absolute;
-    left: 104px;
-    top: 100px;
-}
 
 /* Export controls styles */
 #export_options_container {
