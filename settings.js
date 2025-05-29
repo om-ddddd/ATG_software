@@ -78,6 +78,9 @@ function initializeSettingsManagement() {
     // Get close buttons
     const closeBtns = document.querySelectorAll('.s_close-dialog');
     
+    // Set up potentiometer output display
+    setupPotOutputDisplay();
+    
     // Open dialog event listeners
     if (createSettingBtn) {
         createSettingBtn.addEventListener('click', () => {
@@ -152,6 +155,51 @@ function initializeSettingsManagement() {
     
     // Load settings on init
     loadSettings();
+}
+
+// Set up the potentiometer output display functionality
+function setupPotOutputDisplay() {
+    const showPotCheckbox = document.getElementById('s_show_pot_output');
+    const potOutputDisplay = document.getElementById('s_pot_output_display');
+    const potOutputValue = document.getElementById('s_pot_output_value');
+    
+    // Initially hide the pot output display
+    potOutputDisplay.style.display = 'none';
+    
+    // Toggle visibility of pot output based on checkbox
+    showPotCheckbox.addEventListener('change', function() {
+        potOutputDisplay.style.display = this.checked ? 'block' : 'none';
+        
+        if (this.checked) {
+            // Start updating pot output value if checkbox is checked
+            startPotOutputUpdates();
+        }
+    });
+    
+    // Function to update pot output value
+    function updatePotOutput() {
+        if (window.pmVars && typeof window.pmVars.pot_output !== 'undefined') {
+            // Format to 2 decimal places
+            potOutputValue.textContent = window.pmVars.pot_output.toFixed(2);
+        } else {
+            potOutputValue.textContent = 'N/A';
+        }
+    }
+    
+    // Start regular updates of pot output value
+    function startPotOutputUpdates() {
+        // Update immediately
+        updatePotOutput();
+        
+        // Then update every 200ms if the checkbox is checked
+        const interval = setInterval(() => {
+            if (showPotCheckbox.checked) {
+                updatePotOutput();
+            } else {
+                clearInterval(interval);
+            }
+        }, 200);
+    }
 }
 
 // Fetch all settings from the server

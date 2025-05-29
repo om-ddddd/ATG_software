@@ -237,6 +237,43 @@
     border-left: 4px solid #ffc107;
 }
 
+/* Potentiometer output container */
+.s_pot-output-container {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    left: 25px;
+}
+
+/* Pot checkbox styling */
+.s_pot-checkbox {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Pot display styling */
+.s_pot-display {
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #e6f7ff;
+    border-radius: 4px;
+    border-left: 4px solid #0072c6;
+}
+
+#s_pot_output_value {
+    color: #0072c6;
+    font-family: monospace;
+    padding: 0 5px;
+}
+
 /* Responsive adjustments */
 @media screen and (max-width: 600px) {
     .s_button-container {
