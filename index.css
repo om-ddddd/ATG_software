@@ -609,6 +609,7 @@ footer {
     top: 59px;
     width: 210px;
     height: 33px;
+    opacity: 0
 }
 #accept_button {
     position: absolute;
@@ -648,11 +649,11 @@ footer {
 }
 
 #oscilloscope {
-    height: 856px;
+    height: 850px;
     width: 1732px;
     position: absolute;
     left: 9px;
-    top: -8px;
+    top: 2px;
     z-index: 0;
 }
 
@@ -679,7 +680,72 @@ footer {
     border-style: solid;
     border-width: 1PX;
 }
-
+#container2 {
+    width: 133px;
+    height: 62px;
+    position: absolute;
+    left: 343px;
+    top: 26px;
+    border-style: solid;
+    border-width: 1PX;
+}
+#container3{
+    display: flex;
+    position: relative;
+    left: 17px;
+    top: 10px;
+    width: 97px;
+}
+#container4{
+    display: flex;
+    position: relative;
+    top: 3px;
+    scale: 0.9;
+}
+#container5{
+    position: relative;
+    top: -12px;
+    left: 592px;
+    width: 58px;
+    display: flex;
+    flex-direction: column;
+    scale: 0.8;
+    gap: 10px;
+}
+#container_5 {
+    width: 690px;
+    height: 100px;
+    position: absolute;
+    left: 178px;
+    top: -32px;
+    scale: 1.2;
+}
+#container6{
+    position: relative;
+    left: 490px;
+    width: 98px;
+    top: 37px;
+}
+#quick_hold{
+    position: relative;
+    left: 11px;
+    top: 0px;
+    width: 32px;
+}
+#quick_input{
+    width: 39px;
+}
+#quick_enter{
+    position: relative;
+    left: 5px;
+}
+#quick_label{
+    width: 73px;
+    left: 6px;
+    position: relative;
+    display: block;
+    top: 1px;
+}
 #button {
     position: absolute;
     left: 4px;
@@ -697,11 +763,11 @@ footer {
 }
 
 #container_3 {
-    width: 159px;
-    height: 58px;
+    width: 134px;
+    height: 52px;
     position: absolute;
-    left: 85px;
-    top: 85px;
+    left: 98px;
+    top: 104px;
     border-style: solid;
     border-width: 1PX;
     display: flex;
@@ -712,9 +778,9 @@ footer {
 
 #label_2 {
     position: absolute;
-    left: 35px;
+    left: 27px;
     top: 3px;
-    display: flex
+    display: flex;
 }
 
 #led {
@@ -751,19 +817,17 @@ footer {
 }
 
 #label_7 {
-    position: absolute;
-    left: 5px;
-    top: 3px;
-    width: 115px;
-    height: 24px
+    position: relative;
+    top: 13px;
+    left: 10px;
+    color: green;
 }
 
 #label_8 {
-    position: absolute;
-    left: 9px;
-    top: 22px;
-    width: 98px;
-    height: 24px;
+    position: relative;
+    top: 13px;
+    left: 10px;
+    color: orange;
 }
 
 #input_6 {
@@ -889,14 +953,6 @@ footer {
 }
 
 
-#container_5 {
-    width: 351px;
-    height: 100px;
-    position: absolute;
-    left: 163px;
-    top: -28px;
-}
-
 #actual_wl_span {
     width: 122px;
     height: 27px;
@@ -919,7 +975,7 @@ footer {
     width: 359px;
     height: 341px;
     position: absolute;
-    left: 1437px;
+    left: 1442px;
     top: 7px;
 }
 
@@ -961,7 +1017,7 @@ footer {
     position: absolute;
     left: -6px;
     top: 5px;
-    z-index: -1;
+    z-index: -100;
     opacity: 0;
 }
 
@@ -1471,22 +1527,8 @@ input.auth_error {
     scale: 1.4;
 }
 
-#container_5 {
-    width: 351px;
-    height: 100px;
-    position: absolute;
-    left: 178px;
-    top: -29px;
-    scale: 1.4;
-}
 
-#container_6 {
-    width: 359px;
-    height: 341px;
-    position: absolute;
-    left: 1437px;
-    top: 7px;
-}
+
 
 #label_10 {
     position: absolute;
@@ -1568,7 +1610,7 @@ input.auth_error {
     width: 250px;
    height: 60px;
     position: absolute;
-    right: 108px;
+    right: 95px;
     top: 2px;
     z-index: 100;
     border: 1px solid #ccc;
@@ -1609,4 +1651,25 @@ input.auth_error {
 
 .export-checkbox input {
     margin-right: 5px;
+}
+
+#hold_indicator {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 5px;
+}
+
+#hold_indicator_light {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: red;
+    margin-right: 8px;
+    border: 1px solid #333;
+}
+
+#hold_indicator span {
+    font-size: 12px;
+    font-weight: bold;
 }

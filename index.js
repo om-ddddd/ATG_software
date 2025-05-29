@@ -59,7 +59,7 @@ const init = () => {
                     // Initialize export functions after oscilloscope is set up
                     import('./export-functions.js').then(module => {
                         if (typeof module.initializeExportFunctions === 'function') {
-                            console.log('Initializing export functions...');
+                            //console.log('Initializing export functions...');
                             module.initializeExportFunctions();
                         }
                     }).catch(error => {
@@ -71,7 +71,9 @@ const init = () => {
                         // Update water level values immediately
                         updateActualWLSpan();
                         updateRequiredWLSpan();
-
+                        // Set initial values for quick input and hold for syncing mainoutput with cum_sineinput
+                        pmVars.quick_input = pmVars.mainoutput;
+                        pmVars.quick_hold = 1;
                         // Add listeners for future changes
                         window.pmVars.addListener('mainoutput', updateActualWLSpan);
                         window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
@@ -98,6 +100,9 @@ const init = () => {
             rButton.addEventListener('click', () => {
                 if (window.pmVars) {
                     window.pmVars.hold_status = 0;
+                    window.pmVars.quick_hold = 0;
+                    //console.log('quick_hold reset to 0');
+                    //console.log(quick_hold);
                 }
             });
         }
@@ -140,7 +145,7 @@ function setupOscilloscope() {
   
   // Get sample rate from oscilloscope
   const sampleRate = parseFloat(osc.getAttribute('sample-rate') || 7.09);
-  console.log(`Using oscilloscope sample rate: ${sampleRate}`);
+  //console.log(`Using oscilloscope sample rate: ${sampleRate}`);
   
   // Set initial default value if wave input has a value
   if (waveInput && waveInput.value) {
@@ -151,7 +156,7 @@ function setupOscilloscope() {
   }
   
   // Initialize oscilloscope with current capValue
-  console.log('Initializing oscilloscope...');
+  //console.log('Initializing oscilloscope...');
   osc.setAttribute('capacity', 1);
   osc.setAttribute('trigger-mode', 'manual');
   osc.setAttribute('trigger-armed', true);
@@ -165,10 +170,10 @@ function setupOscilloscope() {
     const hPositionSlider = document.getElementById('h_position');
     if (hPositionSlider) {
       hPositionSlider.setAttribute('max', capValue);
-      console.log(`Updated h_position slider max value to: ${capValue}`);
+      //console.log(`Updated h_position slider max value to: ${capValue}`);
     }
     
-    console.log(`Oscilloscope initialized with capacity: ${capValue}`);
+    //console.log(`Oscilloscope initialized with capacity: ${capValue}`);
   }, 100);
   
   // Configure input listener for future changes
@@ -177,11 +182,11 @@ function setupOscilloscope() {
       const value = parseFloat(this.value);
       if (isNaN(value)) return;
       
-      console.log('User entered wave count:', value);
+      //console.log('User entered wave count:', value);
       
       // Calculate new capacity based on wave count
       capValue = Math.round(value * sampleRate * 707);
-      console.log(`Updating capacity to: ${capValue}`);
+      //console.log(`Updating capacity to: ${capValue}`);
       
       // Apply new capacity to oscilloscope
       osc.setAttribute('capacity', capValue);
@@ -190,10 +195,10 @@ function setupOscilloscope() {
       const hPositionSlider = document.getElementById('h_position');
       if (hPositionSlider) {
         hPositionSlider.setAttribute('max', capValue);
-        console.log(`Updated h_position slider max value to: ${capValue}`);
+        //console.log(`Updated h_position slider max value to: ${capValue}`);
       }
     });
-    console.log('Wave input listener configured');
+    //console.log('Wave input listener configured');
   } else {
     console.warn('Wave input element not found');
   }
@@ -267,7 +272,7 @@ function setupTideRangeListener() {
                 });
                 
                 tideRangeDropdown.dispatchEvent(tideSelectedEvent);
-                console.log(`Tide selected: ${selectedTideName}`);
+                //console.log(`Tide selected: ${selectedTideName}`);
                 
                 // Fetch the selected tide details from tide.json
                 fetch('/api/getAllTides')
@@ -276,7 +281,7 @@ function setupTideRangeListener() {
                         if (data.success) {
                             const selectedTide = data.tides.find(tide => tide.name === selectedTideName);
                             if (selectedTide) {
-                                console.log('Selected tide details:', selectedTide);
+                                //console.log('Selected tide details:', selectedTide);
                                 
                                 // Update offset input value with selected tide offset
                                 const offsetInput = document.getElementById('input_6');
@@ -345,7 +350,7 @@ function setupTabPanelObservers() {
   const tideManipulationTabPanel = document.getElementById('tide_manipulation');  
   // Function to run when the 'run' tab panel becomes visible
   function runTabPanelFunction() {
-    console.log('Run tab panel is now visible!');
+    //console.log('Run tab panel is now visible!');
     // Add your custom code here for when the 'run' tab panel becomes visible
     // For example:
     // - Initialize components 
@@ -381,7 +386,7 @@ function setupTabPanelObservers() {
   
   // Function to run when the 'page_settings' tab panel becomes visible
   function settingsTabPanelFunction() {
-    console.log('Settings tab panel is now visible!');
+    //console.log('Settings tab panel is now visible!');
     // Add your custom code here for when the 'page_settings' tab panel becomes visible
     // For example:
     // - Load settings
@@ -403,9 +408,9 @@ function setupTabPanelObservers() {
                            !runTabPanel.hasAttribute('hidden');
           
           if (isVisible) {
-            console.log('Run tab panel visibility detected!');
+            //console.log('Run tab panel visibility detected!');
             runTabPanelFunction();
-            initAdminAuth(); // Initialize admin authentication if needed
+            // initAdminAuth(); // Initialize admin authentication if needed
             
             // Optional: Stop observing after it's visible once
             // runObserver.disconnect();
@@ -419,7 +424,7 @@ function setupTabPanelObservers() {
       attributes: true, 
       attributeFilter: ['style', 'class', 'hidden'] 
     });
-    console.log('Run tab panel observer initialized');
+    //console.log('Run tab panel observer initialized');
   } else {
     console.warn('Run tab panel element not found');
   }
@@ -438,9 +443,9 @@ function setupTabPanelObservers() {
                            !settingsTabPanel.hasAttribute('hidden');
           
           if (isVisible) {
-            console.log('Settings tab panel visibility detected!');
+            //console.log('Settings tab panel visibility detected!');
             settingsTabPanelFunction();
-            initAdminAuth(); // Initialize admin authentication if needed
+            // initAdminAuth(); // Initialize admin authentication if needed
             // Optional: Stop observing after it's visible once
             // settingsObserver.disconnect();
           }
@@ -453,7 +458,7 @@ function setupTabPanelObservers() {
       attributes: true, 
       attributeFilter: ['style', 'class', 'hidden'] 
     });
-    console.log('Settings tab panel observer initialized');
+    //console.log('Settings tab panel observer initialized');
   } else {
     console.warn('Settings tab panel element not found');
   }
@@ -462,7 +467,7 @@ function setupTabPanelObservers() {
   if (tideManipulationTabPanel) {
     // Function to run when the 'tide_manipulation' tab panel becomes visible
     function tideManipulationTabPanelFunction() {
-      console.log('Tide Manipulation tab panel is now visible!');
+      //console.log('Tide Manipulation tab panel is now visible!');
       // Add custom code here for when the tide manipulation panel becomes visible
       // For example:
       // - Load existing tide data
@@ -474,7 +479,7 @@ function setupTabPanelObservers() {
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            console.log('Loaded tides for manipulation:', data.tides.length);
+            //console.log('Loaded tides for manipulation:', data.tides.length);
             // Update UI with tide data if needed
           }
         })
@@ -483,7 +488,7 @@ function setupTabPanelObservers() {
         });
         
       // Initialize admin authentication if needed
-      initAdminAuth();
+      // initAdminAuth();
     }
     
     const tideManipulationObserver = new MutationObserver(mutations => {
@@ -498,7 +503,7 @@ function setupTabPanelObservers() {
                            !tideManipulationTabPanel.hasAttribute('hidden');
           
           if (isVisible) {
-            console.log('Tide Manipulation tab panel visibility detected!');
+            //console.log('Tide Manipulation tab panel visibility detected!');
             tideManipulationTabPanelFunction();
             
             // Optional: Stop observing after it's visible once
@@ -513,7 +518,7 @@ function setupTabPanelObservers() {
       attributes: true, 
       attributeFilter: ['style', 'class', 'hidden'] 
     });
-    console.log('Tide Manipulation tab panel observer initialized');
+    //console.log('Tide Manipulation tab panel observer initialized');
   } else {
     console.warn('Tide Manipulation tab panel element not found');
   }

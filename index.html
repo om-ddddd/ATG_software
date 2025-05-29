@@ -232,15 +232,15 @@
                                 style=" width: 133px;height: 23px;">
                         </gc-widget-container>
                         <gc-widget-label id="label_tides_per_screen" label="No. of Tides Per Screen"></gc-widget-label>
-                        <gc-widget-label id="manual_check" label="Enter Range and Offset Manually"></gc-widget-label>
+                        <gc-widget-container id="container_90">
+                      <gc-widget-label id="manual_check" label="Enter Range and Offset Manually"></gc-widget-label>
                         <input type="checkbox" name="checkbox" id="m_check"
                             style="width: 20px; position: absolute; left: 74px; top: 69px; height: 16px;" />
-                        <gc-widget-container id="container_90">
-                            <gc-widget-input id="input_5" placeholder="Enter Manually"></gc-widget-input>
+                            <gc-widget-input id="input_5" placeholder="Offset"></gc-widget-input>
                             <gc-widget-label id="label_9" label="Offset"></gc-widget-label>
                             <gc-widget-input id="input_6"></gc-widget-input>
                             <gc-widget-label id="label_4" label="Tide Range"></gc-widget-label>
-                        </gc-widget-container>
+                        </gc-widget-container> 
                     </gc-widget-container>
                     <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                 </gc-widget-tab-panel>
@@ -256,8 +256,8 @@
                             </gc-widget-container>
 
                             <gc-widget-container id="container_4">
-                                <gc-widget-label id="label_7" label="Green - Feedback "></gc-widget-label>
-                                <gc-widget-label id="label_8" label="Orange - Input"></gc-widget-label>
+                                <gc-widget-label id="label_7" label="----- : Actual WL "></gc-widget-label>
+                                <gc-widget-label id="label_8" label="----- : Required WL "></gc-widget-label>
                             </gc-widget-container>
                         </gc-widget-container>
                         <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" "
@@ -302,9 +302,25 @@
                             <gc-widget-button id="button" label="H"></gc-widget-button>
                             <gc-widget-button id="button_1" label="R"></gc-widget-button>
                         </gc-widget-container>
-                        
-                        <!-- Export Options Container -->
-                        
+                        <gc-widget-container id="container2">
+                            <div id="container4">
+                                <input type="checkbox" id="quick_hold">
+                            <label for="quick_hold" id="quick_label">Quick Hold</label> </div>
+                            <div id="container3">
+                                <input id="quick_input" type="number">
+                                <button id="quick_enter">Enter</button>
+                            </div>
+                        </gc-widget-container>
+                        <div id = "container6">
+                            <div id="hold_indicator">
+                                <div id="hold_indicator_light"></div>
+                                <span>Hold Status</span>
+                            </div>
+                        </div>
+                        <div id ="container5">
+                            <button id = "stop"  style = "width:58px"> STOP </button>
+                            <button id="start" style = "width:58px"> START </button>
+                        </div>
                     </gc-widget-container>
                     <gc-widget-container id="export_options_container">
                             <div class="export-controls">
@@ -393,15 +409,45 @@
         checkbox.addEventListener('change', function () {
             if (checkbox.checked) {
                 elem.style.opacity = 1;
-                console.log('Checkbox is checked ✅');
+                //console.log('Checkbox is checked ✅');
                 // Trigger your custom logic here
             } else {
                  elem.style.opacity = 0;
-                console.log('Checkbox is unchecked ❌');
+                //console.log('Checkbox is unchecked ❌');
                 // Handle uncheck if needed
             }
         });
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const quickHoldCheckbox = document.getElementById("quick_hold");
+        const container3 = document.getElementById("container3");
+        const quickEnterBtn = document.getElementById("quick_enter");
+        const quickInputField = document.getElementById("quick_input");
+
+        // Uncheck checkbox and hide container3 initially
+        quickHoldCheckbox.checked = false;
+        container3.style.display = "none";
+
+        // Toggle visibility of container3 based on checkbox
+        quickHoldCheckbox.addEventListener("change", function() {
+            container3.style.display = quickHoldCheckbox.checked ? "flex" : "none";
+        });
+
+        // On Enter click, set values to pmVars
+        quickEnterBtn.addEventListener("click", function() {
+            const quick_input = quickInputField.value;
+
+            if (window.pmVars) {
+                window.pmVars.quick_input = parseFloat(quick_input);
+                window.pmVars.quick_hold = 1;
+            }
+
+            //console.log("Quick Input:", quick_input);
+            //console.log("pmVars.quick_hold set to 1");
+        });
+    });
+</script>
 
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
@@ -436,6 +482,113 @@
             };
         });
     </script>
+    <script>
+        // Monitor hold status and update the indicator
+        document.addEventListener("DOMContentLoaded", function() {
+            const holdIndicatorLight = document.getElementById("hold_indicator_light");
+            
+            // Function to check hold status and update indicator
+            function updateHoldIndicator() {
+                if (window.pmVars) {
+                    // Check if either hold_status or quick_hold is active (equals 1)
+                    if (window.pmVars.hold_status === 1 || window.pmVars.quick_hold === 1) {
+                        holdIndicatorLight.style.backgroundColor = "#17de63"; // Green
+                    } else {
+                        holdIndicatorLight.style.backgroundColor = "red";
+                    }
+                }
+            }
+
+            // Update indicator immediately when DOM is loaded
+            setTimeout(updateHoldIndicator, 1000);
+            
+            // Set up interval to check status regularly
+            setInterval(updateHoldIndicator, 500);
+            
+            // Set up event listeners for both hold_status and quick_hold
+            if (window.pmVars) {
+                window.pmVars.addListener("hold_status", updateHoldIndicator);
+                window.pmVars.addListener("quick_hold", updateHoldIndicator);
+            }
+        });
+    </script>
+    <script>
+        // Script to handle start/stop buttons
+        document.addEventListener("DOMContentLoaded", function() {
+            const stopButton = document.getElementById("stop");
+            const startButton = document.getElementById("start");
+
+            // When Stop button is pressed, set pmVars.stop to 1
+            stopButton.addEventListener("click", function() {
+                if (window.pmVars) {
+                    window.pmVars.stop = 1;
+                    console.log("Stop button pressed - pmVars.stop = 1");
+                }
+            });
+
+            // When Start button is pressed, set pmVars.stop to 0
+            startButton.addEventListener("click", function() {
+                if (window.pmVars) {
+                    window.pmVars.stop = 0;
+                    console.log("Start button pressed - pmVars.stop = 0");
+                }
+            });
+        });
+    </script>
+    <!-- <script>
+        // Script to handle start/stop buttons
+        document.addEventListener("DOMContentLoaded", function() {
+            const stopButton = document.getElementById("stop");
+            const startButton = document.getElementById("start");
+
+            // Function to update button colors based on stop value
+            function updateButtonColors() {
+                if (window.pmVars && typeof window.pmVars.stop !== 'undefined') {
+                    if (window.pmVars.stop === 1) {
+                        // When stopped: stop button is green, start button is red
+                        stopButton.style.backgroundColor = "#17de63"; // Green
+                        stopButton.style.color = "white";
+                        startButton.style.backgroundColor = "#f9230b"; // Red
+                        startButton.style.color = "white";
+                    } else {
+                        // When running: stop button is red, start button is green
+                        stopButton.style.backgroundColor = "#f9230b"; // Red
+                        stopButton.style.color = "white";
+                        startButton.style.backgroundColor = "#17de63"; // Green
+                        startButton.style.color = "white";
+                    }
+                }
+            }
+
+            // When Stop button is pressed, set pmVars.stop to 1
+            stopButton.addEventListener("click", function() {
+                if (window.pmVars) {
+                    window.pmVars.stop = 1;
+                    console.log("Stop button pressed - pmVars.stop = 1");
+                    updateButtonColors();
+                }
+            });
+
+            // When Start button is pressed, set pmVars.stop to 0
+            startButton.addEventListener("click", function() {
+                if (window.pmVars) {
+                    window.pmVars.stop = 0;
+                    console.log("Start button pressed - pmVars.stop = 0");
+                    updateButtonColors();
+                }
+            });
+            
+            // Set initial button colors after a short delay to ensure pmVars is loaded
+            setTimeout(() => {
+                updateButtonColors();
+            }, 1000);
+            
+            // Update button colors whenever pmVars.stop changes
+            if (window.pmVars) {
+                window.pmVars.addListener("stop", updateButtonColors);
+            }
+        });
+    </script> -->
 </body>
 
 </html>

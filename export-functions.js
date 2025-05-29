@@ -27,7 +27,7 @@ export function initializeExportFunctions() {
   // Configure print functionality
   if (printBtn) {
     printBtn.addEventListener('click', () => {
-      console.log('Print button clicked');
+      // //console.log('Print button clicked');
       window.print();
     });
   }
@@ -35,11 +35,11 @@ export function initializeExportFunctions() {
   // Configure save button functionality
   if (saveBtn) {
     saveBtn.addEventListener('click', () => {
-      console.log('Save button clicked');
+      //console.log('Save button clicked');
       captureScreenshot(true); // Pass true to indicate it's a manual save
     });
   } else {
-    console.error('Element #save_btn not found');
+    //console.error('Element #save_btn not found');
   }
   
   // Function to start autosave timer - with proper calculation and buffer
@@ -49,7 +49,7 @@ export function initializeExportFunctions() {
       clearInterval(autoSaveInterval);
     }
     
-    console.log('Getting oscilloscope attributes for autosave...');
+    //console.log('Getting oscilloscope attributes for autosave...');
     
     // Wait to ensure oscilloscope has its capacity fully set
     await new Promise(resolve => setTimeout(resolve, 5000));
@@ -58,7 +58,7 @@ export function initializeExportFunctions() {
     const capacity = parseInt(osc?.getAttribute('capacity')) || 100; 
     const sampleRate = parseFloat(osc?.getAttribute('sample-rate')) || 7.09;
     
-    console.log(`Oscilloscope capacity: ${capacity}, sample rate: ${sampleRate}`);
+    //console.log(`Oscilloscope capacity: ${capacity}, sample rate: ${sampleRate}`);
     
     // Calculate the time it takes for the oscilloscope to complete one full cycle
     // The formula is (capacity / sample rate) * 1000 to convert to milliseconds
@@ -68,16 +68,16 @@ export function initializeExportFunctions() {
     const bufferMs = 2000; // 2 seconds buffer
     const cycleTimeMs = Math.max(fullCycleTimeMs - bufferMs, 3000); // At least 3 seconds minimum
     
-    console.log(`Full cycle time: ${fullCycleTimeMs}ms (${fullCycleTimeMs/1000} seconds)`);
-    console.log(`With 2-second buffer: ${cycleTimeMs}ms (${cycleTimeMs/1000} seconds)`);
+    //console.log(`Full cycle time: ${fullCycleTimeMs}ms (${fullCycleTimeMs/1000} seconds)`);
+    //console.log(`With 2-second buffer: ${cycleTimeMs}ms (${cycleTimeMs/1000} seconds)`);
     
     // Start auto-saving at the calculated interval based on oscilloscope cycle time
     autoSaveInterval = setInterval(() => {
-      console.log(`Auto-saving screenshot at ${new Date().toISOString()}...`);
+      //console.log(`Auto-saving screenshot at ${new Date().toISOString()}...`);
       captureScreenshot(false); // Pass false to indicate it's an auto-save
     }, cycleTimeMs);
     
-    console.log(`Auto save enabled (every ${cycleTimeMs / 1000} seconds, aligned with oscilloscope cycle)`);
+    //console.log(`Auto save enabled (every ${cycleTimeMs / 1000} seconds, aligned with oscilloscope cycle)`);
   }
   
   // Function to stop autosave timer
@@ -85,7 +85,7 @@ export function initializeExportFunctions() {
     if (autoSaveInterval) {
       clearInterval(autoSaveInterval);
       autoSaveInterval = null;
-      console.log('Auto save disabled');
+      //console.log('Auto save disabled');
     }
   }
 
@@ -102,7 +102,7 @@ export function initializeExportFunctions() {
     
     // If checkbox is initially checked, start auto-save immediately
     if (autoSaveCheckbox.checked) {
-      console.log('Autosave checkbox is checked, starting autosave...');
+      //console.log('Autosave checkbox is checked, starting autosave...');
       startAutoSave();
     }
   }
@@ -112,7 +112,7 @@ export function initializeExportFunctions() {
     const element = document.getElementById('main_tab'); // ✅ Fixed reference
 
     if (!element) {
-      console.error('Element #main_tab not found');
+      //console.error('Element #main_tab not found');
       return;
     }
 
@@ -128,7 +128,7 @@ export function initializeExportFunctions() {
 
     // Show loading indicator for manual saves only
     if (isManualSave) {
-      console.log('Capturing screenshot, please wait...');
+      //console.log('Capturing screenshot, please wait...');
     }
 
     html2canvas(element, options).then(canvas => {
@@ -140,9 +140,9 @@ export function initializeExportFunctions() {
       link.download = generateFilename();
       link.click();
       
-      console.log(`Screenshot ${isManualSave ? 'saved' : 'auto-saved'} successfully`);
+      //console.log(`Screenshot ${isManualSave ? 'saved' : 'auto-saved'} successfully`);
     }).catch(error => {
-      console.error('Error capturing screenshot:', error);
+      //console.error('Error capturing screenshot:', error);
     });
   }
 }
