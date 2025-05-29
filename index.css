@@ -706,20 +706,27 @@ footer {
 }
 #container5{
     position: relative;
-    top: -12px;
-    left: 592px;
+    top: -28px;
+    left: 582px;
     width: 58px;
     display: flex;
     flex-direction: column;
-    scale: 0.8;
+    scale: 0.7;
     gap: 10px;
+    border: 1px black solid;
+    padding-top: 2px;
+    height: 79px;
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 87px;
 }
+
 #container_5 {
-    width: 690px;
-    height: 100px;
+    width: 692px;
+    height: 140px;
     position: absolute;
     left: 178px;
-    top: -32px;
+    top: -27px;
     scale: 1.2;
 }
 #container6{
@@ -1564,4 +1571,8 @@ input.auth_error {
 #hold_indicator span {
     font-size: 12px;
     font-weight: bold;
+}
+#motor{
+    position: relative;
+    left: 5px;
 }
