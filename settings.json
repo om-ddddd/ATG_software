@@ -1,10 +1,26 @@
 [
   {
     "name": "Default",
-    "calibrationFactor": 1,
+    "calibrationFactor": 8.1,
+    "offset": 1781,
+    "fineOffset": 0,
+    "kp": 1800,
+    "ki": 10
+  },
+  {
+    "name": "New Settings",
+    "calibrationFactor": 1781,
     "offset": 0,
     "fineOffset": 0,
     "kp": 10,
-    "ki": 5
+    "ki": 11
+  },
+  {
+    "name": "fsf",
+    "calibrationFactor": 323,
+    "offset": 232,
+    "fineOffset": 2323,
+    "kp": 323,
+    "ki": 232
   }
 ]

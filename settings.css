@@ -1,0 +1,250 @@
+/**
+ * Settings Management CSS
+ * Contains styles for the settings management UI with s_ prefixes
+ */
+
+/* Settings container */
+.s_settings-container {
+    padding: 20px;
+    max-width: 1000px;
+    scale: 1.2;
+    margin: 0 auto;
+    position: relative;
+    top: 76px;
+}
+
+/* Button container */
+.s_button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    left: 39px;
+    position: relative;
+}
+
+/* Setting buttons */
+.s_setting-btn {
+    padding: 8px 16px;
+    background-color: #0072c6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.s_setting-btn:hover {
+    background-color: #005a9e;
+}
+
+/* Setting selection container */
+.s_setting-selection-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* Setting table container */
+.s_setting-table-container {
+    margin-top: 30px;
+    overflow-x: auto;
+}
+
+/* Setting table */
+.s_setting-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.s_setting-table th,
+.s_setting-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.s_setting-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.s_setting-table tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+.s_setting-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Default setting */
+.s_default-setting {
+    background-color: #e6f7ff !important;
+}
+
+.s_default-setting td:first-child {
+    font-weight: bold;
+    color: #0072c6;
+}
+
+/* Modal dialogs */
+.s_modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.s_modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.s_close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.s_close:hover,
+.s_close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Form groups */
+.s_form-group {
+    margin-bottom: 15px;
+}
+
+.s_form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.s_form-group input,
+.s_form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Form actions */
+.s_form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Submit and cancel buttons */
+.s_submit-btn,
+.s_cancel-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.s_submit-btn {
+    background-color: #0072c6;
+    color: white;
+}
+
+.s_submit-btn:hover {
+    background-color: #005a9e;
+}
+
+.s_cancel-btn {
+    background-color: #f2f2f2;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.s_cancel-btn:hover {
+    background-color: #e6e6e6;
+}
+
+/* Delete button */
+.s_delete-confirm-btn {
+    background-color: #e74c3c;
+}
+
+.s_delete-confirm-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Warning message */
+.s_warning-message {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+}
+
+/* Notification */
+.s_notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1100;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.s_notification.s_show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.s_notification-success {
+    border-left: 4px solid #28a745;
+}
+
+.s_notification-error {
+    border-left: 4px solid #dc3545;
+}
+
+.s_notification-warning {
+    border-left: 4px solid #ffc107;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+    .s_button-container {
+        flex-direction: column;
+    }
+    
+    .s_modal-content {
+        width: 95%;
+        margin: 20% auto;
+    }
+}

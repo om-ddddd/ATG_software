@@ -41,6 +41,7 @@
     <script type="module" src="./start_from_0.js"></script>
     <script type="module" src="./admin-auth.js"></script>
     <script type="module" src="./tide-management.js"></script>
+    <script type="module" src="./settings.js"></script>
     <script type="module" src="./auth.js"></script>
     <script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script>
     <script type="module" src="./export-functions.js"></script>
@@ -98,17 +99,138 @@
 
                 <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="routnd:aifrjsi"
                     vertical layout has-heading tooltip="Calibration and settings">
-                   
-                      
-                     
-                          
-                      
-                    
+                    <div class="s_settings-container">
+                        <div class="s_button-container">
+                            <button id="s_create-setting-btn" class="s_setting-btn">Create New Setting</button>
+                            <button id="s_modify-setting-btn" class="s_setting-btn">Modify Setting</button>
+                            <button id="s_delete-setting-btn" class="s_setting-btn">Delete Setting</button>
+                        </div>
+
+                        <div class="s_setting-selection-container">
+                            <h3>Apply Setting</h3>
+                            <div class="s_form-group">
+                                <label for="s_setting-dropdown">Select Setting:</label>
+                                <select id="s_setting-dropdown">
+                                    <option value="">--Choose Setting--</option>
+                                    <!-- Settings options will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="s_setting-table-container">
+                            <h3>Available Settings</h3>
+                            <table id="s_setting-list" class="s_setting-table">
+                                <!-- Setting data will be dynamically inserted here -->
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Create Setting Dialog -->
+                    <div id="s_create-setting-dialog" class="s_modal">
+                        <div class="s_modal-content">
+                            <span class="s_close s_close-dialog">&times;</span>
+                            <h3>Create New Setting</h3>
+                            <form id="s_create-setting-form">
+                                <div class="s_form-group">
+                                    <label for="s_setting-name">Setting Name:</label>
+                                    <input type="text" id="s_setting-name" required>
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_calibration-factor">Calibration Factor:</label>
+                                    <input type="number" id="s_calibration-factor" required step="0.01">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_offset">Offset:</label>
+                                    <input type="number" id="s_offset" required step="0.01">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_fine-offset">Fine Offset:</label>
+                                    <input type="number" id="s_fine-offset" required step="0.001">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_kp">Kp:</label>
+                                    <input type="number" id="s_kp" required step="0.01">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_ki">Ki:</label>
+                                    <input type="number" id="s_ki" required step="0.01">
+                                </div>
+                                <div class="s_form-actions">
+                                    <button type="submit" class="s_submit-btn">Create</button>
+                                    <button type="button" class="s_cancel-btn s_close-dialog">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Modify Setting Dialog -->
+                    <div id="s_modify-setting-dialog" class="s_modal">
+                        <div class="s_modal-content">
+                            <span class="s_close s_close-dialog">&times;</span>
+                            <h3>Modify Setting</h3>
+                            <form id="s_modify-setting-form">
+                                <div class="s_form-group">
+                                    <label for="s_setting-select">Select Setting:</label>
+                                    <select id="s_setting-select" required>
+                                        <option value="">Select a setting</option>
+                                        <!-- Options will be populated dynamically, excluding Default -->
+                                    </select>
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_modify-calibration-factor">Calibration Factor:</label>
+                                    <input type="number" id="s_modify-calibration-factor" required step="0.01">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_modify-offset">Offset:</label>
+                                    <input type="number" id="s_modify-offset" required step="0.01">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_modify-fine-offset">Fine Offset:</label>
+                                    <input type="number" id="s_modify-fine-offset" required step="0.001">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_modify-kp">Kp:</label>
+                                    <input type="number" id="s_modify-kp" required step="0.01">
+                                </div>
+                                <div class="s_form-group">
+                                    <label for="s_modify-ki">Ki:</label>
+                                    <input type="number" id="s_modify-ki" required step="0.01">
+                                </div>
+                                <div class="s_form-actions">
+                                    <button type="submit" class="s_submit-btn">Update</button>
+                                    <button type="button" class="s_cancel-btn s_close-dialog">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Delete Setting Dialog -->
+                    <div id="s_delete-setting-dialog" class="s_modal">
+                        <div class="s_modal-content">
+                            <span class="s_close s_close-dialog">&times;</span>
+                            <h3>Delete Setting</h3>
+                            <form id="s_delete-setting-form">
+                                <div class="s_form-group">
+                                    <label for="s_delete-setting-select">Select Setting to Delete:</label>
+                                    <select id="s_delete-setting-select" required>
+                                        <option value="">Select a setting</option>
+                                        <!-- Options will be populated dynamically, excluding Default -->
+                                    </select>
+                                </div>
+                                <div class="s_warning-message">
+                                    Warning: This action cannot be undone.
+                                </div>
+                                <div class="s_form-actions">
+                                    <button type="submit" class="s_submit-btn s_delete-confirm-btn">Delete</button>
+                                    <button type="button" class="s_cancel-btn s_close-dialog">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
                     icon-name="round:act" vertical layout has-heading tooltip="Calibration and settings">
                     <div class="tide-manipulation-container">
-                        <h2>Tide Manipulation</h2>
                         <div class="button-container">
                             <button id="create-tide-btn" class="tide-btn">Create New Tide</button>
                             <button id="modify-tide-btn" class="tide-btn">Modify Tide</button>

@@ -1,20 +1,7 @@
 {
     "widgetBindings": [
-        {
-            "widgetId": "input_4",
-            "serverBindName": "widget.pm.fine_offset",
-            "propertyName": "value"
-        },
-        {
-            "widgetId": "input_3",
-            "serverBindName": "widget.pm.offset",
-            "propertyName": "value"
-        },
-        {
-            "widgetId": "slider",
-            "serverBindName": "widget.pm.main_gain",
-            "propertyName": "value"
-        },
+    
+       
         {
             "widgetId": "input_5",
             "serverBindName": "widget.pm.sineinput",
