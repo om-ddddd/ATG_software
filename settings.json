@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Default",
+    "calibrationFactor": 1,
+    "offset": 0,
+    "fineOffset": 0,
+    "kp": 10,
+    "ki": 5
+  }
+]

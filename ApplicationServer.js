@@ -31,7 +31,7 @@ var require$$9 = require('du');
 var require$$6 = require('tar-stream');
 var open = require('open');
 
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+function _interopDefaultLegacy(e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var path__default = /*#__PURE__*/_interopDefaultLegacy(path$2);
 var os__default = /*#__PURE__*/_interopDefaultLegacy(os);
@@ -205,151 +205,260 @@ class AbstractServer {
         await new Promise((resolve) => {
             console.log('Starting GUI Composer Server ...');
             const server = this.app.listen(this.port || 0, this.allowedIP, () => {
-            const address = server.address();
-            this.server = server;
-            if (this.instanceOfAddress(address)) {
-                this.port = address.port;
-                console.log(`... server started at port: ${this.port}`);
-                resolve();
-            }
-            else {
-                console.error(`... failed to start server at port: ${this.port}`);
-                process.exit(1);
-            }
+                const address = server.address();
+                this.server = server;
+                if (this.instanceOfAddress(address)) {
+                    this.port = address.port;
+                    console.log(`... server started at port: ${this.port}`);
+                    resolve();
+                }
+                else {
+                    console.error(`... failed to start server at port: ${this.port}`);
+                    process.exit(1);
+                }
             });
         });
         const tidePath = path__default["default"].join(__dirname, 'tide.json');
+        const settingsPath = path__default["default"].join(__dirname, 'settings.json');
 
-// 1. Create a new tide
-this.app.post('/api/createTide', (req, res) => {
-    try {
-        const { name, range, offset } = req.body;
+        // Settings Management Routes
+        
+        // 1. Create a new setting
+        this.app.post('/api/createSetting', (req, res) => {
+            try {
+                const { name, calibrationFactor, offset, fineOffset, kp, ki } = req.body;
 
-        if (!name || typeof range !== 'number' || typeof offset !== 'number') {
-            return res.status(400).json({ success: false, message: 'Invalid tide data' });
-        }
+                if (!name || typeof calibrationFactor !== 'number' || typeof offset !== 'number' || 
+                    typeof fineOffset !== 'number' || typeof kp !== 'number' || typeof ki !== 'number') {
+                    return res.status(400).json({ success: false, message: 'Invalid setting data' });
+                }
 
-        const tidesData = fs__default["default"].existsSync(tidePath)
-            ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-            : [];
+                const settingsData = fs__default["default"].existsSync(settingsPath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
+                    : [];
 
-        // Check for duplicate tide name
-        if (tidesData.some(tide => tide.name === name)) {
-            return res.status(409).json({ success: false, message: 'Tide with this name already exists' });
-        }
+                // Check for duplicate setting name
+                if (settingsData.some(setting => setting.name === name)) {
+                    return res.status(409).json({ success: false, message: 'Setting with this name already exists' });
+                }
 
-        tidesData.push({ name, range, offset });
-        fs__default["default"].writeFileSync(tidePath, JSON.stringify(tidesData, null, 2), 'utf8');
+                settingsData.push({ name, calibrationFactor, offset, fineOffset, kp, ki });
+                fs__default["default"].writeFileSync(settingsPath, JSON.stringify(settingsData, null, 2), 'utf8');
 
-        res.status(201).json({ success: true, message: 'Tide created successfully' });
-    } catch (error) {
-        console.error('Error creating tide:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-});
-
-// 2. Get all tides
-this.app.get('/api/getAllTides', (req, res) => {
-    try {
-        const tidesData = fs__default["default"].existsSync(tidePath)
-            ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-            : [];
-
-        res.status(200).json({ success: true, tides: tidesData });
-    } catch (error) {
-        console.error('Error reading tides:', error);
-        res.status(500).json({ success: false, message: 'Failed to read tide data' });
-    }
-});
-
-// 3. Modify a tide
-this.app.post('/api/modifyTide', (req, res) => {
-    try {
-        const { name, newRange, newOffset } = req.body;
-
-        if (!name || typeof newRange !== 'number' || typeof newOffset !== 'number') {
-            return res.status(400).json({ success: false, message: 'Invalid input' });
-        }
-
-        const tidesData = fs__default["default"].existsSync(tidePath)
-            ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-            : [];
-
-        const index = tidesData.findIndex(tide => tide.name === name);
-
-        if (index === -1) {
-            return res.status(404).json({ success: false, message: 'Tide not found' });
-        }
-
-        tidesData[index].range = newRange;
-        tidesData[index].offset = newOffset;
-
-        fs__default["default"].writeFileSync(tidePath, JSON.stringify(tidesData, null, 2), 'utf8');
-
-        res.status(200).json({ success: true, message: 'Tide updated successfully' });
-    } catch (error) {
-        console.error('Error modifying tide:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-});
-this.app.post('/api/deleteTide', (req, res) => {
-    try {
-        const { name } = req.body;
-
-        if (!name) {
-            return res.status(400).json({ success: false, message: 'Tide name is required' });
-        }
-
-        const tidesData = fs__default["default"].existsSync(tidePath)
-            ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-            : [];
-
-        const updatedTides = tidesData.filter(tide => tide.name !== name);
-
-        if (updatedTides.length === tidesData.length) {
-            return res.status(404).json({ success: false, message: 'Tide not found' });
-        }
-
-        fs__default["default"].writeFileSync(tidePath, JSON.stringify(updatedTides, null, 2), 'utf8');
-
-        res.status(200).json({ success: true, message: 'Tide deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting tide:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-});
-
-        this.app.get('/api/check', (req, res) => {
-            res.send("this is working");
+                res.status(201).json({ success: true, message: 'Setting created successfully' });
+            } catch (error) {
+                console.error('Error creating setting:', error);
+                res.status(500).json({ success: false, message: 'Internal server error' });
+            }
         });
+
+        // 2. Get all settings
+        this.app.get('/api/getAllSettings', (req, res) => {
+            try {
+                const settingsData = fs__default["default"].existsSync(settingsPath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
+                    : [];
+
+                res.status(200).json({ success: true, settings: settingsData });
+            } catch (error) {
+                console.error('Error reading settings:', error);
+                res.status(500).json({ success: false, message: 'Failed to read settings data' });
+            }
+        });
+
+        // 3. Modify a setting
+        this.app.post('/api/modifySetting', (req, res) => {
+            try {
+                const { name, newCalibrationFactor, newOffset, newFineOffset, newKp, newKi } = req.body;
+
+                if (!name || typeof newCalibrationFactor !== 'number' || typeof newOffset !== 'number' || 
+                    typeof newFineOffset !== 'number' || typeof newKp !== 'number' || typeof newKi !== 'number') {
+                    return res.status(400).json({ success: false, message: 'Invalid input' });
+                }
+
+                const settingsData = fs__default["default"].existsSync(settingsPath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
+                    : [];
+
+                const index = settingsData.findIndex(setting => setting.name === name);
+
+                if (index === -1) {
+                    return res.status(404).json({ success: false, message: 'Setting not found' });
+                }
+
+                settingsData[index].calibrationFactor = newCalibrationFactor;
+                settingsData[index].offset = newOffset;
+                settingsData[index].fineOffset = newFineOffset;
+                settingsData[index].kp = newKp;
+                settingsData[index].ki = newKi;
+
+                fs__default["default"].writeFileSync(settingsPath, JSON.stringify(settingsData, null, 2), 'utf8');
+
+                res.status(200).json({ success: true, message: 'Setting updated successfully' });
+            } catch (error) {
+                console.error('Error modifying setting:', error);
+                res.status(500).json({ success: false, message: 'Internal server error' });
+            }
+        });
+
+        // 4. Delete a setting
+        this.app.post('/api/deleteSetting', (req, res) => {
+            try {
+                const { name } = req.body;
+
+                if (!name) {
+                    return res.status(400).json({ success: false, message: 'Setting name is required' });
+                }
+
+                const settingsData = fs__default["default"].existsSync(settingsPath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
+                    : [];
+
+                const updatedSettings = settingsData.filter(setting => setting.name !== name);
+
+                if (updatedSettings.length === settingsData.length) {
+                    return res.status(404).json({ success: false, message: 'Setting not found' });
+                }
+
+                fs__default["default"].writeFileSync(settingsPath, JSON.stringify(updatedSettings, null, 2), 'utf8');
+
+                res.status(200).json({ success: true, message: 'Setting deleted successfully' });
+            } catch (error) {
+                console.error('Error deleting setting:', error);
+                res.status(500).json({ success: false, message: 'Internal server error' });
+            }
+        });
+
+        // Tide Management Routes (existing)
+
+        // 1. Create a new tide
+        this.app.post('/api/createTide', (req, res) => {
+            try {
+                const { name, range, offset } = req.body;
+
+                if (!name || typeof range !== 'number' || typeof offset !== 'number') {
+                    return res.status(400).json({ success: false, message: 'Invalid tide data' });
+                }
+
+                const tidesData = fs__default["default"].existsSync(tidePath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
+                    : [];
+
+                // Check for duplicate tide name
+                if (tidesData.some(tide => tide.name === name)) {
+                    return res.status(409).json({ success: false, message: 'Tide with this name already exists' });
+                }
+
+                tidesData.push({ name, range, offset });
+                fs__default["default"].writeFileSync(tidePath, JSON.stringify(tidesData, null, 2), 'utf8');
+
+                res.status(201).json({ success: true, message: 'Tide created successfully' });
+            } catch (error) {
+                console.error('Error creating tide:', error);
+                res.status(500).json({ success: false, message: 'Internal server error' });
+            }
+        });
+
+        // 2. Get all tides
+        this.app.get('/api/getAllTides', (req, res) => {
+            try {
+                const tidesData = fs__default["default"].existsSync(tidePath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
+                    : [];
+
+                res.status(200).json({ success: true, tides: tidesData });
+            } catch (error) {
+                console.error('Error reading tides:', error);
+                res.status(500).json({ success: false, message: 'Failed to read tide data' });
+            }
+        });
+
+        // 3. Modify a tide
+        this.app.post('/api/modifyTide', (req, res) => {
+            try {
+                const { name, newRange, newOffset } = req.body;
+
+                if (!name || typeof newRange !== 'number' || typeof newOffset !== 'number') {
+                    return res.status(400).json({ success: false, message: 'Invalid input' });
+                }
+
+                const tidesData = fs__default["default"].existsSync(tidePath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
+                    : [];
+
+                const index = tidesData.findIndex(tide => tide.name === name);
+
+                if (index === -1) {
+                    return res.status(404).json({ success: false, message: 'Tide not found' });
+                }
+
+                tidesData[index].range = newRange;
+                tidesData[index].offset = newOffset;
+
+                fs__default["default"].writeFileSync(tidePath, JSON.stringify(tidesData, null, 2), 'utf8');
+
+                res.status(200).json({ success: true, message: 'Tide updated successfully' });
+            } catch (error) {
+                console.error('Error modifying tide:', error);
+                res.status(500).json({ success: false, message: 'Internal server error' });
+            }
+        });
+        this.app.post('/api/deleteTide', (req, res) => {
+            try {
+                const { name } = req.body;
+
+                if (!name) {
+                    return res.status(400).json({ success: false, message: 'Tide name is required' });
+                }
+
+                const tidesData = fs__default["default"].existsSync(tidePath)
+                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
+                    : [];
+
+                const updatedTides = tidesData.filter(tide => tide.name !== name);
+
+                if (updatedTides.length === tidesData.length) {
+                    return res.status(404).json({ success: false, message: 'Tide not found' });
+                }
+
+                fs__default["default"].writeFileSync(tidePath, JSON.stringify(updatedTides, null, 2), 'utf8');
+
+                res.status(200).json({ success: true, message: 'Tide deleted successfully' });
+            } catch (error) {
+                console.error('Error deleting tide:', error);
+                res.status(500).json({ success: false, message: 'Internal server error' });
+            }
+        });
+
+
         this.app.post('/api/changeUser', (req, res) => {
             try {
                 const { userType, newUserName, currentPassword, newPassword } = req.body;
                 const usersPath = path__default["default"].join(__dirname, 'users.json');
-                
+
                 // Read the users.json file
                 const usersData = JSON5__default["default"].parse(fs__default["default"].readFileSync(usersPath, 'utf8'));
-                
+
                 // Verify the current password
                 if (!usersData[userType] || usersData[userType].password !== currentPassword) {
                     return res.status(401).json({ success: false, message: 'Current password is incorrect' });
                 }
-                
+
                 // Update username if provided
                 if (newUserName && newUserName !== usersData[userType].username) {
                     usersData[userType].username = newUserName;
                 }
-                
+
                 // Update password if provided
                 if (newPassword && newPassword.length >= 3) {
                     usersData[userType].password = newPassword;
                 } else if (newPassword) {
                     return res.status(400).json({ success: false, message: 'Password must be at least 3 characters' });
                 }
-                
+
                 // Save the updated user data
                 fs__default["default"].writeFileSync(usersPath, JSON.stringify(usersData, null, 2), 'utf8');
-                
+
                 res.status(200).json({ success: true, message: 'Credentials updated successfully' });
             } catch (error) {
                 console.error('Error updating user:', error);
@@ -384,41 +493,41 @@ this.app.post('/api/deleteTide', (req, res) => {
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-function getDefaultExportFromCjs (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
-function getDefaultExportFromNamespaceIfPresent (n) {
-	return n && Object.prototype.hasOwnProperty.call(n, 'default') ? n['default'] : n;
+function getDefaultExportFromNamespaceIfPresent(n) {
+    return n && Object.prototype.hasOwnProperty.call(n, 'default') ? n['default'] : n;
 }
 
-function getDefaultExportFromNamespaceIfNotNamed (n) {
-	return n && Object.prototype.hasOwnProperty.call(n, 'default') && Object.keys(n).length === 1 ? n['default'] : n;
+function getDefaultExportFromNamespaceIfNotNamed(n) {
+    return n && Object.prototype.hasOwnProperty.call(n, 'default') && Object.keys(n).length === 1 ? n['default'] : n;
 }
 
 function getAugmentedNamespace(n) {
-  if (n.__esModule) return n;
-  var f = n.default;
-	if (typeof f == "function") {
-		var a = function a () {
-			if (this instanceof a) {
-        return Reflect.construct(f, arguments, this.constructor);
-			}
-			return f.apply(this, arguments);
-		};
-		a.prototype = f.prototype;
-  } else a = {};
-  Object.defineProperty(a, '__esModule', {value: true});
-	Object.keys(n).forEach(function (k) {
-		var d = Object.getOwnPropertyDescriptor(n, k);
-		Object.defineProperty(a, k, d.get ? d : {
-			enumerable: true,
-			get: function () {
-				return n[k];
-			}
-		});
-	});
-	return a;
+    if (n.__esModule) return n;
+    var f = n.default;
+    if (typeof f == "function") {
+        var a = function a() {
+            if (this instanceof a) {
+                return Reflect.construct(f, arguments, this.constructor);
+            }
+            return f.apply(this, arguments);
+        };
+        a.prototype = f.prototype;
+    } else a = {};
+    Object.defineProperty(a, '__esModule', { value: true });
+    Object.keys(n).forEach(function (k) {
+        var d = Object.getOwnPropertyDescriptor(n, k);
+        Object.defineProperty(a, k, d.get ? d : {
+            enumerable: true,
+            get: function () {
+                return n[k];
+            }
+        });
+    });
+    return a;
 }
 
 var fileutils$3 = {};
@@ -431,374 +540,374 @@ var fileutils$3 = {};
  */
 
 (function (exports) {
-	var fs = require$$0__default["default"];
-	var path  = path__default["default"];
-	var child_process = require$$2__default["default"]; 
-	var isWin = /^win/.test(process.platform);
+    var fs = require$$0__default["default"];
+    var path = path__default["default"];
+    var child_process = require$$2__default["default"];
+    var isWin = /^win/.test(process.platform);
 
-	var mkdirSync = function (path) {
-		try {
-			fs.mkdirSync(path);
-		} catch(e) {
-			if (!(e.code == 'EEXIST' || e.code == 'EISDIR')) throw e;
-		}
-	};
+    var mkdirSync = function (path) {
+        try {
+            fs.mkdirSync(path);
+        } catch (e) {
+            if (!(e.code == 'EEXIST' || e.code == 'EISDIR')) throw e;
+        }
+    };
 
-	/**
-	 * Ensure a folder exists. 
-	 * If works for both relative and absolute dirpath.
-	 */
-	exports.mkdirSync = function ( dirpath) {
-		var driveLetter = "";
-		var myPath = dirpath;
-		if (isWin) {
-			var index = myPath.indexOf(":");
-			if (index > 0) {
-				driveLetter = myPath.substring(0, index+2);
-				myPath = myPath.substring(index+2);
-			}
-		}
-		
-		var parts = myPath.split(path.sep);
-		for( var i = 1; i <= parts.length; i++ ) {
-			var currentPath = path.join.apply(null, parts.slice(0, i));
-			if( dirpath.indexOf(path.sep) == 0) {
-				if( i == 1) {
-					currentPath = path.sep;
-				}
-				else {
-					currentPath = path.sep + currentPath;
-				}
-			}
-			mkdirSync( driveLetter + currentPath);
-		}
-	};
+    /**
+     * Ensure a folder exists. 
+     * If works for both relative and absolute dirpath.
+     */
+    exports.mkdirSync = function (dirpath) {
+        var driveLetter = "";
+        var myPath = dirpath;
+        if (isWin) {
+            var index = myPath.indexOf(":");
+            if (index > 0) {
+                driveLetter = myPath.substring(0, index + 2);
+                myPath = myPath.substring(index + 2);
+            }
+        }
 
-	/**
-	 * Remove files and directories for the given path.
-	 * 
-	 * @param dirpath the directory path
-	 */
-	exports.rmdirSync = function rmdirSync(dirpath) {
-		var files = [];
-		if (fs.existsSync(dirpath)) {
-			files = fs.readdirSync(dirpath);
-			files.forEach(function(file, index){
-				var curPath = dirpath + "/" + file;
-				if (fs.lstatSync(curPath).isDirectory()) { // recurse
-					rmdirSync(curPath);
-				} else { // delete file
-					fs.unlinkSync(curPath);
-				}
-			});
-			
-			/* WORKAROUND: sometime rmdirSync failed due to unlinySync didn't finish removing the files from disk */
-			var retry = true;
-			for (var i = 0; retry && (i < 20); ++i) {
-				try {
-					fs.rmdirSync(dirpath);
-					retry = false;
-				} catch (e) {
-					retry = true;
-				}
-			}
-	    }
-	};
+        var parts = myPath.split(path.sep);
+        for (var i = 1; i <= parts.length; i++) {
+            var currentPath = path.join.apply(null, parts.slice(0, i));
+            if (dirpath.indexOf(path.sep) == 0) {
+                if (i == 1) {
+                    currentPath = path.sep;
+                }
+                else {
+                    currentPath = path.sep + currentPath;
+                }
+            }
+            mkdirSync(driveLetter + currentPath);
+        }
+    };
 
+    /**
+     * Remove files and directories for the given path.
+     * 
+     * @param dirpath the directory path
+     */
+    exports.rmdirSync = function rmdirSync(dirpath) {
+        var files = [];
+        if (fs.existsSync(dirpath)) {
+            files = fs.readdirSync(dirpath);
+            files.forEach(function (file, index) {
+                var curPath = dirpath + "/" + file;
+                if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                    rmdirSync(curPath);
+                } else { // delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
 
-	/**
-	 * Returns random generated file name that does not exist in the specified folder. 
-	 * @param folder 
-	 * @param callback( error, filePath) - the full path of the file.  
-	 */
-	exports.getTempFile = function getTempFileName( folder, callback) {
-		var _getFileName = function( level) {
-			if( level >= 20) {
-				callback(new Error("Cannot create temp file."));
-				return;
-			};
-			var dest = Math.floor((Math.random() * 10E8) + 1);
-			var name = dest.toString() + ".tmp";
-			var fullPath = path.join(folder, name);
-			fs.exists( fullPath, function (exists) {
-				if( exists) {
-					_getFileName( level + 1);
-					return;
-				}
-			    callback( undefined, fullPath);
-			});
-		};
-		_getFileName(0);
-	};
+            /* WORKAROUND: sometime rmdirSync failed due to unlinySync didn't finish removing the files from disk */
+            var retry = true;
+            for (var i = 0; retry && (i < 20); ++i) {
+                try {
+                    fs.rmdirSync(dirpath);
+                    retry = false;
+                } catch (e) {
+                    retry = true;
+                }
+            }
+        }
+    };
 
 
-	// assumes folder is a folder.
-	// callback( error, files, folders)
-	function listFilesAndFolders( folder, callback) {
-		fs.readdir( folder, function( error, items) {
-			var files = [];
-			var folders = [];
-			if( error ) {
-				return callback(error , files, folders);
-			};
-			var count = items.length;
-			if( count == 0) {
-				return callback(undefined, files, folders); 
-			};
-			var firstError;
-			var current = 0;
-			var stat = function( fullpath) {
-				fs.stat( fullpath, function( error2, st) {
-					if( error2 && !firstError) {
-						firstError = error2;
-					}
-					else if( error2) {
-						// DO NOTHING. We recorded the first error.
-					}
-					else if( st.isFile()) {
-						files.push(fullpath);
-					}
-					else if( st.isDirectory()) {
-						folders.push(fullpath);
-					};
-					++current;
-					if( current == count) {
-						callback( firstError, files, folders);
-					};
-				});		
-			};
-			for(var i = 0; i < count; ++i) {
-				stat( path.join( folder, items[i]));
-			};
-		});	
-	};
-	exports.listFilesAndFolders = listFilesAndFolders; 
-
-	// assumes files is array of full path names to files. 
-	function deleteAllFiles( files, callback) {
-		var count = files.length;
-		if( count == 0) {
-			return callback();
-		};
-		var firstError;
-		var current = 0;
-		for( var i = 0; i < count; ++i) {
-			fs.unlink( files[i], function( error) {
-				if( error && !firstError) {
-					firstError = error;
-				};
-				++current;
-				if( current == count) {
-					callback( firstError);
-				};
-			});
-		};
-	};
-
-	//assumes folders is array of full path names to existing folders. 
-	function deleteAllFolders( folders, callback) {
-		var count = folders.length;
-		if( count == 0) {
-			return callback();
-		};
-		var firstError;
-		var current = 0;
-		var emptyAndRemoveFolder = function( fullpath) {
-			emptyFolder( fullpath, function( error) {
-				if( error) {
-					// https://github.com/nodejs/node-v0.x-archive/issues/2387
-					if( error && error.code == "ENOENT" && error.path && !isWin) {
-						child_process.exec("rm -rf " + fullpath, function( err) {
-							++current;
-							if( current == count) {
-								callback( firstError);
-							};
-						});
-						return;
-					};
-					if( !firstError) {
-						firstError = error;
-					};
-					++current;
-					if( current == count) {
-						callback( firstError);
-					};
-					return;
-				};
-				fs.rmdir(fullpath, function( error2){
-					if( error2 && !firstError) {
-						firstError = error2; 
-					}
-					++current;
-					if( current == count) {
-						callback( firstError);
-					};
-				});
-			});
-		};
-		
-		for( var i = 0; i < count; ++i) {
-			emptyAndRemoveFolder( folders[i]);
-		};
-	}
+    /**
+     * Returns random generated file name that does not exist in the specified folder. 
+     * @param folder 
+     * @param callback( error, filePath) - the full path of the file.  
+     */
+    exports.getTempFile = function getTempFileName(folder, callback) {
+        var _getFileName = function (level) {
+            if (level >= 20) {
+                callback(new Error("Cannot create temp file."));
+                return;
+            };
+            var dest = Math.floor((Math.random() * 10E8) + 1);
+            var name = dest.toString() + ".tmp";
+            var fullPath = path.join(folder, name);
+            fs.exists(fullPath, function (exists) {
+                if (exists) {
+                    _getFileName(level + 1);
+                    return;
+                }
+                callback(undefined, fullPath);
+            });
+        };
+        _getFileName(0);
+    };
 
 
-	// assumes we have write permission for each element.
-	// assumes folder is folder and it exists. 
-	function emptyFolder( folder, callback) {
-		listFilesAndFolders( folder, function( error, files, folders) {
-			if( error) {
-				return callback( error);
-			};
-			deleteAllFiles( files, function( error2) {
-				if( error2) {
-					return callback( error2);
-				};
-				deleteAllFolders( folders, callback);
-			});
-		});
-	};
+    // assumes folder is a folder.
+    // callback( error, files, folders)
+    function listFilesAndFolders(folder, callback) {
+        fs.readdir(folder, function (error, items) {
+            var files = [];
+            var folders = [];
+            if (error) {
+                return callback(error, files, folders);
+            };
+            var count = items.length;
+            if (count == 0) {
+                return callback(undefined, files, folders);
+            };
+            var firstError;
+            var current = 0;
+            var stat = function (fullpath) {
+                fs.stat(fullpath, function (error2, st) {
+                    if (error2 && !firstError) {
+                        firstError = error2;
+                    }
+                    else if (error2) {
+                        // DO NOTHING. We recorded the first error.
+                    }
+                    else if (st.isFile()) {
+                        files.push(fullpath);
+                    }
+                    else if (st.isDirectory()) {
+                        folders.push(fullpath);
+                    };
+                    ++current;
+                    if (current == count) {
+                        callback(firstError, files, folders);
+                    };
+                });
+            };
+            for (var i = 0; i < count; ++i) {
+                stat(path.join(folder, items[i]));
+            };
+        });
+    };
+    exports.listFilesAndFolders = listFilesAndFolders;
 
-	/**
-	 * If fullpath does not exist, it creates it. 
-	 * If fullpath is a folder, it empties it.
-	 * If fullpath is a file, deletes is and creates a folder with the same name instead. 
-	 */
-	exports.emptyDirectory = function(fullpath, callback){
-		fs.exists( fullpath, function(exists){
-			if( !exists) {
-				exports.mkdirSync( fullpath);
-				return callback();
-			}
-			fs.stat( fullpath, function(error, st) {
-				if( error) {
-					return callback( error);
-				};
-				if( st.isFile()) {
-					deleteAllFiles( [fullpath], function(error2) {
-						exports.emptyDirectory( fullpath, callback);
-					});
-				}
-				else if( st.isDirectory()) {
-					emptyFolder( fullpath, function(error){
-						if( error && error.code == "ENOENT" && error.path  && !isWin) {
-							// https://github.com/nodejs/node-v0.x-archive/issues/2387
-							child_process.exec("rm -rf " + fullpath, function( err) {
-								callback();
-							});
-							return;
-						};
-						callback(error);		
-					});
-				}
-				else {
-					callback(new Error("Unsupported File Type: path="+fullpath));
-				};
-			});
-		});
-	};
+    // assumes files is array of full path names to files. 
+    function deleteAllFiles(files, callback) {
+        var count = files.length;
+        if (count == 0) {
+            return callback();
+        };
+        var firstError;
+        var current = 0;
+        for (var i = 0; i < count; ++i) {
+            fs.unlink(files[i], function (error) {
+                if (error && !firstError) {
+                    firstError = error;
+                };
+                ++current;
+                if (current == count) {
+                    callback(firstError);
+                };
+            });
+        };
+    };
 
-	/**
-	 * If fullpath does not exist, it does nothing. 
-	 * If fullpath is a folder or a file, it removes it.
-	 */
-	exports.removeItem = function( fullpath, callback) {
-		fs.exists( fullpath, function(exists){
-			if( !exists) {
-				return callback();
-			}
-			fs.stat( fullpath, function(error, st) {
-				if( error) {
-					return callback( error);
-				};
-				if( st.isFile()) {
-					return deleteAllFiles( [fullpath], callback);
-				}
-				else if( st.isDirectory()) {
-					exports.emptyDirectory( fullpath, function( error) {
-						if( error) {
-							return callback(error);
-						};
-						return deleteAllFolders( [fullpath], callback); 
-					});		
-				}
-				else {
-					callback(new Error("Unsupported File Type: path="+fullpath));
-				};
-			});
-		});
-	};
+    //assumes folders is array of full path names to existing folders. 
+    function deleteAllFolders(folders, callback) {
+        var count = folders.length;
+        if (count == 0) {
+            return callback();
+        };
+        var firstError;
+        var current = 0;
+        var emptyAndRemoveFolder = function (fullpath) {
+            emptyFolder(fullpath, function (error) {
+                if (error) {
+                    // https://github.com/nodejs/node-v0.x-archive/issues/2387
+                    if (error && error.code == "ENOENT" && error.path && !isWin) {
+                        child_process.exec("rm -rf " + fullpath, function (err) {
+                            ++current;
+                            if (current == count) {
+                                callback(firstError);
+                            };
+                        });
+                        return;
+                    };
+                    if (!firstError) {
+                        firstError = error;
+                    };
+                    ++current;
+                    if (current == count) {
+                        callback(firstError);
+                    };
+                    return;
+                };
+                fs.rmdir(fullpath, function (error2) {
+                    if (error2 && !firstError) {
+                        firstError = error2;
+                    }
+                    ++current;
+                    if (current == count) {
+                        callback(firstError);
+                    };
+                });
+            });
+        };
 
-	exports.moveItem = function(oldPath, newPath, callback) {
-	    fs.rename(oldPath, newPath, function (err) {
-	        if (err) {
-	            if (err.code === 'EXDEV') {
-	                copy();
-	            } else {
-	                callback(err);
-	            }
-	            return;
-	        }
-	        callback();
-	    });
+        for (var i = 0; i < count; ++i) {
+            emptyAndRemoveFolder(folders[i]);
+        };
+    }
 
-	    function copy () {
-	        var readStream = fs.createReadStream(oldPath);
-	        var writeStream = fs.createWriteStream(newPath);
 
-	        readStream.on('error', callback);
-	        writeStream.on('error', callback);
-	        readStream.on('close', function () {
-	            fs.unlink(oldPath, callback);
-	        });
+    // assumes we have write permission for each element.
+    // assumes folder is folder and it exists. 
+    function emptyFolder(folder, callback) {
+        listFilesAndFolders(folder, function (error, files, folders) {
+            if (error) {
+                return callback(error);
+            };
+            deleteAllFiles(files, function (error2) {
+                if (error2) {
+                    return callback(error2);
+                };
+                deleteAllFolders(folders, callback);
+            });
+        });
+    };
 
-	        readStream.pipe(writeStream);
-	    }
-	};
+    /**
+     * If fullpath does not exist, it creates it. 
+     * If fullpath is a folder, it empties it.
+     * If fullpath is a file, deletes is and creates a folder with the same name instead. 
+     */
+    exports.emptyDirectory = function (fullpath, callback) {
+        fs.exists(fullpath, function (exists) {
+            if (!exists) {
+                exports.mkdirSync(fullpath);
+                return callback();
+            }
+            fs.stat(fullpath, function (error, st) {
+                if (error) {
+                    return callback(error);
+                };
+                if (st.isFile()) {
+                    deleteAllFiles([fullpath], function (error2) {
+                        exports.emptyDirectory(fullpath, callback);
+                    });
+                }
+                else if (st.isDirectory()) {
+                    emptyFolder(fullpath, function (error) {
+                        if (error && error.code == "ENOENT" && error.path && !isWin) {
+                            // https://github.com/nodejs/node-v0.x-archive/issues/2387
+                            child_process.exec("rm -rf " + fullpath, function (err) {
+                                callback();
+                            });
+                            return;
+                        };
+                        callback(error);
+                    });
+                }
+                else {
+                    callback(new Error("Unsupported File Type: path=" + fullpath));
+                };
+            });
+        });
+    };
 
-	// https://github.com/nodejs/node-v0.x-archive/issues/2387
-	exports.covertFileNamesToUTF8 = function ( folder, callback) {
-		if( isWin) {
-			callback();
-			return;
-		};
-		listFilesAndFolders( folder, function( error) {
-			if( error && error.code == "ENOENT" && error.path) {
-				child_process.exec("convmv --notest -r -f iso-8859-1 -t UTF-8 " + folder, function( err) {
-					callback({ converted : true});
-				});
-				return;
-			};
-			callback();
-		});	
-	};
+    /**
+     * If fullpath does not exist, it does nothing. 
+     * If fullpath is a folder or a file, it removes it.
+     */
+    exports.removeItem = function (fullpath, callback) {
+        fs.exists(fullpath, function (exists) {
+            if (!exists) {
+                return callback();
+            }
+            fs.stat(fullpath, function (error, st) {
+                if (error) {
+                    return callback(error);
+                };
+                if (st.isFile()) {
+                    return deleteAllFiles([fullpath], callback);
+                }
+                else if (st.isDirectory()) {
+                    exports.emptyDirectory(fullpath, function (error) {
+                        if (error) {
+                            return callback(error);
+                        };
+                        return deleteAllFolders([fullpath], callback);
+                    });
+                }
+                else {
+                    callback(new Error("Unsupported File Type: path=" + fullpath));
+                };
+            });
+        });
+    };
 
-	exports.filenameWithDate = function(filename) {
-		function _pad(num, size) {
-			var s = num + '';
-			while (s.length < size) s = '0' + s;
-			return s;
-		}
-		
-		var date = new Date();
-		return filename + "_"
-			+ _pad(date.getUTCFullYear(), 4).toString() 
-			+ _pad(date.getUTCMonth()+1, 2).toString() // month in JS is zero base
-			+ _pad(date.getUTCDate(), 2).toString()
-			+ _pad(date.getUTCHours(), 2).toString()
-			+ _pad(date.getUTCMinutes(), 2).toString()
-			+ _pad(date.getUTCSeconds(), 2).toString(); 
-	};
+    exports.moveItem = function (oldPath, newPath, callback) {
+        fs.rename(oldPath, newPath, function (err) {
+            if (err) {
+                if (err.code === 'EXDEV') {
+                    copy();
+                } else {
+                    callback(err);
+                }
+                return;
+            }
+            callback();
+        });
 
-	exports.encodePathSegments = function(path) {
-		var result = [];
-		var segments = path.split("/");
-		segments.forEach(function(segment) {
-			result.push(encodeURIComponent(segment));
-		});
-		return result.join("/");
-	}; 
-} (fileutils$3));
+        function copy() {
+            var readStream = fs.createReadStream(oldPath);
+            var writeStream = fs.createWriteStream(newPath);
+
+            readStream.on('error', callback);
+            writeStream.on('error', callback);
+            readStream.on('close', function () {
+                fs.unlink(oldPath, callback);
+            });
+
+            readStream.pipe(writeStream);
+        }
+    };
+
+    // https://github.com/nodejs/node-v0.x-archive/issues/2387
+    exports.covertFileNamesToUTF8 = function (folder, callback) {
+        if (isWin) {
+            callback();
+            return;
+        };
+        listFilesAndFolders(folder, function (error) {
+            if (error && error.code == "ENOENT" && error.path) {
+                child_process.exec("convmv --notest -r -f iso-8859-1 -t UTF-8 " + folder, function (err) {
+                    callback({ converted: true });
+                });
+                return;
+            };
+            callback();
+        });
+    };
+
+    exports.filenameWithDate = function (filename) {
+        function _pad(num, size) {
+            var s = num + '';
+            while (s.length < size) s = '0' + s;
+            return s;
+        }
+
+        var date = new Date();
+        return filename + "_"
+            + _pad(date.getUTCFullYear(), 4).toString()
+            + _pad(date.getUTCMonth() + 1, 2).toString() // month in JS is zero base
+            + _pad(date.getUTCDate(), 2).toString()
+            + _pad(date.getUTCHours(), 2).toString()
+            + _pad(date.getUTCMinutes(), 2).toString()
+            + _pad(date.getUTCSeconds(), 2).toString();
+    };
+
+    exports.encodePathSegments = function (path) {
+        var result = [];
+        var segments = path.split("/");
+        segments.forEach(function (segment) {
+            result.push(encodeURIComponent(segment));
+        });
+        return result.join("/");
+    };
+}(fileutils$3));
 
 var fileutils$2 = /*@__PURE__*/getDefaultExportFromCjs(fileutils$3);
 
@@ -1365,7 +1474,8 @@ class ResourceHandler {
         }
         const atTIDir = path__default["default"].join(compDir, '@ti');
         const destDir = path__default["default"].join(projDir, 'components/@ti');
-        await fs__default["default"].copy(atTIDir, destDir, { filter: (src, dest) => {
+        await fs__default["default"].copy(atTIDir, destDir, {
+            filter: (src, dest) => {
                 const testStr = src.replace(/\\/g, '/');
                 return (testStr.indexOf('.js.map') === -1)
                     && (testStr.indexOf('components/@ti/host.config.json') === -1)
@@ -1374,7 +1484,8 @@ class ResourceHandler {
                     && (testStr.indexOf('components/@ti/index.js') === -1)
                     && (testStr.indexOf('components/@ti/assets/stylesheets/gc-demo-stylesheet.css') === -1)
                     && (testStr.match(/.*\/components\/@ti\/(?!(build|gc-.*\/lib))(gc-.*)\/(demo|test|usage.md|readme.md|.*.js|.*.css)/gi) === null);
-            } });
+            }
+        });
         /* remove working folders */
         if (tmpDir)
             await fs__default["default"].remove(tmpDir);
@@ -1407,7 +1518,8 @@ class ResourceHandler {
         const splashHtmlPath = path__default["default"].join(projDir, 'splash', 'splashscreen.html');
         const packageJsonPath = path__default["default"].join(projDir, 'package.json');
         /* filter files that are not required by the user application */
-        await fs__default["default"].copy(appDir, projDir, { filter: (src, dest) => {
+        await fs__default["default"].copy(appDir, projDir, {
+            filter: (src, dest) => {
                 const testStr = src.replace(/\\/g, '/');
                 return (testStr.indexOf('.js.map') === -1)
                     && (testStr.indexOf('/src') === -1)
@@ -1416,7 +1528,8 @@ class ResourceHandler {
                     && (testStr.indexOf('index.js') === -1)
                     && (testStr.indexOf('index.html') === -1)
                     && (testStr.indexOf('/node_modules') === -1);
-            } });
+            }
+        });
         // eslint-disable-next-line prefer-const
         let [projJson, packageJson, splashHtml] = await Promise.all([
             fs__default["default"].readJson(projJsonPath),
@@ -2959,51 +3072,51 @@ var http$2 = {};
  * @param callback (error, port)  
  */
 
-var findPortAndListen = http$2.findPortAndListen = function( server, callback) {
-	var min = 10000;
-	var max = 55000;
-	var start = min + Math.floor(Math.random() * max);
-	var current = start + 1; 
-	
-	function getNext( current) {
-		// roll over. We did not find a single port. 
-		if( current === start) {
-			return null;
-		}
-		if( current < max) {
-			return current + 1;
-		}
-		return min;
-	}
-	
-	function listenHTTPinner( current) {
-		var onError = function(err){
-			server.removeListener( "error", onError);
-			server.removeListener( "listening", onListening);
-			if( err.code === 'EADDRINUSE') {
-				var next = getNext(current);
-				if( next !== null) { 
-					listenHTTPinner( next);
-				}
-				else {
-					callback( new Error("Cannot find avaiable port."));
-				};
-			}
-			else {
-				callback( err);
-			};
-		};
-		var onListening = function() {
-			server.removeListener( "error", onError);
-			server.removeListener( "listening", onListening);
-			return callback( null, current);
-		};
-		server.once("error", onError);
-		server.once("listening", onListening);
-		server.listen( current);
-	}
-	
-	listenHTTPinner( current);
+var findPortAndListen = http$2.findPortAndListen = function (server, callback) {
+    var min = 10000;
+    var max = 55000;
+    var start = min + Math.floor(Math.random() * max);
+    var current = start + 1;
+
+    function getNext(current) {
+        // roll over. We did not find a single port. 
+        if (current === start) {
+            return null;
+        }
+        if (current < max) {
+            return current + 1;
+        }
+        return min;
+    }
+
+    function listenHTTPinner(current) {
+        var onError = function (err) {
+            server.removeListener("error", onError);
+            server.removeListener("listening", onListening);
+            if (err.code === 'EADDRINUSE') {
+                var next = getNext(current);
+                if (next !== null) {
+                    listenHTTPinner(next);
+                }
+                else {
+                    callback(new Error("Cannot find avaiable port."));
+                };
+            }
+            else {
+                callback(err);
+            };
+        };
+        var onListening = function () {
+            server.removeListener("error", onError);
+            server.removeListener("listening", onListening);
+            return callback(null, current);
+        };
+        server.once("error", onError);
+        server.once("listening", onListening);
+        server.listen(current);
+    }
+
+    listenHTTPinner(current);
 };
 
 var helper$2 = {};
@@ -3017,33 +3130,33 @@ var helper$2 = {};
  * 
  *******************************************************************************/
 
-function endOK(res) { 
-	res.writeHead(200, {'Content-Type': 'text/json'});
-	res.end("OK");
+function endOK(res) {
+    res.writeHead(200, { 'Content-Type': 'text/json' });
+    res.end("OK");
 };
 
-function endError( res, text) {
-	res.writeHead(404, {'Content-Type': 'text/json'});
-	res.end(text);
+function endError(res, text) {
+    res.writeHead(404, { 'Content-Type': 'text/json' });
+    res.end(text);
 };
 
-function validPathName( param) {
-	if( param.indexOf("..") != -1)
-		return false;
-	return true;
+function validPathName(param) {
+    if (param.indexOf("..") != -1)
+        return false;
+    return true;
 };
 
-function validFileName( param) {
-	if( !validPathName(param))
-		return false;
-	if( param.indexOf("/") != -1)
-		return false;
-	if( param.indexOf("\\") != -1) 
-		return false;
-	return true;
+function validFileName(param) {
+    if (!validPathName(param))
+        return false;
+    if (param.indexOf("/") != -1)
+        return false;
+    if (param.indexOf("\\") != -1)
+        return false;
+    return true;
 };
 
-var endOK_1 = helper$2.endOK = endOK; 
+var endOK_1 = helper$2.endOK = endOK;
 var endError_1 = helper$2.endError = endError;
 var validPathName_1 = helper$2.validPathName = validPathName;
 var validFileName_1 = helper$2.validFileName = validFileName;
@@ -3059,147 +3172,147 @@ var copyroute$1 = {};
  *
  *******************************************************************************/
 
-var url$1			= url__default["default"];
-var fs$1			= require$$0__default["default"];
-var path$1		= path__default["default"];
-var http$1		= require$$3__default["default"];
+var url$1 = url__default["default"];
+var fs$1 = require$$0__default["default"];
+var path$1 = path__default["default"];
+var http$1 = require$$3__default["default"];
 var querystring$1 = querystring__default["default"];
-var tar 		= tar__default["default"];
-var tarstream 	= require$$6__default["default"];
+var tar = tar__default["default"];
+var tarstream = require$$6__default["default"];
 
-var fileutils$1	= fileutils$3;
-var helper$1 		= helper$2;
+var fileutils$1 = fileutils$3;
+var helper$1 = helper$2;
 
-function initRequest( res, request) {
-    if( request) {
+function initRequest(res, request) {
+    if (request) {
         return request;
     };
     return {
-        endError : function (message) {
+        endError: function (message) {
             helper$1.endError(res, message);
         },
-        endOK : function(){
+        endOK: function () {
             helper$1.endOK(res);
         }
     };
 };
 
 // convert synch to async, give priority to the new function 
-function queryAsync( ports, appData, callback) {
-	if( ports && ports.queryAsync && typeof ports.queryAsync === "function") {
-		return ports.queryAsync( appData, callback); 
-	}
-	else if( ports && ports.query && typeof ports.query === "function") {
-		return callback( ports.query( appData));
-	}
-	return callback(null);
+function queryAsync(ports, appData, callback) {
+    if (ports && ports.queryAsync && typeof ports.queryAsync === "function") {
+        return ports.queryAsync(appData, callback);
+    }
+    else if (ports && ports.query && typeof ports.query === "function") {
+        return callback(ports.query(appData));
+    }
+    return callback(null);
 }
 
 var INVALID_FROM_PARAM = "Invalid from parameter.";
 var INVALID_APP_REGISTRY = "Appication not properly registered.";
 var CANNOT_IDENTIFY_USER = "Cannot identify the user.";
 
-function getPackData( req, from, options, commandId, noroot, callback) {
-	var uid = null;
+function getPackData(req, from, options, commandId, noroot, callback) {
+    var uid = null;
     var userInfo = req.headers["ti-user-info"];
-    if( !options.isLocal) {
-        if( !userInfo) {
-            callback( CANNOT_IDENTIFY_USER);
+    if (!options.isLocal) {
+        if (!userInfo) {
+            callback(CANNOT_IDENTIFY_USER);
             return;
         };
         uid = querystring$1.parse(userInfo).userId;
-        if( !uid) {
-            callback( CANNOT_IDENTIFY_USER);
+        if (!uid) {
+            callback(CANNOT_IDENTIFY_USER);
             return;
         };
     };
 
-    if( !from) {
+    if (!from) {
         callback(INVALID_FROM_PARAM);
         return;
     };
-    if( !helper$1.validPathName(from)) {
+    if (!helper$1.validPathName(from)) {
         callback(INVALID_FROM_PARAM);
         return;
     };
     var toParts = from.split("/");
-    if( toParts.length < 3) {
+    if (toParts.length < 3) {
         callback(INVALID_FROM_PARAM);
         return;
     };
-    if( toParts[0] !== "") {
+    if (toParts[0] !== "") {
         callback(INVALID_FROM_PARAM);
         return;
     };
     var app = toParts[1];
-    if( !app) {
+    if (!app) {
         callback(INVALID_FROM_PARAM);
         return;
     };
     var rootRoute = toParts[2];
-    if( !rootRoute) {
+    if (!rootRoute) {
         callback(INVALID_FROM_PARAM);
         return;
     };
     var restUrl = from.substring(app.length + rootRoute.length + 3);
-    if( !restUrl) {
+    if (!restUrl) {
         callback(INVALID_FROM_PARAM);
         return;
     };
     restUrl = encodeURIComponent(restUrl);
-    var localPath = "/"+rootRoute+"/"+restUrl+"?command=pack&type=tar";
-    if( noroot) {
+    var localPath = "/" + rootRoute + "/" + restUrl + "?command=pack&type=tar";
+    if (noroot) {
         localPath = localPath + "&noroot=true";
     };
 
     var appData = {
-    	role : app, 
-    	type: "application",
+        role: app,
+        type: "application",
     };
-    if( uid && app == "workspaceserver") {
-    	appData.uid = uid;
-    	appData.type = "applicationPerUser";
-    }; 
-    
-    queryAsync( options.ports, appData, function( portInfo){
+    if (uid && app == "workspaceserver") {
+        appData.uid = uid;
+        appData.type = "applicationPerUser";
+    };
+
+    queryAsync(options.ports, appData, function (portInfo) {
         var appInfo = undefined;
-        if( portInfo && portInfo.length && portInfo[0] && portInfo[0].host && portInfo[0].port) {
+        if (portInfo && portInfo.length && portInfo[0] && portInfo[0].host && portInfo[0].port) {
             appInfo = portInfo[0];
         };
 
-        if( !appInfo) {
+        if (!appInfo) {
             callback(INVALID_APP_REGISTRY);
             return;
         };
 
         var httpOptions = {
-            hostname : appInfo.host,
-            port : appInfo.port,
-            path : localPath,
-            method : "GET",
-            agent : false  // work around the concurrent socket of node 0.10
+            hostname: appInfo.host,
+            port: appInfo.port,
+            path: localPath,
+            method: "GET",
+            agent: false  // work around the concurrent socket of node 0.10
         };
 
         var headers = {};
-        if( commandId) {
+        if (commandId) {
             headers["ti-command-id"] = commandId;
         };
 
-        if( !options.isLocal) {
-            userInfo = { userId : uid};
+        if (!options.isLocal) {
+            userInfo = { userId: uid };
             var userInfoText = querystring$1.stringify(userInfo);
             headers["ti-user-info"] = userInfoText;
         }
         httpOptions.headers = headers;
 
-        var req = http$1.request( httpOptions, function(response) {
+        var req = http$1.request(httpOptions, function (response) {
             if (response.statusCode !== 200) {
                 return callback("Response status " + response.statusCode);
             };
-            if( response.headers["content-type"] !== "application/x-tar") {
+            if (response.headers["content-type"] !== "application/x-tar") {
                 return callback("Missign headers.");
             };
-            callback( undefined, response);
+            callback(undefined, response);
         });
 
         // check for req error too
@@ -3210,29 +3323,29 @@ function getPackData( req, from, options, commandId, noroot, callback) {
     });
 };
 
-function copyInternal( req, from, options, callback) {
-    fs$1.stat( options.to, function( error, st) {
-        if( error) {
-            callback( error);
+function copyInternal(req, from, options, callback) {
+    fs$1.stat(options.to, function (error, st) {
+        if (error) {
+            callback(error);
             return;
         }
-        if( !st.isDirectory()) {
-            callback( "Not a folder!");
+        if (!st.isDirectory()) {
+            callback("Not a folder!");
             return;
         };
-        getPackData( req, from, options, undefined, false, function( error, response) {
-            if( error) {
-                callback( error);
+        getPackData(req, from, options, undefined, false, function (error, response) {
+            if (error) {
+                callback(error);
                 return;
             };
-            response.on('error', function() {
+            response.on('error', function () {
                 callback("Transfer Error.");
             });
             var toStream = tar.extract(options.to);
-            response.pipe(toStream).on('finish', function() {
+            response.pipe(toStream).on('finish', function () {
                 callback();
             });
-            toStream.on("error", function(error) {
+            toStream.on("error", function (error) {
                 callback(error.toString());
             });
         });
@@ -3247,12 +3360,12 @@ function copyInternal( req, from, options, callback) {
  * @param request
  * @returns
  */
-function copy( req, res, options, request) {
-    request = initRequest( res, request);
+function copy(req, res, options, request) {
+    request = initRequest(res, request);
     var parsedUrl = url$1.parse(req.url, true);
     var from = parsedUrl.query.from;
     var noroot = !!(parsedUrl.query.noroot);
-    getPackData( req, from, options, request.commandId, noroot, function( error, response) {
+    getPackData(req, from, options, request.commandId, noroot, function (error, response) {
         try {
             if (error) {
                 request.endError(error);
@@ -3271,7 +3384,7 @@ function copy( req, res, options, request) {
             toStream.on("error", function (error) {
                 request.endError(error.toString());
             });
-        } catch(ex){
+        } catch (ex) {
             request.endError(ex.toString());
         }
     });
@@ -3284,37 +3397,37 @@ function copy( req, res, options, request) {
  * @param request
  * @returns
  */
-function send( req, res, options, request) {
-    request = initRequest( res, request);
+function send(req, res, options, request) {
+    request = initRequest(res, request);
 
-    if( !options.isLocal && !req.headers["ti-user-info"]) {
+    if (!options.isLocal && !req.headers["ti-user-info"]) {
         return request.endError("Missing userid.");
     };
 
     var parsedUrl = url$1.parse(req.url, true);
-    if( parsedUrl.query.type !== "tar") {
+    if (parsedUrl.query.type !== "tar") {
         return request.endError("Missing parameter pack.");
     };
     var noroot = parsedUrl.query.noroot;
     var from = options.from;
-    fs$1.stat( from, function (error, stats) {
-        if(error) {
+    fs$1.stat(from, function (error, stats) {
+        if (error) {
             return request.endError(error.message);
         };
-        if(stats.isFile() || stats.isDirectory()) {
+        if (stats.isFile() || stats.isDirectory()) {
             res.setHeader("Content-Type", "application/x-tar");
             var parentFolder = path$1.dirname(options.from);
             var folderName = path$1.basename(options.from);
             var readStream = null;
-            if( noroot && stats.isDirectory()) {
-                readStream = tar.pack( options.from);
+            if (noroot && stats.isDirectory()) {
+                readStream = tar.pack(options.from);
             }
             else {
-                readStream = tar.pack( parentFolder, { entries : [folderName ] });
+                readStream = tar.pack(parentFolder, { entries: [folderName] });
             };
             readStream.pipe(res);
-            req.addListener('end', function() {
-                if( request.done) {
+            req.addListener('end', function () {
+                if (request.done) {
                     request.done();
                 };
             });
@@ -3350,32 +3463,32 @@ var childProcess$1 = require$$2__default["default"];
 var CMD_IMPORT = "ccs:import";
 var CMD_BUILD = "ccs:build";
 
-var initialize = ccs$1.initialize = function(cmds) {
-    cmds[CMD_IMPORT]	= "ccs_import";
-    cmds[CMD_BUILD]		= "ccs_build";    
+var initialize = ccs$1.initialize = function (cmds) {
+    cmds[CMD_IMPORT] = "ccs_import";
+    cmds[CMD_BUILD] = "ccs_build";
 };
 
-var injectCommandHandlers = ccs$1.injectCommandHandlers = function(Request) {
+var injectCommandHandlers = ccs$1.injectCommandHandlers = function (Request) {
 
-    Request.prototype.ccs_import = function() {
+    Request.prototype.ccs_import = function () {
         var self = this;
 
         self.dispatch(
-            function() { // onFile
+            function () { // onFile
                 self.endError(self.path + " is a file.");
             },
-            function() { // onFolder
+            function () { // onFolder
                 try {
                     childProcess$1.exec('./ccs-server -nosplash ' +
                         '-data "/home/guest/.ccs-server/workspace_' + self.app + '" ' +
                         '-application com.ti.ccs.apps.projectImport ' +
                         '-ccs.location \'' + self.parsedUrl.query.location + '\' ' + // wrap location in single-quotes to prevent variable expansion
-                        '-ccs.defaultImportDestination "' + self.path + '"', 
+                        '-ccs.defaultImportDestination "' + self.path + '"',
                         {
                             cwd: '/mnt/ccs/ccs/eclipse'
                         },
-                        function(error, stdout, stderr) {
-                            self.endJSON({ result: error? 'error': 'OK', output: stdout });
+                        function (error, stdout, stderr) {
+                            self.endJSON({ result: error ? 'error' : 'OK', output: stdout });
                         }
                     );
                 } catch (e) {
@@ -3383,20 +3496,20 @@ var injectCommandHandlers = ccs$1.injectCommandHandlers = function(Request) {
                 }
             },
             null, // onMissing
-            function(err) { // onError
+            function (err) { // onError
                 self.endError(err);
             }
         );
     };
-    
-    Request.prototype.ccs_build = function() {
+
+    Request.prototype.ccs_build = function () {
         var self = this;
 
         self.dispatch(
-            function() { // onFile
+            function () { // onFile
                 self.endError(self.path + " is a file.");
             },
-            function() { // onFolder
+            function () { // onFolder
                 try {
                     childProcess$1.exec('./ccs-server -nosplash ' +
                         '-data "/home/guest/.ccs-server/workspace_' + self.app + '" ' +
@@ -3405,12 +3518,12 @@ var injectCommandHandlers = ccs$1.injectCommandHandlers = function(Request) {
                         '-ccs.autoImport ' +
                         '-ccs.autoOpen ' +
                         (self.parsedUrl.query.buildType ? '-ccs.buildType "' + self.parsedUrl.query.buildType + '" ' : '') +
-                        (self.parsedUrl.query.configuration ? '-ccs.configuration "' + self.parsedUrl.query.configuration + '" ' : ''), 
+                        (self.parsedUrl.query.configuration ? '-ccs.configuration "' + self.parsedUrl.query.configuration + '" ' : ''),
                         {
-                            cwd: '/mnt/ccs/ccs/eclipse' 
+                            cwd: '/mnt/ccs/ccs/eclipse'
                         },
-                        function(error, stdout, stderr) {
-                            self.endJSON({ result: error? 'error': 'OK', output: stdout });
+                        function (error, stdout, stderr) {
+                            self.endJSON({ result: error ? 'error' : 'OK', output: stdout });
                         }
                     );
                 } catch (e) {
@@ -3418,12 +3531,12 @@ var injectCommandHandlers = ccs$1.injectCommandHandlers = function(Request) {
                 }
             },
             null, // onMissing
-            function(err) { // onError
+            function (err) { // onError
                 self.endError(err);
             }
         );
     };
-   
+
 };
 
 /*******************************************************************************
@@ -3444,25 +3557,25 @@ var injectCommandHandlers = ccs$1.injectCommandHandlers = function(Request) {
  *******************************************************************************/
 
 var httpServer;
-var fs			= require$$0__default["default"];
-var http		= require$$3__default["default"];
-var path		= path__default["default"];
+var fs = require$$0__default["default"];
+var http = require$$3__default["default"];
+var path = path__default["default"];
 var querystring = querystring__default["default"];
-var url			= url__default["default"];
-var ncp			= require$$5__default["default"].ncp;
-var serveStatic	= require$$6__default$1["default"];
-var uuid 		= require$$7__default["default"];
-var ncp 		= require$$5__default["default"].ncp;
-var onFinished 	= require$$8__default["default"];
-var du			= require$$9__default["default"];
+var url = url__default["default"];
+var ncp = require$$5__default["default"].ncp;
+var serveStatic = require$$6__default$1["default"];
+var uuid = require$$7__default["default"];
+var ncp = require$$5__default["default"].ncp;
+var onFinished = require$$8__default["default"];
+var du = require$$9__default["default"];
 var childProcess = require$$2__default["default"];
 
-var fileutils	= fileutils$3;
-var listen		= http$2.findPortAndListen;
+var fileutils = fileutils$3;
+var listen = http$2.findPortAndListen;
 
-var helper 		= helper$2;
-var copyroute 	= copyroute$1;
-var ccs			= ccs$1;
+var helper = helper$2;
+var copyroute = copyroute$1;
+var ccs = ccs$1;
 
 // commands.
 var CMD_CLOSE = "close";
@@ -3482,93 +3595,93 @@ var CMD_STORE = "store";
 var CMD_DF = "df";
 
 var HTTP_VERBS = {
-	GET:CMD_GET,
-	PUT:CMD_PUT,
-	DELETE:CMD_DELETE
+    GET: CMD_GET,
+    PUT: CMD_PUT,
+    DELETE: CMD_DELETE
 };
 
 // atomic commands
 var ATOMIC_CMDS = {
-	"close"		: true,
-	"putContent": true,
-	"delete"	: true,
-	"create"	: true,
-	"copy"		: true,
-	"rename"    : true,
-	"clone"		: true,
-	"meta"		: true,
-	"store"		: true
+    "close": true,
+    "putContent": true,
+    "delete": true,
+    "create": true,
+    "copy": true,
+    "rename": true,
+    "clone": true,
+    "meta": true,
+    "store": true
 };
 
 // hook up the methods.
 var cmds = {};
-cmds[CMD_CLOSE] 	= "close";
-cmds[CMD_GET] 		= "getContent";
-cmds[CMD_PUT] 		= "putContent";
-cmds[CMD_LIST] 		= "list";
-cmds[CMD_DELETE] 	= "deleteItem";
-cmds[CMD_CREATE] 	= "createItem";
-cmds[CMD_STATS]		= "stats";
-cmds[CMD_EXISTS]	= "exists";
-cmds[CMD_COPY]		= "copy";
-cmds[CMD_RENAME]	= "rename";
-cmds[CMD_PACK]		= "pack";
-cmds[CMD_CLONE]		= "clone";
-cmds[CMD_META]		= "meta";
-cmds[CMD_STORE]		= "store";
-cmds[CMD_DF]		= "df";
+cmds[CMD_CLOSE] = "close";
+cmds[CMD_GET] = "getContent";
+cmds[CMD_PUT] = "putContent";
+cmds[CMD_LIST] = "list";
+cmds[CMD_DELETE] = "deleteItem";
+cmds[CMD_CREATE] = "createItem";
+cmds[CMD_STATS] = "stats";
+cmds[CMD_EXISTS] = "exists";
+cmds[CMD_COPY] = "copy";
+cmds[CMD_RENAME] = "rename";
+cmds[CMD_PACK] = "pack";
+cmds[CMD_CLONE] = "clone";
+cmds[CMD_META] = "meta";
+cmds[CMD_STORE] = "store";
+cmds[CMD_DF] = "df";
 
 // global variables
-var gLog			= null;
-var gRoot			= null;
-var gCopySrcBaseDir	= null;
-var gAppStorage		= null;
-var gSeaports		= null;
+var gLog = null;
+var gRoot = null;
+var gCopySrcBaseDir = null;
+var gAppStorage = null;
+var gSeaports = null;
 var gActivityWatcher = null;
-var isLocal			= false;
-var gOptions        = null;
+var isLocal = false;
+var gOptions = null;
 
 // delegates
-var delegates = [ ccs ];
+var delegates = [ccs];
 
 // initialize delegates
-for(var i = 0; i < delegates.length; ++i) {
-	delegates[i].initialize(cmds);
+for (var i = 0; i < delegates.length; ++i) {
+    delegates[i].initialize(cmds);
 }
 
 /************************************************************************************************************
  * WorkspaceLock Object.
  ************************************************************************************************************/
 
-function WorkspaceLock( uid, workspace, callback) {
-	var self = this;
-	self.completed = false;
-	self.clients = [ callback];
-	var loadCompleted = function () {
-		for(var i = 0; i < self.clients.length; ++i) {
-			self.clients[i]();
-		};
-		self.completed = true;
-	};
+function WorkspaceLock(uid, workspace, callback) {
+    var self = this;
+    self.completed = false;
+    self.clients = [callback];
+    var loadCompleted = function () {
+        for (var i = 0; i < self.clients.length; ++i) {
+            self.clients[i]();
+        };
+        self.completed = true;
+    };
 
-	gAppStorage.restore(uid, workspace, loadCompleted,
-//		{"sessionId": params.browserSessionId}  // TODO (dobrin) - add the browser sessionID - it is only used in the logging.
-		null);
+    gAppStorage.restore(uid, workspace, loadCompleted,
+        //		{"sessionId": params.browserSessionId}  // TODO (dobrin) - add the browser sessionID - it is only used in the logging.
+        null);
 
-// test code
-//	fs.mkdir( workspace, function(e){
-//		setTimeout( function() {
-//			gAppStorage.restore(uid, workspace, loadCompleted,null);
-//		}, 4000);
-//	});
-// end of test code
+    // test code
+    //	fs.mkdir( workspace, function(e){
+    //		setTimeout( function() {
+    //			gAppStorage.restore(uid, workspace, loadCompleted,null);
+    //		}, 4000);
+    //	});
+    // end of test code
 };
 
-WorkspaceLock.prototype.wait = function( callback) {
-	if( this.completed) {
-		callback();
-	};
-	this.clients.push( callback);
+WorkspaceLock.prototype.wait = function (callback) {
+    if (this.completed) {
+        callback();
+    };
+    this.clients.push(callback);
 };
 
 /************************************************************************************************************
@@ -3576,43 +3689,43 @@ WorkspaceLock.prototype.wait = function( callback) {
  ************************************************************************************************************/
 
 function WorkspaceLoader() {
-	this.locks = {};
+    this.locks = {};
 };
 
-WorkspaceLoader.prototype.waitToLoad = function( uid, workspace, callback) {
-	var lock = this.getLock(uid, workspace);
-	if( !lock) {
-		if( fs.existsSync(workspace)) {
-			return callback();
-		};
-		this.addLock( uid, workspace, callback);
-	}
-	else {
-		lock.wait( callback);
-	}
+WorkspaceLoader.prototype.waitToLoad = function (uid, workspace, callback) {
+    var lock = this.getLock(uid, workspace);
+    if (!lock) {
+        if (fs.existsSync(workspace)) {
+            return callback();
+        };
+        this.addLock(uid, workspace, callback);
+    }
+    else {
+        lock.wait(callback);
+    }
 };
 
-WorkspaceLoader.prototype.getLock = function( uid, workspace) {
-	if( !this.locks[uid]) {
-		return undefined;
-	};
-	return this.locks[uid][workspace];
+WorkspaceLoader.prototype.getLock = function (uid, workspace) {
+    if (!this.locks[uid]) {
+        return undefined;
+    };
+    return this.locks[uid][workspace];
 };
 
-WorkspaceLoader.prototype.addLock = function( uid, workspace, callback) {
-	var self = this;
-	var lock = new WorkspaceLock( uid, workspace, callback);
-	if( !self.locks[uid]) {
-		self.locks[uid] = {};
-	};
-	self.locks[uid][workspace] = lock;
-	// make sure we delete the object once wait completes.
-	lock.wait( function() {
-		delete self.locks[uid][workspace];
-		if( Object.keys(self.locks[uid]) == 0){
-			delete self.locks[uid];
-		};
-	});
+WorkspaceLoader.prototype.addLock = function (uid, workspace, callback) {
+    var self = this;
+    var lock = new WorkspaceLock(uid, workspace, callback);
+    if (!self.locks[uid]) {
+        self.locks[uid] = {};
+    };
+    self.locks[uid][workspace] = lock;
+    // make sure we delete the object once wait completes.
+    lock.wait(function () {
+        delete self.locks[uid][workspace];
+        if (Object.keys(self.locks[uid]) == 0) {
+            delete self.locks[uid];
+        };
+    });
 };
 
 var wsLoader = new WorkspaceLoader();
@@ -3621,360 +3734,360 @@ var wsLoader = new WorkspaceLoader();
  * Request Object.
  ************************************************************************************************************/
 function Request() {
-	var self = this;
-	this.parsedUrl = null;
-	this.completed = false;
-	this.uid = null;
-	this.command = null;
-	this.urlPath = null;
-	this.path = null;
-	this.workspacePath = null;
-	this.userRootPath = null;
-	this.directory = false;
-	this.filter = false;
-	this.recursive = false;
-	this.internalCommand = false;
-	this.internalCallback = undefined;
-	this.internalError = undefined;
-	this.metaParams = { clearFlag : true, queryDBBackupFailed : undefined};
-	this.timer = new setTimeout( function() {
-		self.onMaxTime();
-	},instrumentation.maxTime);
+    var self = this;
+    this.parsedUrl = null;
+    this.completed = false;
+    this.uid = null;
+    this.command = null;
+    this.urlPath = null;
+    this.path = null;
+    this.workspacePath = null;
+    this.userRootPath = null;
+    this.directory = false;
+    this.filter = false;
+    this.recursive = false;
+    this.internalCommand = false;
+    this.internalCallback = undefined;
+    this.internalError = undefined;
+    this.metaParams = { clearFlag: true, queryDBBackupFailed: undefined };
+    this.timer = new setTimeout(function () {
+        self.onMaxTime();
+    }, instrumentation.maxTime);
 };
 
 // inject delegate command handlers
-for(var i = 0; i < delegates.length; ++i) {
-	delegates[i].injectCommandHandlers(Request);
+for (var i = 0; i < delegates.length; ++i) {
+    delegates[i].injectCommandHandlers(Request);
 }
 
 Request.prototype.deferredReqs = {};
 Request.prototype.currentReqs = {};
 
-Request.prototype.preventOnRoot = function() {
-	return this.command == CMD_DELETE || this.command == CMD_RENAME || this.command == CMD_CLONE;
+Request.prototype.preventOnRoot = function () {
+    return this.command == CMD_DELETE || this.command == CMD_RENAME || this.command == CMD_CLONE;
 };
 
-Request.prototype.init = function(req, res) {
-	this.req = req;
-	this.res = res;
-	if (!isLocal) {
-		var userInfo = this.req.headers["ti-user-info"];
-		if( !userInfo) {
-			this.endError( "Cannot identify the user. Missing header info.");
-			return;
-		};
-		this.uid = querystring.parse(userInfo).userId;
-		if( !this.uid) {
-			this.endError( "Cannot identify the user. Missing userId inside header info.");
-			return;
-		};
-	};
+Request.prototype.init = function (req, res) {
+    this.req = req;
+    this.res = res;
+    if (!isLocal) {
+        var userInfo = this.req.headers["ti-user-info"];
+        if (!userInfo) {
+            this.endError("Cannot identify the user. Missing header info.");
+            return;
+        };
+        this.uid = querystring.parse(userInfo).userId;
+        if (!this.uid) {
+            this.endError("Cannot identify the user. Missing userId inside header info.");
+            return;
+        };
+    };
 
-	var requestCommandId = this.req.headers["ti-command-id"];
-	if( requestCommandId) {
-		this.requestCommandId = requestCommandId;
-	};
+    var requestCommandId = this.req.headers["ti-command-id"];
+    if (requestCommandId) {
+        this.requestCommandId = requestCommandId;
+    };
 
-	this.logInfo("commands", "URL="+this.req.url);
+    this.logInfo("commands", "URL=" + this.req.url);
 
-	var parsedUrl = this.parsedUrl = url.parse(this.req.url, true);
-	this.command = HTTP_VERBS[this.req.method];
-	if( !this.command) {
-		this.command = CMD_GET;
-	};
+    var parsedUrl = this.parsedUrl = url.parse(this.req.url, true);
+    this.command = HTTP_VERBS[this.req.method];
+    if (!this.command) {
+        this.command = CMD_GET;
+    };
 
-	if( parsedUrl.query.command) {
-		this.command = parsedUrl.query.command;
-	};
-	if( parsedUrl.query.filter) {
-		this.filter = parsedUrl.query.filter;
-	};
-	if( parsedUrl.query.recursive) {
-		this.recursive = (parsedUrl.query.recursive == "true");
-	};
-	if( parsedUrl.query.to) {
-		var to = parsedUrl.query.to;
-		if( !helper.validFileName(to)) {
-			this.endError( "Invalid parameter:to.");
-			return;
-		}
-		this.to = to;
-	}
+    if (parsedUrl.query.command) {
+        this.command = parsedUrl.query.command;
+    };
+    if (parsedUrl.query.filter) {
+        this.filter = parsedUrl.query.filter;
+    };
+    if (parsedUrl.query.recursive) {
+        this.recursive = (parsedUrl.query.recursive == "true");
+    };
+    if (parsedUrl.query.to) {
+        var to = parsedUrl.query.to;
+        if (!helper.validFileName(to)) {
+            this.endError("Invalid parameter:to.");
+            return;
+        }
+        this.to = to;
+    }
 
-	// parse additional parameters
-	if( parsedUrl.query.directory === "true") {
-		this.directory = true;
-	};
+    // parse additional parameters
+    if (parsedUrl.query.directory === "true") {
+        this.directory = true;
+    };
 
-	if( parsedUrl.query.clearFlag == "false") {
-		this.metaParams.clearFlag = false;
-	};
+    if (parsedUrl.query.clearFlag == "false") {
+        this.metaParams.clearFlag = false;
+    };
 
-	if( typeof parsedUrl.query.queryDBBackupFailed != undefined) {
-		this.metaParams.queryDBBackupFailed = true;
-	};
+    if (typeof parsedUrl.query.queryDBBackupFailed != undefined) {
+        this.metaParams.queryDBBackupFailed = true;
+    };
 
-	try {
-		this.urlPath = decodeURIComponent(parsedUrl.pathname);
-	}
-	catch( err) {
-		this.endError( "Invalid Path.");
-		return;
-	};
-	if( !helper.validPathName(this.urlPath)) {
-		// prevent access to parent folders "..".
-		this.endError( "Invalid Path.");
-		return;
-	};
+    try {
+        this.urlPath = decodeURIComponent(parsedUrl.pathname);
+    }
+    catch (err) {
+        this.endError("Invalid Path.");
+        return;
+    };
+    if (!helper.validPathName(this.urlPath)) {
+        // prevent access to parent folders "..".
+        this.endError("Invalid Path.");
+        return;
+    };
 
-	var pathSections = this.urlPath.split("/");
-	if (!isLocal) {
-		this.app = pathSections.length > 1 ? pathSections[1] : null;
-		if( !this.app) {
-			this.endError( "Missing app from the URL (first segment).");
-			return;
-		};
-	};
+    var pathSections = this.urlPath.split("/");
+    if (!isLocal) {
+        this.app = pathSections.length > 1 ? pathSections[1] : null;
+        if (!this.app) {
+            this.endError("Missing app from the URL (first segment).");
+            return;
+        };
+    };
 
-	var workspaceSegment = !isLocal ? 2 : 1;
-	this.workspaceName = pathSections.length > workspaceSegment ? pathSections[workspaceSegment] : null;
-	if( !this.workspaceName) {
-		this.endError( "Missing workspace from the URL (second segment).");
-		return;
-	};
-	if( !this.validWorkspaceName(this.workspaceName)) {
-		this.endError( "Invalid Path.");
-		return;
-	};
+    var workspaceSegment = !isLocal ? 2 : 1;
+    this.workspaceName = pathSections.length > workspaceSegment ? pathSections[workspaceSegment] : null;
+    if (!this.workspaceName) {
+        this.endError("Missing workspace from the URL (second segment).");
+        return;
+    };
+    if (!this.validWorkspaceName(this.workspaceName)) {
+        this.endError("Invalid Path.");
+        return;
+    };
 
-//	this.path = path.join(gRoot, !isLocal ? this.uid : "", this.urlPath);
-//	this.workspacePath = path.join(gRoot, !isLocal ? this.uid : "", !isLocal ? this.app : "", this.workspaceName);
-//	this.userRootPath = path.join(gRoot, !isLocal ? this.uid : "");
+    //	this.path = path.join(gRoot, !isLocal ? this.uid : "", this.urlPath);
+    //	this.workspacePath = path.join(gRoot, !isLocal ? this.uid : "", !isLocal ? this.app : "", this.workspaceName);
+    //	this.userRootPath = path.join(gRoot, !isLocal ? this.uid : "");
 
-	this.path = path.join(gRoot, this.urlPath);
+    this.path = path.join(gRoot, this.urlPath);
 
-	if( isLocal) {
-		this.workspacePath = path.join(gRoot, this.workspaceName);
-	}
-	else {
-		this.workspacePath = path.join(gRoot, this.app, this.workspaceName);
-	}
-	this.userRootPath = path.join(gRoot, "");
+    if (isLocal) {
+        this.workspacePath = path.join(gRoot, this.workspaceName);
+    }
+    else {
+        this.workspacePath = path.join(gRoot, this.app, this.workspaceName);
+    }
+    this.userRootPath = path.join(gRoot, "");
 
-	// some commands are not allowed on the root workspace folder.
-	var rel = path.relative(this.workspacePath, this.path);
-	if( rel.length == 0 && this.preventOnRoot()) {
-		this.endError( this.command  + " cannot be executed on workspace root.");
-		return;
-	};
+    // some commands are not allowed on the root workspace folder.
+    var rel = path.relative(this.workspacePath, this.path);
+    if (rel.length == 0 && this.preventOnRoot()) {
+        this.endError(this.command + " cannot be executed on workspace root.");
+        return;
+    };
 
-	if( !isLocal && pathSections.length > workspaceSegment + 1 && pathSections[workspaceSegment + 1] == SCRATCH_NAME) {
-		this.path = path.join("/tmp", this.urlPath);
-		this.userRootPath = path.join("/tmp", "");
-	}
+    if (!isLocal && pathSections.length > workspaceSegment + 1 && pathSections[workspaceSegment + 1] == SCRATCH_NAME) {
+        this.path = path.join("/tmp", this.urlPath);
+        this.userRootPath = path.join("/tmp", "");
+    }
 };
 
-Request.prototype.initInternalClose = function( uid, workspacePath, callback) {
-	this.command = CMD_CLOSE;
-	this.internalCommand = true;
-	this.internalCallback = callback;
-	this.internalError = undefined;
-	var pathSections = workspacePath.split("/");
-	if( pathSections.length <= 3) {
-		this.endError("Invalid workspace path");
-		return;
-	}
-	this.workspacePath = workspacePath;
-	this.workspaceName = pathSections[pathSections.length-1];
-	this.app = pathSections[pathSections.length-2];
-	this.uid = pathSections[pathSections.length-3];
-	this.urlPath = "INTERNAL CLOSE COMMAND";
+Request.prototype.initInternalClose = function (uid, workspacePath, callback) {
+    this.command = CMD_CLOSE;
+    this.internalCommand = true;
+    this.internalCallback = callback;
+    this.internalError = undefined;
+    var pathSections = workspacePath.split("/");
+    if (pathSections.length <= 3) {
+        this.endError("Invalid workspace path");
+        return;
+    }
+    this.workspacePath = workspacePath;
+    this.workspaceName = pathSections[pathSections.length - 1];
+    this.app = pathSections[pathSections.length - 2];
+    this.uid = pathSections[pathSections.length - 3];
+    this.urlPath = "INTERNAL CLOSE COMMAND";
 };
 
-Request.prototype.logAny = function( stream, id, text) {
-	var self = this;
+Request.prototype.logAny = function (stream, id, text) {
+    var self = this;
 
-	// Desktop Node App can be started without console.
-	if( !gLog || !gLog[stream] || typeof gLog[stream] !== "function") {
-		return;
-	};
+    // Desktop Node App can be started without console.
+    if (!gLog || !gLog[stream] || typeof gLog[stream] !== "function") {
+        return;
+    };
 
-	var newText = text;
-	if( self.uid) {
-		newText = text + " userid = " + self.uid;
-	};
-	if( self.req) {
-		gLog[stream](id, newText, self.req.url);
-	}
-	else {
-		gLog[stream](id, newText);
-	};
+    var newText = text;
+    if (self.uid) {
+        newText = text + " userid = " + self.uid;
+    };
+    if (self.req) {
+        gLog[stream](id, newText, self.req.url);
+    }
+    else {
+        gLog[stream](id, newText);
+    };
 };
 
-Request.prototype.logInfo = function( id, text) {
-	this.logAny( "info", id, text);
+Request.prototype.logInfo = function (id, text) {
+    this.logAny("info", id, text);
 };
 
-Request.prototype.logError = function( id, text) {
-	this.logAny( "error", id, text);
+Request.prototype.logError = function (id, text) {
+    this.logAny("error", id, text);
 };
 
-Request.prototype.validWorkspaceName = function( param) {
-	if( !helper.validPathName(param))
-		return false;
-	if( param.indexOf("$") != -1)
-		return false;
-	if( param.indexOf("'") != -1)
-		return false;
-	if( param.indexOf('"') != -1)
-		return false;
-	if( param.indexOf("`") != -1)
-		return false;
-	return true;
+Request.prototype.validWorkspaceName = function (param) {
+    if (!helper.validPathName(param))
+        return false;
+    if (param.indexOf("$") != -1)
+        return false;
+    if (param.indexOf("'") != -1)
+        return false;
+    if (param.indexOf('"') != -1)
+        return false;
+    if (param.indexOf("`") != -1)
+        return false;
+    return true;
 };
 
-Request.prototype.execute = function() {
-	var self = this;
-	if( self.isCompleted()) {
-		return;
-	};
-	if( !self.command) {
-		self.endError("Missing command.");
-		return;
-	};
-	var current = null;
-	for(var cmd in cmds) {
-		if( cmd === self.command) {
-			current = cmd;
-			break;
-		};
-	};
-	if( !current) {
-		self.endError( "Unsupported command: "+ self.command);
-		return;
-	};
+Request.prototype.execute = function () {
+    var self = this;
+    if (self.isCompleted()) {
+        return;
+    };
+    if (!self.command) {
+        self.endError("Missing command.");
+        return;
+    };
+    var current = null;
+    for (var cmd in cmds) {
+        if (cmd === self.command) {
+            current = cmd;
+            break;
+        };
+    };
+    if (!current) {
+        self.endError("Unsupported command: " + self.command);
+        return;
+    };
 
-	function addToDeferReqsQ(req) {
-		var defReqsQ = Request.prototype.deferredReqs[req.workspacePath];
-		if (!defReqsQ) {
-			Request.prototype.deferredReqs[req.workspacePath] = [req];
-		} else {
-			defReqsQ.push(req);
-		}
-	};
+    function addToDeferReqsQ(req) {
+        var defReqsQ = Request.prototype.deferredReqs[req.workspacePath];
+        if (!defReqsQ) {
+            Request.prototype.deferredReqs[req.workspacePath] = [req];
+        } else {
+            defReqsQ.push(req);
+        }
+    };
 
-	/*
-	 * If there are current requests, than we need to check whether the
-	 * request can be execute in parallel with the current requests or not.
-	 */
-	var defer = false;
-	var curReqsQ = Request.prototype.currentReqs[self.workspacePath];
-	if (!!curReqsQ) {
+    /*
+     * If there are current requests, than we need to check whether the
+     * request can be execute in parallel with the current requests or not.
+     */
+    var defer = false;
+    var curReqsQ = Request.prototype.currentReqs[self.workspacePath];
+    if (!!curReqsQ) {
 
-		/* A copy from workspace to workspace generates getContent that needs be let through. */
-		if( self.requestCommandId && self.requestCommandId == curReqsQ[0].commandId) {
-			self.bypassQueue = true;
-		}
+        /* A copy from workspace to workspace generates getContent that needs be let through. */
+        if (self.requestCommandId && self.requestCommandId == curReqsQ[0].commandId) {
+            self.bypassQueue = true;
+        }
 
-		/* if the request is an atomic request, than just add it to the defer Q */
-		else if (!!ATOMIC_CMDS[self.command]) {
-			defer = true;
-			addToDeferReqsQ(self);
+        /* if the request is an atomic request, than just add it to the defer Q */
+        else if (!!ATOMIC_CMDS[self.command]) {
+            defer = true;
+            addToDeferReqsQ(self);
 
-		/* check if the request is compatible with current requests */
-		} else if (curReqsQ.length > 0 && !!ATOMIC_CMDS[curReqsQ[0].command]){
-			defer = true;
-			addToDeferReqsQ(self);
-		}
-	}
+            /* check if the request is compatible with current requests */
+        } else if (curReqsQ.length > 0 && !!ATOMIC_CMDS[curReqsQ[0].command]) {
+            defer = true;
+            addToDeferReqsQ(self);
+        }
+    }
 
-	self.logInfo("commands-concurrent", (defer ? "Deferring " : "Executing ") + self.command + " where url=" + self.urlPath);
-	if (!defer) {
+    self.logInfo("commands-concurrent", (defer ? "Deferring " : "Executing ") + self.command + " where url=" + self.urlPath);
+    if (!defer) {
 
-		if( !self.bypassQueue) {
-			if (!curReqsQ) {
-				Request.prototype.currentReqs[self.workspacePath] = [self];
-			} else {
-				curReqsQ.push(self);
-			}
-		};
+        if (!self.bypassQueue) {
+            if (!curReqsQ) {
+                Request.prototype.currentReqs[self.workspacePath] = [self];
+            } else {
+                curReqsQ.push(self);
+            }
+        };
 
-		self.ensureWorkspaceExists( function( error) {
-// I have test cases that make operations take long time to complete so I can test the deferred queue.
-			if( instrumentation.delay) {
-				setTimeout( function(){
-					if( !self.isCompleted()) {
-						self[cmds[current]]();
-					}
-				},instrumentation.delay);
-			}
-			else {
-				self[cmds[current]]();
-			}
-		});
-	}
+        self.ensureWorkspaceExists(function (error) {
+            // I have test cases that make operations take long time to complete so I can test the deferred queue.
+            if (instrumentation.delay) {
+                setTimeout(function () {
+                    if (!self.isCompleted()) {
+                        self[cmds[current]]();
+                    }
+                }, instrumentation.delay);
+            }
+            else {
+                self[cmds[current]]();
+            }
+        });
+    }
 };
 
-Request.prototype.done = function() {
-	var self = this;
-	if( self.timer) {
-		clearTimeout( self.timer);
-		self.timer = null;
-	}
-	if( self.internalCommand) {
-		self.internalCallback( self.internalError);
-	};
+Request.prototype.done = function () {
+    var self = this;
+    if (self.timer) {
+        clearTimeout(self.timer);
+        self.timer = null;
+    }
+    if (self.internalCommand) {
+        self.internalCallback(self.internalError);
+    };
 
-	self.logInfo("commands-concurrent", "Completed " + self.command + " where url=" + self.urlPath);
+    self.logInfo("commands-concurrent", "Completed " + self.command + " where url=" + self.urlPath);
 
-	if( self.bypassQueue) {
-		return;
-	};
+    if (self.bypassQueue) {
+        return;
+    };
 
-	/* remove the current request from the Q */
-	var curReqsQ = Request.prototype.currentReqs[self.workspacePath];
-	if (!!curReqsQ) {
-		for (var i = 0, l = curReqsQ.length; i < l; ++i) {
-			if (curReqsQ[i] === self) {
-				curReqsQ.splice(i, 1);
-				break;
-			}
-		}
+    /* remove the current request from the Q */
+    var curReqsQ = Request.prototype.currentReqs[self.workspacePath];
+    if (!!curReqsQ) {
+        for (var i = 0, l = curReqsQ.length; i < l; ++i) {
+            if (curReqsQ[i] === self) {
+                curReqsQ.splice(i, 1);
+                break;
+            }
+        }
 
-		if (curReqsQ.length == 0)
-			delete Request.prototype.currentReqs[self.workspacePath];
-	}
+        if (curReqsQ.length == 0)
+            delete Request.prototype.currentReqs[self.workspacePath];
+    }
 
-	/* In the case that the timeout expires and the request has never been removed
-	   from the deferred queue make sure we remove it from there.*/
-	var defReqsQ = Request.prototype.deferredReqs[self.workspacePath];
-	if( defReqsQ && defReqsQ.length > 0) {
-		for (var i = 0, l = defReqsQ.length; i < l; ++i) {
-			if (defReqsQ[i] === self) {
-				defReqsQ.splice(i, 1);
-				break;
-			}
-		}
+    /* In the case that the timeout expires and the request has never been removed
+       from the deferred queue make sure we remove it from there.*/
+    var defReqsQ = Request.prototype.deferredReqs[self.workspacePath];
+    if (defReqsQ && defReqsQ.length > 0) {
+        for (var i = 0, l = defReqsQ.length; i < l; ++i) {
+            if (defReqsQ[i] === self) {
+                defReqsQ.splice(i, 1);
+                break;
+            }
+        }
 
-		if (defReqsQ.length == 0)
-			delete Request.prototype.deferredReqs[self.workspacePath];
-	};
+        if (defReqsQ.length == 0)
+            delete Request.prototype.deferredReqs[self.workspacePath];
+    };
 
 
-	/* current request Q is empty, so move on to the next deferred request */
-	if (!Request.prototype.currentReqs[self.workspacePath]) {
-		defReqsQ = Request.prototype.deferredReqs[self.workspacePath];
-		if (!!defReqsQ) {
-			if (defReqsQ.length > 0) {
-				var nextReq = defReqsQ.shift();
-				if (defReqsQ.length == 0) {
-					delete Request.prototype.deferredReqs[self.workspacePath];
-				}
+    /* current request Q is empty, so move on to the next deferred request */
+    if (!Request.prototype.currentReqs[self.workspacePath]) {
+        defReqsQ = Request.prototype.deferredReqs[self.workspacePath];
+        if (!!defReqsQ) {
+            if (defReqsQ.length > 0) {
+                var nextReq = defReqsQ.shift();
+                if (defReqsQ.length == 0) {
+                    delete Request.prototype.deferredReqs[self.workspacePath];
+                }
 
-				nextReq.execute();
-			}
-		}
-	}
+                nextReq.execute();
+            }
+        }
+    }
 };
 
 /**
@@ -3984,788 +4097,788 @@ Request.prototype.done = function() {
  * @param onMissing - optional
  * @param onError - optional
  */
-Request.prototype.dispatch = function( onFile, onFolder, onMissing, onError ) {
-	var self = this;
-	self.logInfo("commands", self.command + " " + self.path);
-	fs.stat( self.path, function(error, stats) {
-		if( error) {
-			if(onMissing && error.code == "ENOENT") {
-				onMissing(error);
-			}
-			else {
-				if( onError){
-					onError( error);
-				}
-				else {
-					self.endError( error.toString());
-				}
-			}
-		}
-		else if( stats.isDirectory()) {
-			onFolder(stats);
-		}
-		else if( stats.isFile()) {
-			onFile(stats);
-		}
-		else {
-			self.endError( "Unsupported File Type");
-		}
-	});
+Request.prototype.dispatch = function (onFile, onFolder, onMissing, onError) {
+    var self = this;
+    self.logInfo("commands", self.command + " " + self.path);
+    fs.stat(self.path, function (error, stats) {
+        if (error) {
+            if (onMissing && error.code == "ENOENT") {
+                onMissing(error);
+            }
+            else {
+                if (onError) {
+                    onError(error);
+                }
+                else {
+                    self.endError(error.toString());
+                }
+            }
+        }
+        else if (stats.isDirectory()) {
+            onFolder(stats);
+        }
+        else if (stats.isFile()) {
+            onFile(stats);
+        }
+        else {
+            self.endError("Unsupported File Type");
+        }
+    });
 };
 
-Request.prototype.ensureWorkspaceExists = function( callback) {
-	var self = this;
+Request.prototype.ensureWorkspaceExists = function (callback) {
+    var self = this;
 
-	// if the workspace is not in the file system: do nothing.
-	// If we call twice close/close command we don't want to delete the record form the
-	// the database.
-	if( self.command == CMD_CLOSE) {
-		self.workspaceExists = fs.existsSync(this.workspacePath);
-		callback();
-		return;
-	};
+    // if the workspace is not in the file system: do nothing.
+    // If we call twice close/close command we don't want to delete the record form the
+    // the database.
+    if (self.command == CMD_CLOSE) {
+        self.workspaceExists = fs.existsSync(this.workspacePath);
+        callback();
+        return;
+    };
 
-	if (gAppStorage) {
-		wsLoader.waitToLoad( self.uid, self.workspacePath, function(){
-			self.workspaceExists = fs.existsSync(this.workspacePath);
-			callback();
-		});
-	}
-	else if( !isLocal) {
-		if( !fs.existsSync(self.workspacePath)) {
-			fileutils.mkdirSync(self.workspacePath);
-			self.workspaceExists = fs.existsSync(self.workspacePath);
-		}
-		callback();
-	}
-	else {
-		callback();
-	}
+    if (gAppStorage) {
+        wsLoader.waitToLoad(self.uid, self.workspacePath, function () {
+            self.workspaceExists = fs.existsSync(this.workspacePath);
+            callback();
+        });
+    }
+    else if (!isLocal) {
+        if (!fs.existsSync(self.workspacePath)) {
+            fileutils.mkdirSync(self.workspacePath);
+            self.workspaceExists = fs.existsSync(self.workspacePath);
+        }
+        callback();
+    }
+    else {
+        callback();
+    }
 };
 
-Request.prototype.getContent = function() {
-	var self = this;
-	self.dispatch(
-		function() { // onFile
-			var fn = serveStatic(self.userRootPath, {dotfiles : "allow"});
-			onFinished(self.res, function (){
-				self.completed = true;
-				self.done();
-			});
-			fn(self.req, self.res, function(err) {
-				if( err && err.toString) {
-					self.logError("commands", err.toString());
-				};
-			});
-		},
-		function() { // onFolder
-			self.endError(self.path + " is a folder.");
-		},
-		null, // onMsising
-		function(err) { // onError
-			self.endError(err);
-		}
-	);
+Request.prototype.getContent = function () {
+    var self = this;
+    self.dispatch(
+        function () { // onFile
+            var fn = serveStatic(self.userRootPath, { dotfiles: "allow" });
+            onFinished(self.res, function () {
+                self.completed = true;
+                self.done();
+            });
+            fn(self.req, self.res, function (err) {
+                if (err && err.toString) {
+                    self.logError("commands", err.toString());
+                };
+            });
+        },
+        function () { // onFolder
+            self.endError(self.path + " is a folder.");
+        },
+        null, // onMsising
+        function (err) { // onError
+            self.endError(err);
+        }
+    );
 };
 
-Request.prototype.pack = function() {
-	var self = this;
-	var options =  {
-		from		: self.path,
-		isLocal		: isLocal
-	};
-	copyroute.send( self.req, self.res, options, self);
+Request.prototype.pack = function () {
+    var self = this;
+    var options = {
+        from: self.path,
+        isLocal: isLocal
+    };
+    copyroute.send(self.req, self.res, options, self);
 };
 
-Request.prototype.copy = function() {
-	var self = this;
-	var parsedUrl = url.parse(this.req.url, true);
-	var from = parsedUrl.query.from;
-	self.logInfo("commands", "copy from='" + from + "' to='" + self.path + "'");
-	self.commandId = uuid.v4();
-	var options =  {
-		to			: self.path,
-		ports		: gOptions.ports,
-		isLocal		: isLocal
-	};
-	copyroute.copy( self.req, self.res, options, self);
+Request.prototype.copy = function () {
+    var self = this;
+    var parsedUrl = url.parse(this.req.url, true);
+    var from = parsedUrl.query.from;
+    self.logInfo("commands", "copy from='" + from + "' to='" + self.path + "'");
+    self.commandId = uuid.v4();
+    var options = {
+        to: self.path,
+        ports: gOptions.ports,
+        isLocal: isLocal
+    };
+    copyroute.copy(self.req, self.res, options, self);
 };
 
-Request.prototype.stats = function() {
-	var self = this;
-	var filter = function( data) {
-		var prop = ["size", "atime", "mtime", "ctime"];
-		var ret = {};
-		for( var i = 0; i < prop.length; ++i) {
-			if( typeof data[prop[i]] !== "undefined") {
-				ret[prop[i]] = data[prop[i]];
-			};
-		};
-		return ret;
-	};
+Request.prototype.stats = function () {
+    var self = this;
+    var filter = function (data) {
+        var prop = ["size", "atime", "mtime", "ctime"];
+        var ret = {};
+        for (var i = 0; i < prop.length; ++i) {
+            if (typeof data[prop[i]] !== "undefined") {
+                ret[prop[i]] = data[prop[i]];
+            };
+        };
+        return ret;
+    };
 
-	self.dispatch(
-		function(data) { //onFile
-			self.endJSON(filter(data));
-		},
-		function(data) { //onFolder
-			var ret = filter(data);
-			if( self.recursive) {
-				du(self.path, function(err, size) {
-					if( err) {
-						self.logError("commands", "Recursive Stats. Error = " + err + " Path = " + self.path);
-						self.endError(err);
-						return;
-					};
-					ret.size = size;
-					self.logInfo("commands", "Recursive Stats. Size = " + size + " Path = " + self.path);
-					self.endJSON(ret);
-				});
-				return;
-			}
-			self.endJSON(ret);
-		},
-		function(err) { //onError
-			self.endError(err);
-		},
-		function(err) { //onMissing
-			self.endError(err);
-		}
-	);
+    self.dispatch(
+        function (data) { //onFile
+            self.endJSON(filter(data));
+        },
+        function (data) { //onFolder
+            var ret = filter(data);
+            if (self.recursive) {
+                du(self.path, function (err, size) {
+                    if (err) {
+                        self.logError("commands", "Recursive Stats. Error = " + err + " Path = " + self.path);
+                        self.endError(err);
+                        return;
+                    };
+                    ret.size = size;
+                    self.logInfo("commands", "Recursive Stats. Size = " + size + " Path = " + self.path);
+                    self.endJSON(ret);
+                });
+                return;
+            }
+            self.endJSON(ret);
+        },
+        function (err) { //onError
+            self.endError(err);
+        },
+        function (err) { //onMissing
+            self.endError(err);
+        }
+    );
 };
 
-Request.prototype.df = function() {
-	var self = this;
-	childProcess.exec("df --block-size=1 " + gRoot, function(error, stdout, stderr) {
-		if (error != null) {
-			self.endError( error);
-			return;
-		}
-		try{
-			var lines = stdout.split("\n");
-			var words = lines[1].split(/\s+/);
-			var total = Number(words[1]);
-			var available = Number(words[3]);
-			var word4 = words[4];
-			word4 = word4.substring(0, word4.length - 1);
-			var percent = Number(word4);
-			self.endJSON({
-				total:total,
-				available:available,
-				percent:percent,
-				warning:95
-			});
-		}
-		catch( e) {
-			self.endError( e);
-		}
-	});
+Request.prototype.df = function () {
+    var self = this;
+    childProcess.exec("df --block-size=1 " + gRoot, function (error, stdout, stderr) {
+        if (error != null) {
+            self.endError(error);
+            return;
+        }
+        try {
+            var lines = stdout.split("\n");
+            var words = lines[1].split(/\s+/);
+            var total = Number(words[1]);
+            var available = Number(words[3]);
+            var word4 = words[4];
+            word4 = word4.substring(0, word4.length - 1);
+            var percent = Number(word4);
+            self.endJSON({
+                total: total,
+                available: available,
+                percent: percent,
+                warning: 95
+            });
+        }
+        catch (e) {
+            self.endError(e);
+        }
+    });
 };
 
-Request.prototype.exists = function() {
-	var self = this;
-	self.dispatch(
-		function(data) { //onFile
-			self.endText("true");
-		},
-		function(data) { //onFolder
-			self.endText("true");
-		},
-		function(err) { //onError
-			self.endText("false");
-		},
-		function(err) { //onMissing
-			self.endText("false");
-		}
-	);
+Request.prototype.exists = function () {
+    var self = this;
+    self.dispatch(
+        function (data) { //onFile
+            self.endText("true");
+        },
+        function (data) { //onFolder
+            self.endText("true");
+        },
+        function (err) { //onError
+            self.endText("false");
+        },
+        function (err) { //onMissing
+            self.endText("false");
+        }
+    );
 };
 
-Request.prototype.list = function() {
-	var self = this;
-	self.dispatch(
-		function() { // onFile
-			self.endError( self.path +" is a file.");
-		},
-		function() { // onFolder
-			fs.readdir( self.path, function(error, files){
-				if( error) {
-					self.endError( error.toString());
-					return;
-				}
-				var pattern = null;
-				try {
-					pattern = self.filter ? new RegExp(self.filter) : null;
-				}
-				catch( err) {
-					self.logError("commands", err.toString());
-					self.endError( err.toString());
-					return;
-				};
-				var i = 0;
-				var data = [];
-				var filteredFiles = [];
-				for( i = 0; i < files.length; ++i) {
-					if( !isLocal && files[i] == SCRATCH_NAME) {
-						continue;
-					}
+Request.prototype.list = function () {
+    var self = this;
+    self.dispatch(
+        function () { // onFile
+            self.endError(self.path + " is a file.");
+        },
+        function () { // onFolder
+            fs.readdir(self.path, function (error, files) {
+                if (error) {
+                    self.endError(error.toString());
+                    return;
+                }
+                var pattern = null;
+                try {
+                    pattern = self.filter ? new RegExp(self.filter) : null;
+                }
+                catch (err) {
+                    self.logError("commands", err.toString());
+                    self.endError(err.toString());
+                    return;
+                };
+                var i = 0;
+                var data = [];
+                var filteredFiles = [];
+                for (i = 0; i < files.length; ++i) {
+                    if (!isLocal && files[i] == SCRATCH_NAME) {
+                        continue;
+                    }
 
-					if(!pattern || pattern.test(files[i])) {
-						filteredFiles.push(files[i]);
-					}
-				};
-				var total = filteredFiles.length;
+                    if (!pattern || pattern.test(files[i])) {
+                        filteredFiles.push(files[i]);
+                    }
+                };
+                var total = filteredFiles.length;
 
-				if( total == 0) {
-					self.endJSON( data);
-					return;
-				};
+                if (total == 0) {
+                    self.endJSON(data);
+                    return;
+                };
 
-				var filled = 0;
-				var anyError = null;
-				var fill = function( index) {
-					var name = filteredFiles[index];
-					data.push({ name : name});
-					fs.stat( path.join(self.path, name), function(err, st) {
-						if( err) {
-							anyError = err;
-							self.endError( err.toString());
-						};
-						if( anyError) {
-							return;
-						}
-						data[index].isDirectory = st.isDirectory();
-						data[index].size = st.size;
-						data[index].atime = st.atime;
-						data[index].ctime = st.ctime;
-						data[index].mtime = st.mtime;
-						++filled;
-						if( filled >= total) {
-							self.endJSON( data);
-						};
-					});
-				};
-				for( i = 0; i < total; ++i) {
-					fill( i);
-				};
-			});
-		}
-	);
+                var filled = 0;
+                var anyError = null;
+                var fill = function (index) {
+                    var name = filteredFiles[index];
+                    data.push({ name: name });
+                    fs.stat(path.join(self.path, name), function (err, st) {
+                        if (err) {
+                            anyError = err;
+                            self.endError(err.toString());
+                        };
+                        if (anyError) {
+                            return;
+                        }
+                        data[index].isDirectory = st.isDirectory();
+                        data[index].size = st.size;
+                        data[index].atime = st.atime;
+                        data[index].ctime = st.ctime;
+                        data[index].mtime = st.mtime;
+                        ++filled;
+                        if (filled >= total) {
+                            self.endJSON(data);
+                        };
+                    });
+                };
+                for (i = 0; i < total; ++i) {
+                    fill(i);
+                };
+            });
+        }
+    );
 };
 
-Request.prototype.putContent = function() {
-	var self = this;
-	self.tempUploadPath = null;
-	self.unlinkOriginalFile = false;
-	var fill = function() {
-	//// TODO - make sure we don't exceed the quota.
-	//// TODO - if we reach 90% of the quota fire an event to the proxy that (uid,app,workspace) has reached their limit.
+Request.prototype.putContent = function () {
+    var self = this;
+    self.tempUploadPath = null;
+    self.unlinkOriginalFile = false;
+    var fill = function () {
+        //// TODO - make sure we don't exceed the quota.
+        //// TODO - if we reach 90% of the quota fire an event to the proxy that (uid,app,workspace) has reached their limit.
 
-		var stream = fs.createWriteStream(self.tempUploadPath);
-		var requestEnded = false;
-		var fileClosed = false;
+        var stream = fs.createWriteStream(self.tempUploadPath);
+        var requestEnded = false;
+        var fileClosed = false;
 
-		var allCompleted = function() {
-			// The request is already completed. Do nothing.
-			if( self.completed) {
-				return;
-			}
+        var allCompleted = function () {
+            // The request is already completed. Do nothing.
+            if (self.completed) {
+                return;
+            }
 
-			// Wait for both file 'close' and request 'end' events to fire.
-			if( !fileClosed || !requestEnded) {
-				return;
-			}
+            // Wait for both file 'close' and request 'end' events to fire.
+            if (!fileClosed || !requestEnded) {
+                return;
+            }
 
-			// when a file is new we do not create a temporary file.
-			var doNotDeleteAnything = function( path, callback) {
-				callback();
-			};
-			var deleteFunction = self.unlinkOriginalFile ? fs.unlink : doNotDeleteAnything;
-			deleteFunction( self.path, function(error) {
-				if( self.completed) {
-					return;
-				};
-				if( error) {
-					self.logError("commands", "PUT " + self.path + " cannot override file.");
-					self.endError("cannot override file " + self.path);
-					return;
-				};
-				fs.rename( self.tempUploadPath, self.path, function( error) {
-					if( self.completed) {
-						return;
-					};
-					if( error) {
-						self.logError("commands", "PUT " + self.tempUploadPath + " cannot rename file.");
-						self.endError("cannot rename file " + self.tempUploadPath);
-						return;
-					};
-					self.logInfo("commands", "PUT " + self.path + " ended.");
-					self.endOK();
-				});
-			});
-		};
+            // when a file is new we do not create a temporary file.
+            var doNotDeleteAnything = function (path, callback) {
+                callback();
+            };
+            var deleteFunction = self.unlinkOriginalFile ? fs.unlink : doNotDeleteAnything;
+            deleteFunction(self.path, function (error) {
+                if (self.completed) {
+                    return;
+                };
+                if (error) {
+                    self.logError("commands", "PUT " + self.path + " cannot override file.");
+                    self.endError("cannot override file " + self.path);
+                    return;
+                };
+                fs.rename(self.tempUploadPath, self.path, function (error) {
+                    if (self.completed) {
+                        return;
+                    };
+                    if (error) {
+                        self.logError("commands", "PUT " + self.tempUploadPath + " cannot rename file.");
+                        self.endError("cannot rename file " + self.tempUploadPath);
+                        return;
+                    };
+                    self.logInfo("commands", "PUT " + self.path + " ended.");
+                    self.endOK();
+                });
+            });
+        };
 
-		stream.on("close", function() {
-			fileClosed = true;
-			allCompleted();
-		});
+        stream.on("close", function () {
+            fileClosed = true;
+            allCompleted();
+        });
 
-		self.req.on("end", function() {
-			requestEnded = true;
-			allCompleted();
-		});
+        self.req.on("end", function () {
+            requestEnded = true;
+            allCompleted();
+        });
 
-		// Handle file stream exceptions.
-		// To simulate: Just before the file is opened in createWriteStream, create a ~file and make it read-only.
-		stream.on("error", function() {
-			// The request is already completed. Do nothing.
-			if( self.completed) {
-				return;
-			};
-			self.logError("commands", "PUT " + self.tempUploadPath + " cannot open file for writing.");
-			self.endError("cannot open file for writing " + self.tempUploadPath);
-		});
+        // Handle file stream exceptions.
+        // To simulate: Just before the file is opened in createWriteStream, create a ~file and make it read-only.
+        stream.on("error", function () {
+            // The request is already completed. Do nothing.
+            if (self.completed) {
+                return;
+            };
+            self.logError("commands", "PUT " + self.tempUploadPath + " cannot open file for writing.");
+            self.endError("cannot open file for writing " + self.tempUploadPath);
+        });
 
-		// the connection has closed before uploaded completed. Remove the temp upload file and return error.
-		// To simulate: In 'workspacetestclient' use the function generateLongText(), press 'Put' button and close the browser.
-		if (process.versions.node.split('.')[0] <= 14) { // https://jira.itg.ti.com/browse/GC-3127
-			self.req.on("close", function() {
-			// The request is already completed. Do nothing.
-				if( self.completed) {
-					return;
-				};
-				fs.unlink( self.tempUploadPath, function( error) {
-					if( self.completed) {
-						return;
-					};
-					self.logError("commands", "PUT " + self.tempUploadPath + " conenction closed by client.");
-					self.endError( self.path +" conenction closed by client.");
-				});
-			});
-		}
+        // the connection has closed before uploaded completed. Remove the temp upload file and return error.
+        // To simulate: In 'workspacetestclient' use the function generateLongText(), press 'Put' button and close the browser.
+        if (process.versions.node.split('.')[0] <= 14) { // https://jira.itg.ti.com/browse/GC-3127
+            self.req.on("close", function () {
+                // The request is already completed. Do nothing.
+                if (self.completed) {
+                    return;
+                };
+                fs.unlink(self.tempUploadPath, function (error) {
+                    if (self.completed) {
+                        return;
+                    };
+                    self.logError("commands", "PUT " + self.tempUploadPath + " conenction closed by client.");
+                    self.endError(self.path + " conenction closed by client.");
+                });
+            });
+        }
 
-		self.req.pipe(stream);
-	};
-	self.dispatch(
-		function() { // onFile
-			self.unlinkOriginalFile = true;
-			self.setTempUploadPath( function( error) {
-				if( error) {
-					// setTempUpdaloadName already replied with error.
-					return;
-				};
-				fill();
-			});
-		},
-		function() { // onFolder
-			self.endError( self.path +" already exists as folder.");
-		},
-		function() { // onMsising
-			self.unlinkOriginalFile = false;
-			var parent = path.dirname( self.path);
-			fileutils.mkdirSync(parent);
-			// the file does not exist here.
-			self.setTempUploadPath( function( error) {
-				if( error) {
-					// setTempUpdaloadName already replied with error.
-					return;
-				};
-				fill();
-			});
-		}
-	);
+        self.req.pipe(stream);
+    };
+    self.dispatch(
+        function () { // onFile
+            self.unlinkOriginalFile = true;
+            self.setTempUploadPath(function (error) {
+                if (error) {
+                    // setTempUpdaloadName already replied with error.
+                    return;
+                };
+                fill();
+            });
+        },
+        function () { // onFolder
+            self.endError(self.path + " already exists as folder.");
+        },
+        function () { // onMsising
+            self.unlinkOriginalFile = false;
+            var parent = path.dirname(self.path);
+            fileutils.mkdirSync(parent);
+            // the file does not exist here.
+            self.setTempUploadPath(function (error) {
+                if (error) {
+                    // setTempUpdaloadName already replied with error.
+                    return;
+                };
+                fill();
+            });
+        }
+    );
 };
 
-Request.prototype.setTempUploadPath = function( callback) {
-	var self = this;
-	var parent = path.dirname( self.path);
-	var fileName = path.basename( self.path);
-	function nameExists( name, files) {
-		for( var i = 0; i < files.length; ++i) {
-			if( files[i] == name)
-				return true;
-		};
-		return false;
-	};
+Request.prototype.setTempUploadPath = function (callback) {
+    var self = this;
+    var parent = path.dirname(self.path);
+    var fileName = path.basename(self.path);
+    function nameExists(name, files) {
+        for (var i = 0; i < files.length; ++i) {
+            if (files[i] == name)
+                return true;
+        };
+        return false;
+    };
 
-	fs.readdir( parent, function(error, files){
-		if( error) {
-			self.logError("commands", "PUT " + self.path + " ended with error:" + error.toString());
-			self.endError( error.toString());
-			callback( error);
-			return;
-		};
-		var prefix = "~";
-		while( nameExists(prefix + fileName, files)) {
-			prefix += "~";
-		};
-		self.tempUploadPath = path.join(parent, prefix + fileName);
-		callback();
-	});
+    fs.readdir(parent, function (error, files) {
+        if (error) {
+            self.logError("commands", "PUT " + self.path + " ended with error:" + error.toString());
+            self.endError(error.toString());
+            callback(error);
+            return;
+        };
+        var prefix = "~";
+        while (nameExists(prefix + fileName, files)) {
+            prefix += "~";
+        };
+        self.tempUploadPath = path.join(parent, prefix + fileName);
+        callback();
+    });
 };
 
-Request.prototype.deleteItem = function() {
-	var self = this;
-	self.dispatch(
-		function() { // onFile
-			fs.unlink(self.path, function (err) {
-				if( err) {
-					self.endError( err.toString());
-				}
-				else {
-					self.endOK();
-				}
-			});
-		},
-		function() { // onFolder
-			fileutils.rmdirSync(self.path);
-			self.endOK();
-		}
-	);
+Request.prototype.deleteItem = function () {
+    var self = this;
+    self.dispatch(
+        function () { // onFile
+            fs.unlink(self.path, function (err) {
+                if (err) {
+                    self.endError(err.toString());
+                }
+                else {
+                    self.endOK();
+                }
+            });
+        },
+        function () { // onFolder
+            fileutils.rmdirSync(self.path);
+            self.endOK();
+        }
+    );
 };
 
-Request.prototype.rename = function() {
-	var self = this;
-	if( !self.to) {
-		self.endError( "Invalid parameter.");
-		return;
-	};
-	var both = function() {
-		var toPath = path.join(path.dirname(self.path), self.to);
-		fs.stat( toPath, function(error, stats) {
-			if(error && error.code == "ENOENT") {
-				fs.rename(self.path, toPath, function( error) {
-					if( error) {
-						self.endError( error.toString());
-					}
-					else {
-						self.endOK();
-					};
-				});
-			}
-			else {
-				self.endError( "File "+self.to+" already exists.");
-			}
-		});
-	};
-	self.dispatch( both, both);
+Request.prototype.rename = function () {
+    var self = this;
+    if (!self.to) {
+        self.endError("Invalid parameter.");
+        return;
+    };
+    var both = function () {
+        var toPath = path.join(path.dirname(self.path), self.to);
+        fs.stat(toPath, function (error, stats) {
+            if (error && error.code == "ENOENT") {
+                fs.rename(self.path, toPath, function (error) {
+                    if (error) {
+                        self.endError(error.toString());
+                    }
+                    else {
+                        self.endOK();
+                    };
+                });
+            }
+            else {
+                self.endError("File " + self.to + " already exists.");
+            }
+        });
+    };
+    self.dispatch(both, both);
 };
 
-Request.prototype.clone = function() {
-	var self = this;
-	if( !self.to) {
-		self.endError( "Invalid parameter.");
-		return;
-	};
+Request.prototype.clone = function () {
+    var self = this;
+    if (!self.to) {
+        self.endError("Invalid parameter.");
+        return;
+    };
 
-	var toPath = path.join(path.dirname(self.path), self.to);
-	var both = function() {
-		ncp(self.path, toPath, function(error) {
-			if( error) {
-				self.endError( error.toString());
-				return;
-			};
-			self.endOK();
-		});
-	};
+    var toPath = path.join(path.dirname(self.path), self.to);
+    var both = function () {
+        ncp(self.path, toPath, function (error) {
+            if (error) {
+                self.endError(error.toString());
+                return;
+            };
+            self.endOK();
+        });
+    };
 
-	fs.stat( toPath, function(error, stats) {
-		if(error && error.code == "ENOENT") {
-			self.dispatch( both, both);
-			return;
-		};
-		if( error) {
-			self.endError( error.toString());
-			return;
-		}
-		self.endError( "Resource " + self.to+" already exists.");
-	});
+    fs.stat(toPath, function (error, stats) {
+        if (error && error.code == "ENOENT") {
+            self.dispatch(both, both);
+            return;
+        };
+        if (error) {
+            self.endError(error.toString());
+            return;
+        }
+        self.endError("Resource " + self.to + " already exists.");
+    });
 };
 
-Request.prototype.createItem = function() {
-	var self = this;
-	self.dispatch(
-		function() { // onFile
-			self.endError( self.path +" File already exist.");
-		},
-		function() { // onFolder
-			self.endError( self.path +" Folder already exist.");
-		},
-		function() { // onMissing
-			if( self.directory) {
-				try {
-					fileutils.mkdirSync(self.path);
-					self.endOK();
-				} catch (e) {
-					self.endError(e.toString());
-				}
-			}
-			else {
-				fs.open( self.path, "wx", function (err, fd) {
-					if( err) {
-						self.endError( error.tioString());
-					}
-					else {
-					    fs.close(fd, function (err) {
-					    	if(err) {
-					    		self.endError( error.tioString());
-					    	}
-					    	else  {
-					    		self.endOK();
-					    	};
-					    });
-					};
-				});
-			};
-		}
-	);
+Request.prototype.createItem = function () {
+    var self = this;
+    self.dispatch(
+        function () { // onFile
+            self.endError(self.path + " File already exist.");
+        },
+        function () { // onFolder
+            self.endError(self.path + " Folder already exist.");
+        },
+        function () { // onMissing
+            if (self.directory) {
+                try {
+                    fileutils.mkdirSync(self.path);
+                    self.endOK();
+                } catch (e) {
+                    self.endError(e.toString());
+                }
+            }
+            else {
+                fs.open(self.path, "wx", function (err, fd) {
+                    if (err) {
+                        self.endError(error.tioString());
+                    }
+                    else {
+                        fs.close(fd, function (err) {
+                            if (err) {
+                                self.endError(error.tioString());
+                            }
+                            else {
+                                self.endOK();
+                            };
+                        });
+                    };
+                });
+            };
+        }
+    );
 };
 
 //TICLD-1893
 var SCRATCH_NAME = ".scratch_1764";
 //end TICLD-1893
 
-Request.prototype.close = function() {
-	var self = this;
-	self.logInfo("commands", "CLOSE " + self.workspaceName);
-	if( !gAppStorage) {
-		self.endOK();
-		return;
-	};
-	// If we call workspace second time the temp storage will be removed
-	// this is considered normal condition, we should not try to override the database and return OK.
-	if( !self.workspaceExists) {
-		self.endOK();
-		return;
-	};
+Request.prototype.close = function () {
+    var self = this;
+    self.logInfo("commands", "CLOSE " + self.workspaceName);
+    if (!gAppStorage) {
+        self.endOK();
+        return;
+    };
+    // If we call workspace second time the temp storage will be removed
+    // this is considered normal condition, we should not try to override the database and return OK.
+    if (!self.workspaceExists) {
+        self.endOK();
+        return;
+    };
 
-// TICLD-1893
-	var scratchFolder = path.join( self.workspacePath, SCRATCH_NAME);
-	fileutils.removeItem(scratchFolder, function() {
-// end TICLD-1893
-		gAppStorage.store(self.uid, self.workspacePath, null,
-			null,
-//			params.sessionId,  // TODO - add the sessionID - it is only used in the logging.
-			function(err) {
-				if(err) {
-					self.endError(err.toString());
-					return;
-				}
-				self.endOK();
-			},
-//			{"sessionId": params.browserSessionId}  // TODO - add the browser sessionID - it is only used in the logging.
-			null
-		);
-	});
+    // TICLD-1893
+    var scratchFolder = path.join(self.workspacePath, SCRATCH_NAME);
+    fileutils.removeItem(scratchFolder, function () {
+        // end TICLD-1893
+        gAppStorage.store(self.uid, self.workspacePath, null,
+            null,
+            //			params.sessionId,  // TODO - add the sessionID - it is only used in the logging.
+            function (err) {
+                if (err) {
+                    self.endError(err.toString());
+                    return;
+                }
+                self.endOK();
+            },
+            //			{"sessionId": params.browserSessionId}  // TODO - add the browser sessionID - it is only used in the logging.
+            null
+        );
+    });
 };
 
 // https://jira.itg.ti.com/browse/GC-1055
-Request.prototype.store = function() {
-	var self = this;
-	self.logInfo("commands", "store " + self.workspaceName);
+Request.prototype.store = function () {
+    var self = this;
+    self.logInfo("commands", "store " + self.workspaceName);
 
-	if( !gAppStorage) {
-		self.endOK();
-		return;
-	};
+    if (!gAppStorage) {
+        self.endOK();
+        return;
+    };
 
-	gAppStorage.store(self.uid, self.workspacePath, null,
-		null,
-//			params.sessionId,  // TODO - add the sessionID - it is only used in the logging.
-		function(err) {
-			if(err) {
-				self.endError(err.toString());
-				return;
-			}
-			self.endOK();
-		},
-//			{"sessionId": params.browserSessionId}  // TODO - add the browser sessionID - it is only used in the logging.
-		null,
-		true,
-		SCRATCH_NAME
-	);
+    gAppStorage.store(self.uid, self.workspacePath, null,
+        null,
+        //			params.sessionId,  // TODO - add the sessionID - it is only used in the logging.
+        function (err) {
+            if (err) {
+                self.endError(err.toString());
+                return;
+            }
+            self.endOK();
+        },
+        //			{"sessionId": params.browserSessionId}  // TODO - add the browser sessionID - it is only used in the logging.
+        null,
+        true,
+        SCRATCH_NAME
+    );
 };
 
-Request.prototype.meta = function() {
-	var self = this;
-	self.logInfo("commands", "meta wks = " + self.workspaceName +" params = " + JSON.toString(self.metaParams));
-	var ret = {};
-	if( self.metaParams.queryDBBackupFailed) {
-		var filePath = path.join(self.workspacePath, ".metadata", "DBBackupFailed");
-		fs.stat( filePath, function( error, stat) {
-			ret.queryDBBackupFailed = ( error && error.code == "ENOENT") ? false : true;
-			if( ret.queryDBBackupFailed && self.metaParams.clearFlag) {
-				fs.unlink( filePath, function(err) {
-					self.endJSON( ret);
-				});
-				return;
-			}
-			self.endJSON( ret);
-		});
-		return;
-	}
-	self.endJSON( ret);
+Request.prototype.meta = function () {
+    var self = this;
+    self.logInfo("commands", "meta wks = " + self.workspaceName + " params = " + JSON.toString(self.metaParams));
+    var ret = {};
+    if (self.metaParams.queryDBBackupFailed) {
+        var filePath = path.join(self.workspacePath, ".metadata", "DBBackupFailed");
+        fs.stat(filePath, function (error, stat) {
+            ret.queryDBBackupFailed = (error && error.code == "ENOENT") ? false : true;
+            if (ret.queryDBBackupFailed && self.metaParams.clearFlag) {
+                fs.unlink(filePath, function (err) {
+                    self.endJSON(ret);
+                });
+                return;
+            }
+            self.endJSON(ret);
+        });
+        return;
+    }
+    self.endJSON(ret);
 };
 // end https://jira.itg.ti.com/browse/GC-1055
 
-Request.prototype.isCompleted = function() {
-	return this.completed;
+Request.prototype.isCompleted = function () {
+    return this.completed;
 };
 
-Request.prototype.endError = function(msg) {
-	if( this.internalCommand) {
-		this.internalError = msg;
-	};
-	this.endJSON({msg: msg, code: -1}, 404);
+Request.prototype.endError = function (msg) {
+    if (this.internalCommand) {
+        this.internalError = msg;
+    };
+    this.endJSON({ msg: msg, code: -1 }, 404);
 };
 
-Request.prototype.endOK = function() {
-	this.endText("OK");
+Request.prototype.endOK = function () {
+    this.endText("OK");
 };
 
-Request.prototype.endText = function(text, status) {
-	this.completed = true;
-	if( this.res) {
-		this.res.writeHead(status ? status : 200, {'Content-Type': 'text/json'});
-		this.res.end(text);
-	}
-	this.done();
+Request.prototype.endText = function (text, status) {
+    this.completed = true;
+    if (this.res) {
+        this.res.writeHead(status ? status : 200, { 'Content-Type': 'text/json' });
+        this.res.end(text);
+    }
+    this.done();
 };
 
-Request.prototype.endJSON = function(obj, status) {
-	var self = this;
-	self.completed = true;
-	if( self.res) {
-		try{
-			self.res.writeHead(status ? status : 200, {'Content-Type': 'text/json'});
-			self.res.end(JSON.stringify(obj));
-// https://jira.itg.ti.com/browse/TICLD-2163
-// In rare cases when the header is aready sent we don't want the process to end.
-// I have not tested if this exception is thrown mutiple times.
-		}catch( error) {
-			self.logError("command", "endJSON exception. Commnad = " + self.command + " Exception = " + error);
-		}
-	}
-	this.done();
+Request.prototype.endJSON = function (obj, status) {
+    var self = this;
+    self.completed = true;
+    if (self.res) {
+        try {
+            self.res.writeHead(status ? status : 200, { 'Content-Type': 'text/json' });
+            self.res.end(JSON.stringify(obj));
+            // https://jira.itg.ti.com/browse/TICLD-2163
+            // In rare cases when the header is aready sent we don't want the process to end.
+            // I have not tested if this exception is thrown mutiple times.
+        } catch (error) {
+            self.logError("command", "endJSON exception. Commnad = " + self.command + " Exception = " + error);
+        }
+    }
+    this.done();
 };
 
-Request.prototype.onMaxTime = function() {
-	var self = this;
-	self.logError("command", "Timer expired. Commnad = " + self.command + " Path " + self.path);
-	if( self.isCompleted()) {
-		return;
-	};
-	this.endError( "Timeout.");
+Request.prototype.onMaxTime = function () {
+    var self = this;
+    self.logError("command", "Timer expired. Commnad = " + self.command + " Path " + self.path);
+    if (self.isCompleted()) {
+        return;
+    };
+    this.endError("Timeout.");
 };
 
 /************************************************************************************************************
  * Webserver
  ************************************************************************************************************/
-var start = server$1.start = function(log, options, callback) {
-	gLog = log;
-	gRoot = options.root;
-	gOptions = options;
-	isLocal = !!options.isLocal;
+var start = server$1.start = function (log, options, callback) {
+    gLog = log;
+    gRoot = options.root;
+    gOptions = options;
+    isLocal = !!options.isLocal;
 
-	var self = this;
-	var server = http.createServer(function(req, res) {
-		// Let the status responder handle this request.
-		// We should prevent the user from creating workspace called status when we have these API.
-		if( req.url.indexOf("/status/") === 0) {
-			return;
-		};
-		if( quiesced) {
-			res.writeHead(404, {'Content-Type': 'text/json'});
-			res.end(JSON.stringify({ msg : "Invalid server state: quiesced."}));
-			return;
-		};
-		var r = new Request();
-		r.init(req, res);
-		if( gActivityWatcher) {
-			gActivityWatcher.onNewRequest(r);
-		};
-		r.execute();
-	});
-	httpServer = server$1.httpServer = server;
+    var self = this;
+    var server = http.createServer(function (req, res) {
+        // Let the status responder handle this request.
+        // We should prevent the user from creating workspace called status when we have these API.
+        if (req.url.indexOf("/status/") === 0) {
+            return;
+        };
+        if (quiesced) {
+            res.writeHead(404, { 'Content-Type': 'text/json' });
+            res.end(JSON.stringify({ msg: "Invalid server state: quiesced." }));
+            return;
+        };
+        var r = new Request();
+        r.init(req, res);
+        if (gActivityWatcher) {
+            gActivityWatcher.onNewRequest(r);
+        };
+        r.execute();
+    });
+    httpServer = server$1.httpServer = server;
 
-	if (typeof options.port != 'undefined') {
-		server.listen(options.port, '0.0.0.0', 30, function(error){
-			if( error) {
-				return callback(error);
-			}
-			callback(null, server.address().port);
-		});
-	} else {
-		listen(server, callback);
-	}
+    if (typeof options.port != 'undefined') {
+        server.listen(options.port, '0.0.0.0', 30, function (error) {
+            if (error) {
+                return callback(error);
+            }
+            callback(null, server.address().port);
+        });
+    } else {
+        listen(server, callback);
+    }
 };
 
-var addAppStorage = server$1.addAppStorage = function(appStorage) {
-	gAppStorage = appStorage;
+var addAppStorage = server$1.addAppStorage = function (appStorage) {
+    gAppStorage = appStorage;
 };
 
 // TODO once the new copy is used remove this.
-var addSeaports = server$1.addSeaports = function(seaports) {
-	gSeaports = seaports;
+var addSeaports = server$1.addSeaports = function (seaports) {
+    gSeaports = seaports;
 };
 
 // TODO once we move to new copy remove this.
-var setCopySrcBaseDir = server$1.setCopySrcBaseDir = function(directory) {
-	gCopySrcBaseDir = directory;
+var setCopySrcBaseDir = server$1.setCopySrcBaseDir = function (directory) {
+    gCopySrcBaseDir = directory;
 };
 
-var setActivityWatcher = server$1.setActivityWatcher = function( watcher) {
-	gActivityWatcher = watcher;
+var setActivityWatcher = server$1.setActivityWatcher = function (watcher) {
+    gActivityWatcher = watcher;
 };
 
 var quiesced = false;
 
-var quiesce = server$1.quiesce = function() {
-	quiesced = true;
+var quiesce = server$1.quiesce = function () {
+    quiesced = true;
 };
 
 var instrumentation = {
-	delay : 0,
-	defaultMaxTime : 120000,
-	maxTime : 120000,
+    delay: 0,
+    defaultMaxTime: 120000,
+    maxTime: 120000,
 
-	setDelay : function(ms) {
-		this.delay = ms;
-	},
-	setMaxTime : function(ms) {
-		this.maxTime = ms ? ms : this.defaultMaxTime;
-	},
-	_arrayCount : function( arr, workspacePath) {
-		// return all for testing.
-		var self = this;
-		if( !workspacePath) {
-			var ret = 0;
-			Object.keys(arr).forEach(function(key) {
-				ret += self._arrayCount(arr, key);
-			});
-			return ret;
-		};
-		if( arr[workspacePath] && arr[workspacePath].length) {
-			return arr[workspacePath].length;
-		};
-		return 0;
-	},
-	defferedRequestCount : function( workspacePath) {
-		return this._arrayCount( Request.prototype.deferredReqs, workspacePath);
-	},
-	currentRequestCount : function( workspacePath) {
-		return this._arrayCount( Request.prototype.currentReqs, workspacePath);
-	},
-	hasOutstandingRequests : function(workspacePath) {
-		var total = this.defferedRequestCount(workspacePath) +	this.currentRequestCount(workspacePath);
-		return total > 0;
-	}
+    setDelay: function (ms) {
+        this.delay = ms;
+    },
+    setMaxTime: function (ms) {
+        this.maxTime = ms ? ms : this.defaultMaxTime;
+    },
+    _arrayCount: function (arr, workspacePath) {
+        // return all for testing.
+        var self = this;
+        if (!workspacePath) {
+            var ret = 0;
+            Object.keys(arr).forEach(function (key) {
+                ret += self._arrayCount(arr, key);
+            });
+            return ret;
+        };
+        if (arr[workspacePath] && arr[workspacePath].length) {
+            return arr[workspacePath].length;
+        };
+        return 0;
+    },
+    defferedRequestCount: function (workspacePath) {
+        return this._arrayCount(Request.prototype.deferredReqs, workspacePath);
+    },
+    currentRequestCount: function (workspacePath) {
+        return this._arrayCount(Request.prototype.currentReqs, workspacePath);
+    },
+    hasOutstandingRequests: function (workspacePath) {
+        var total = this.defferedRequestCount(workspacePath) + this.currentRequestCount(workspacePath);
+        return total > 0;
+    }
 };
 var instrumentation_1 = server$1.instrumentation = instrumentation;
 
-var closeWorkspace = server$1.closeWorkspace = function(uid, folder, callback) {
-	var r = new Request();
-	r.initInternalClose(uid, folder, callback);
-	r.execute();
+var closeWorkspace = server$1.closeWorkspace = function (uid, folder, callback) {
+    var r = new Request();
+    r.initInternalClose(uid, folder, callback);
+    r.execute();
 };
 
 /**
