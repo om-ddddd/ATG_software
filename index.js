@@ -73,7 +73,7 @@ const init = () => {
                         updateRequiredWLSpan();
                         // Set initial values for quick input and hold for syncing mainoutput with cum_sineinput
                         pmVars.quick_input = pmVars.mainoutput;
-                        pmVars.quick_hold = 1;
+                        pmVars.quick_hold = 0;
                         // Add listeners for future changes
                         window.pmVars.addListener('mainoutput', updateActualWLSpan);
                         window.pmVars.addListener('cum_sineinput', updateRequiredWLSpan);
@@ -129,7 +129,7 @@ function startSineWaveGenerator() {
 
     animationId = requestAnimationFrame(updateSineValue);
 }
-let capValue = 707; // Default to capacity for 1 wave (1 * sampleRate * 707)
+let capValue = 707 ; // Default to capacity for 1 wave (1 * sampleRate * 707 )
 
 /**
  * Configure the oscilloscope and set up input listeners
@@ -151,7 +151,7 @@ function setupOscilloscope() {
   if (waveInput && waveInput.value) {
     const value = parseFloat(waveInput.value);
     if (!isNaN(value)) {
-      capValue = Math.round(value * sampleRate * 707);
+      capValue = Math.round(value * sampleRate * 707 );
     }
   }
   
@@ -185,7 +185,7 @@ function setupOscilloscope() {
       //console.log('User entered wave count:', value);
       
       // Calculate new capacity based on wave count
-      capValue = Math.round(value * sampleRate * 707);
+      capValue = Math.round(value * sampleRate * 707 );
       //console.log(`Updating capacity to: ${capValue}`);
       
       // Apply new capacity to oscilloscope
