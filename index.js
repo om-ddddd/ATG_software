@@ -274,7 +274,9 @@ function setupTideRangeListener() {
                 tideRangeDropdown.dispatchEvent(tideSelectedEvent);
                 //console.log(`Tide selected: ${selectedTideName}`);
                 
-                // Fetch the selected tide details from tide.json
+                // Fetch the selected tide details from tide.json                // Save the selected tide name in localStorage
+                localStorage.setItem('selectedTideName', selectedTideName);
+                
                 fetch('/api/getAllTides')
                     .then(response => response.json())
                     .then(data => {
@@ -347,8 +349,7 @@ function setupTabPanelObservers() {
   // Target elements
   const runTabPanel = document.getElementById('run');
   const settingsTabPanel = document.getElementById('page_settings');
-  const tideManipulationTabPanel = document.getElementById('tide_manipulation');  
-  // Function to run when the 'run' tab panel becomes visible
+  const tideManipulationTabPanel = document.getElementById('tide_manipulation');    // Function to run when the 'run' tab panel becomes visible
   function runTabPanelFunction() {
     //console.log('Run tab panel is now visible!');
     // Add your custom code here for when the 'run' tab panel becomes visible
@@ -376,6 +377,20 @@ function setupTabPanelObservers() {
               option.textContent = `${tide.name} (Range: ${tide.range}, Offset: ${tide.offset})`;
               dropdown.appendChild(option);
             });
+            
+            // Select previously saved tide from localStorage if available
+            const savedTideName = localStorage.getItem('selectedTideName');
+            if (savedTideName) {
+              // Find and select the saved option if it exists
+              const savedOption = Array.from(dropdown.options).find(option => option.value === savedTideName);
+              if (savedOption) {
+                dropdown.value = savedTideName;
+                
+                // Trigger change event to load tide data
+                const changeEvent = new Event('change');
+                dropdown.dispatchEvent(changeEvent);
+              }
+            }
           }
         }
       })
