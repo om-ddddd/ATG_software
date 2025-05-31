@@ -9,12 +9,12 @@ import { GcUtils } from './components/@ti/gc-core-assets/lib/GcUtils';
 import { GcConsole } from './components/@ti/gc-core-assets/lib/GcConsole';
 import { GcWidget } from './components/@ti/gc-widget-base/lib/GcWidget';
 import { ActionRegistry } from './components/@ti/gc-widget-menu/lib/ActionRegistry';
-import { initializePmVars } from './pm-variables.js';
-import { initAdministration } from './auth.js';
+import { initializePmVars } from './frontendJSFiles/pm-variables.js';
+import { initAdministration } from './frontendJSFiles/auth.js';
 
 // Initialize the application when the DOM is fully loaded
 
-import {initAdminAuth} from './admin-auth.js';
+import {initAdminAuth} from './frontendJSFiles/admin-auth.js';
 
 
 

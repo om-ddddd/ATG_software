@@ -6,7 +6,7 @@
 // Export the init function that will be called from index.html
 export function initAdminAuth() {
   // Initialize the login dialog
-  setupLoginDialog();
+  // setupLoginDialog();
 }
 
 /**
@@ -146,7 +146,7 @@ window.addEventListener('DOMContentLoaded', () => {
   
   if (!isLoggedIn) {
     // If not logged in, initialize the login dialog
-    initAdminAuth();
+    // initAdminAuth();
   } else {
     // If already logged in, make sure the application is accessible
     document.getElementById('loginDialog').style.display = 'none';
@@ -156,4 +156,4 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Initialize auth when this module is loaded
-initAdminAuth();
+// initAdminAuth();

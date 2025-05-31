@@ -6,5 +6,13 @@
     "fineOffset": 0,
     "kp": 0.5,
     "ki": 0.3
+  },
+  {
+    "name": "vji",
+    "calibrationFactor": 11,
+    "offset": 1,
+    "fineOffset": 1,
+    "kp": 1,
+    "ki": 1
   }
 ]

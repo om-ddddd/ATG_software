@@ -1,4 +1,4 @@
-import html2canvas from "./node_modules/html2canvas/dist/html2canvas.esm.js";
+import html2canvas from "html2canvas/dist/html2canvas.esm.js";
 
 // This file handles export functionality like screenshots and printing
 // Functions will be initialized when the accept button is clicked

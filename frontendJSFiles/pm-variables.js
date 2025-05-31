@@ -2,7 +2,7 @@
  * Module for handling PM model variables access and manipulation
  */
 
-import { bindingRegistry, valueChangedEventType } from './components/@ti/gc-core-databind/lib/CoreDatabind';
+import { bindingRegistry, valueChangedEventType } from '../components/@ti/gc-core-databind/lib/CoreDatabind';
 
 // Export function to initialize PM variables
 export async function initializePmVars() {
