@@ -70,12 +70,14 @@ export function startRecording(interval = DEFAULT_INTERVAL, onSuccess = null, on
     }
     
     return new Promise((resolve, reject) => {
-        try {
-            // Verify that pmVars is initialized
+        try {            // Verify that pmVars is initialized
             if (!window.pmVars) {
                 console.warn('pmVars not initialized, attempting to proceed with default values');
             }
               const filename = generateCsvFilename();
+              
+            // Store the current recording filename in localStorage for later use when downloading
+            localStorage.setItem('currentRecordingFilename', filename);
             
             // Create initial record to initialize the CSV file
             recordDataPoint(filename)
@@ -221,22 +223,25 @@ export function recordDataPoint(filename = null) {
 
 /**
  * Download the recorded CSV data
- * @param {string} filename - Optional specific filename to download
+ * @param {string} customFilename - Optional custom filename for downloading
  * @returns {Promise<Object>} Status of the operation
  */
-export function downloadCsvData(filename = null) {
+export function downloadCsvData(customFilename = null) {
     return new Promise((resolve, reject) => {
         try {
-            // Use the provided filename or generate one based on current settings
-            const csvFilename = filename || generateCsvFilename();
+            // Get the ACTUAL filename used for recording (this is what exists on server)
+            const actualFilename = localStorage.getItem('currentRecordingFilename') || generateCsvFilename();
             
-            // Create download URL
-            const downloadUrl = `/api/downloadWaterLevels?filename=${encodeURIComponent(csvFilename)}`;
+            // Create download URL with the actual server filename
+            const downloadUrl = `/api/downloadWaterLevels?filename=${encodeURIComponent(actualFilename)}`;
+            
+            // Use custom filename for the browser download if provided
+            const displayFilename = customFilename || actualFilename;
             
             // Create a link element and trigger the download
             const link = document.createElement('a');
             link.href = downloadUrl;
-            link.download = csvFilename;
+            link.download = displayFilename; // This is what the browser will save it as
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -244,7 +249,7 @@ export function downloadCsvData(filename = null) {
             resolve({
                 success: true,
                 message: 'CSV download initiated',
-                filename: csvFilename
+                filename: displayFilename
             });
         } catch (error) {
             reject(new Error('Error downloading CSV data: ' + error.message));
