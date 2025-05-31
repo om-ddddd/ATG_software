@@ -57,7 +57,7 @@ const init = () => {
                     setupOscilloscope();
                     
                     // Initialize export functions after oscilloscope is set up
-                    import('./export-functions.js').then(module => {
+                    import('./frontendJSFiles/export-functions.js').then(module => {
                         if (typeof module.initializeExportFunctions === 'function') {
                             //console.log('Initializing export functions...');
                             module.initializeExportFunctions();
