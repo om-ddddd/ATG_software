@@ -17,14 +17,15 @@ function setupWaterLevelRoutes(app, options = {}) {
     // Use provided modules or defaults
     const fs_default = fs_module || fs;
     const path_default = path_module || path;
-    
-    // Use custom data path if provided, otherwise use default path
+      // Use custom data path if provided, otherwise use default path
     const dataDirectory = data_path || path_default.join(__dirname, '../data/waterlevels');
-    
-    // Ensure the data directory exists
-    if (!fs_default.existsSync(dataDirectory)) {
-        fs_default.mkdirSync(dataDirectory, { recursive: true });
-        console.log(`Created water level data directory: ${dataDirectory}`);
+      // Ensure the data directory exists
+    try {
+        if (!fs_default.existsSync(dataDirectory)) {
+            fs_default.mkdirSync(dataDirectory, { recursive: true });
+        }
+    } catch (error) {
+        // Will attempt to create directory on first write operation
     }
     
     // Helper function to get file path based on filename
@@ -32,26 +33,47 @@ function setupWaterLevelRoutes(app, options = {}) {
         // Sanitize filename to prevent directory traversal attacks
         const sanitizedFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
         return path_default.join(dataDirectory, sanitizedFilename);
-    };
-
-    // Helper function to ensure CSV file exists with headers
+    };    // Helper function to ensure CSV file exists with headers
     const ensureCSVExists = (filePath) => {
-        if (!fs_default.existsSync(filePath)) {
-            fs_default.writeFileSync(filePath, 'timestamp,actual_water_level,required_water_level\n');
+        try {
+            // Make sure directory exists
+            const dirPath = path_default.dirname(filePath);
+            if (!fs_default.existsSync(dirPath)) {
+                fs_default.mkdirSync(dirPath, { recursive: true });
+            }
+            
+            // Create file with headers if it doesn't exist
+            if (!fs_default.existsSync(filePath)) {
+                fs_default.writeFileSync(filePath, 'timestamp,actual_water_level,required_water_level\n');
+            }        } catch (err) {
+            throw new Error(`Failed to create/access CSV file: ${err.message}`);
         }
     };
     
-    console.log(`Water level CSV management routes initialized. Using data path: ${dataDirectory}`);
-    
-    // 1. Write water level data to CSV (with custom filename support)
+    // Water level CSV management routes initialized
+      // 1. Write water level data to CSV (with custom filename support)
     app.post('/api/writeWaterLevel', (req, res) => {
         try {
             const { timestamp, actual_water_level, required_water_level, filename } = req.body;
 
-            if (!timestamp || typeof actual_water_level !== 'number' || typeof required_water_level !== 'number') {
+                if (!timestamp) {
                 return res.status(400).json({ 
                     success: false, 
-                    message: 'Invalid water level data. All fields are required and values must be numbers.' 
+                    message: 'Missing timestamp' 
+                });
+            }
+            
+            if (typeof actual_water_level !== 'number') {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: `Invalid actual_water_level: must be a number, got ${typeof actual_water_level}` 
+                });
+            }
+            
+            if (typeof required_water_level !== 'number') {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: `Invalid required_water_level: must be a number, got ${typeof required_water_level}` 
                 });
             }
 
@@ -71,9 +93,7 @@ function setupWaterLevelRoutes(app, options = {}) {
                 success: true, 
                 message: 'Water level data recorded successfully',
                 filename: path_default.basename(waterLevelsCsvPath)
-            });
-        } catch (error) {
-            console.error('Error writing water level data:', error);
+            });        } catch (error) {
             res.status(500).json({ 
                 success: false, 
                 message: 'Internal server error' 
@@ -129,9 +149,7 @@ function setupWaterLevelRoutes(app, options = {}) {
                 success: true, 
                 waterLevels: results,
                 filename: path_default.basename(waterLevelsCsvPath)
-            });
-        } catch (error) {
-            console.error('Error reading water level data:', error);
+            });        } catch (error) {
             res.status(500).json({ 
                 success: false, 
                 message: 'Failed to read water level data' 

@@ -11,6 +11,7 @@ import { GcWidget } from './components/@ti/gc-widget-base/lib/GcWidget';
 import { ActionRegistry } from './components/@ti/gc-widget-menu/lib/ActionRegistry';
 import { initializePmVars } from './frontendJSFiles/pm-variables.js';
 import { initAdministration } from './frontendJSFiles/auth.js';
+import { startRecording, stopRecording } from './frontendJSFiles/csv-handler.js';
 
 // Initialize the application when the DOM is fully loaded
 
@@ -45,16 +46,60 @@ const init = () => {
                 // Get the index of the main_tab
                 const mainTabIndex = Array.from(tabContainer.querySelectorAll('gc-widget-tab-panel')).findIndex(
                     panel => panel.id === 'main_tab'
-                );
-
-                if (mainTabIndex >= 0) {
+                );                if (mainTabIndex >= 0) {
                     tabContainer.index = mainTabIndex;
+                      // Save the current date and time in localStorage as instance (Kolkata timezone, 24-hour format)
+                    const now = new Date();
+                    
+                    // Format the date and time in Kolkata timezone using Intl.DateTimeFormat
+                    const dateOptions = { 
+                        timeZone: 'Asia/Kolkata',
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit',
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        second: '2-digit',
+                        hour12: false // Use 24-hour format
+                    };
+                    
+                    // Format the date using Intl API with Kolkata timezone
+                    const kolkataFormatter = new Intl.DateTimeFormat('en-IN', dateOptions);
+                    const formattedParts = kolkataFormatter.formatToParts(now);
+                    
+                    // Extract date parts and construct the formatted string (YYYY-MM-DD HH:MM:SS)
+                    const dateParts = {};
+                    formattedParts.forEach(part => {
+                        dateParts[part.type] = part.value;
+                    });
+                    
+                    const formattedDateTime = 
+                        `${dateParts.year}-${dateParts.month}-${dateParts.day} ${dateParts.hour}:${dateParts.minute}:${dateParts.second}`;
+                      localStorage.setItem('instance', formattedDateTime);
                     
                     // Start updating water level values after accept button is clicked
                     startSineWaveGenerator();
-                    
-                    // Setup the oscilloscope with proper configuration
+                      // Setup the oscilloscope with proper configuration
                     setupOscilloscope();
+                      // Ensure pmVars are initialized before starting CSV recording
+                    if (!window.pmVars) {
+                        setTimeout(() => startCsvRecording(), 1000); // Try again after a delay
+                    } else {
+                        startCsvRecording();
+                    }
+                    
+                    // Function to start CSV recording
+                    function startCsvRecording() {
+                              // Start recording CSV data for water levels (update every 1 second)
+                    startRecording(1000)
+                        .then(() => {
+                            // Recording started successfully
+                            console.log('csv writing started successfully');
+                        })
+                        .catch(() => {
+                            // Silent handling of errors
+                        });
+                    }
                     
                     // Initialize export functions after oscilloscope is set up
                     import('./frontendJSFiles/export-functions.js').then(module => {
@@ -84,8 +129,6 @@ const init = () => {
             });
         });
     });
-
-    // Add event listeners for H and R buttons
     GcWidget.querySelector('#button').then(hButton => {
         if (hButton) {
             hButton.addEventListener('click', () => {
@@ -101,8 +144,6 @@ const init = () => {
                 if (window.pmVars) {
                     window.pmVars.hold_status = 0;
                     window.pmVars.quick_hold = 0;
-                    //console.log('quick_hold reset to 0');
-                    //console.log(quick_hold);
                 }
             });
         }
@@ -110,30 +151,18 @@ const init = () => {
 
 };
 
-// Call the init function to set up event listeners
-// init();
 function startSineWaveGenerator() {
     if (animationId) {
         cancelAnimationFrame(animationId);
     }
-
     startTime = performance.now();
-
     function updateSineValue(timestamp) {
-        // Calculate elapsed time
-
-
-
         animationId = requestAnimationFrame(updateSineValue);
     }
 
     animationId = requestAnimationFrame(updateSineValue);
 }
-let capValue = 707 ; // Default to capacity for 1 wave (1 * sampleRate * 707 )
-
-/**
- * Configure the oscilloscope and set up input listeners
- */
+let capValue = 707 ; //
 function setupOscilloscope() {
   const osc = document.getElementById('oscilloscope');
   const waveInput = document.getElementById('no._of_waves');
@@ -142,26 +171,16 @@ function setupOscilloscope() {
     console.error('Oscilloscope element not found');
     return;
   }
-  
-  // Get sample rate from oscilloscope
   const sampleRate = parseFloat(osc.getAttribute('sample-rate') || 7.09);
-  //console.log(`Using oscilloscope sample rate: ${sampleRate}`);
-  
-  // Set initial default value if wave input has a value
   if (waveInput && waveInput.value) {
     const value = parseFloat(waveInput.value);
     if (!isNaN(value)) {
       capValue = Math.round(value * sampleRate * 707 );
     }
   }
-  
-  // Initialize oscilloscope with current capValue
-  //console.log('Initializing oscilloscope...');
   osc.setAttribute('capacity', 1);
   osc.setAttribute('trigger-mode', 'manual');
   osc.setAttribute('trigger-armed', true);
-  
-  // Short delay before applying final settings
   setTimeout(() => {
     osc.setAttribute('capacity', capValue);
     osc.setAttribute('trigger-mode', 'auto');
@@ -170,42 +189,23 @@ function setupOscilloscope() {
     const hPositionSlider = document.getElementById('h_position');
     if (hPositionSlider) {
       hPositionSlider.setAttribute('max', capValue);
-      //console.log(`Updated h_position slider max value to: ${capValue}`);
     }
-    
-    //console.log(`Oscilloscope initialized with capacity: ${capValue}`);
   }, 100);
-  
-  // Configure input listener for future changes
   if (waveInput) {
     waveInput.addEventListener('input', function () {
       const value = parseFloat(this.value);
       if (isNaN(value)) return;
-      
-      //console.log('User entered wave count:', value);
-      
-      // Calculate new capacity based on wave count
       capValue = Math.round(value * sampleRate * 707 );
-      //console.log(`Updating capacity to: ${capValue}`);
-      
-      // Apply new capacity to oscilloscope
       osc.setAttribute('capacity', capValue);
-      
-      // Update horizontal position slider max value to match the capacity
       const hPositionSlider = document.getElementById('h_position');
       if (hPositionSlider) {
         hPositionSlider.setAttribute('max', capValue);
-        //console.log(`Updated h_position slider max value to: ${capValue}`);
       }
     });
-    //console.log('Wave input listener configured');
   } else {
     console.warn('Wave input element not found');
   }
 }
-
-
-// Update Actual WL and Required WL spans in container_1
 function updateActualWLSpan() {
     const actualWLValue = document.getElementById('actual_wl_value');
     if (actualWLValue && window.pmVars) {
@@ -232,8 +232,6 @@ function updateRequiredWLSpan() {
         }
     }
 }
-
-// Initialize water level displays to "00"
 function initWaterLevelDisplays() {
     const actualWLValue = document.getElementById('actual_wl_value');
     const requiredWLValue = document.getElementById('required_wl_value');
@@ -246,7 +244,6 @@ function initWaterLevelDisplays() {
         requiredWLValue.textContent = "00.00";
     }
 }
-// Initialize water level displays to "00" on page load
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
     initWaterLevelDisplays();
     setupTideRangeListener();
@@ -256,15 +253,23 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
         setupTideRangeListener();
     });
 }
-
-// Setup tide range dropdown change event listener
 function setupTideRangeListener() {
     const tideRangeDropdown = document.getElementById('tide-range');
     if (tideRangeDropdown) {
+        const savedTideName = localStorage.getItem('selectedTideName');
+        if (savedTideName) {
+            setTimeout(() => {
+                if (Array.from(tideRangeDropdown.options).some(option => option.value === savedTideName)) {
+                    tideRangeDropdown.value = savedTideName;
+                    const changeEvent = new Event('change');
+                    tideRangeDropdown.dispatchEvent(changeEvent);
+                }
+            }, 500);
+        }
+        
         tideRangeDropdown.addEventListener('change', (event) => {
             const selectedTideName = event.target.value;
             if (selectedTideName) {
-                // Create and dispatch a custom event when a tide is selected
                 const tideSelectedEvent = new CustomEvent('tideSelected', {
                     detail: { tideName: selectedTideName },
                     bubbles: true,
@@ -272,9 +277,6 @@ function setupTideRangeListener() {
                 });
                 
                 tideRangeDropdown.dispatchEvent(tideSelectedEvent);
-                //console.log(`Tide selected: ${selectedTideName}`);
-                
-                // Fetch the selected tide details from tide.json                // Save the selected tide name in localStorage
                 localStorage.setItem('selectedTideName', selectedTideName);
                 
                 fetch('/api/getAllTides')
@@ -283,21 +285,14 @@ function setupTideRangeListener() {
                         if (data.success) {
                             const selectedTide = data.tides.find(tide => tide.name === selectedTideName);
                             if (selectedTide) {
-                                //console.log('Selected tide details:', selectedTide);
-                                
-                                // Update offset input value with selected tide offset
                                 const offsetInput = document.getElementById('input_6');
                                 if (offsetInput) {
                                     offsetInput.value = selectedTide.offset || '';
                                 }
-                                
-                                // Update required water level display
                                 if (window.pmVars) {
                                     window.pmVars.sineinput = selectedTide.range;
                                     updateRequiredWLSpan();
                                 }
-                                
-                                // You can add more UI updates based on the selected tide here
                             }
                         } else {
                             console.error('Failed to get tide details:', data.message);
@@ -310,8 +305,6 @@ function setupTideRangeListener() {
         });
     }
 }
-// We've moved the listener setup to the accept button click handler
-
 document.readyState === 'complete' ? init() : document.addEventListener('DOMContentLoaded', init);
 // Authentication code has been moved to auth.js
 
@@ -341,24 +334,12 @@ syntax: bindingRegistry.bind(targetBinding, sourceBinding, [getter], [setter]);
 ActionRegistry.registerAction('cmd_exit', {
     run() { GcUtils.isNW ? require('nw.gui').Window.get().close() : window.close(); }
 });
-
-/**
- * Setup MutationObservers to detect when specific tab panels become visible
- */
 function setupTabPanelObservers() {
   // Target elements
   const runTabPanel = document.getElementById('run');
   const settingsTabPanel = document.getElementById('page_settings');
   const tideManipulationTabPanel = document.getElementById('tide_manipulation');    // Function to run when the 'run' tab panel becomes visible
   function runTabPanelFunction() {
-    //console.log('Run tab panel is now visible!');
-    // Add your custom code here for when the 'run' tab panel becomes visible
-    // For example:
-    // - Initialize components 
-    // - Load data
-    // - Set default values
-    
-    // Update the tide dropdown with current tide options
     fetch('/api/getAllTides')
       .then(response => response.json())
       .then(data => {
@@ -399,17 +380,8 @@ function setupTabPanelObservers() {
       });
   }
   
-  // Function to run when the 'page_settings' tab panel becomes visible
   function settingsTabPanelFunction() {
-    //console.log('Settings tab panel is now visible!');
-    // Add your custom code here for when the 'page_settings' tab panel becomes visible
-    // For example:
-    // - Load settings
-    // - Update configuration UI
-    // - Fetch calibration values
   }
-  
-  // Set up observer for the 'run' tab panel
   if (runTabPanel) {
     const runObserver = new MutationObserver(mutations => {
       mutations.forEach(mutation => {
@@ -418,33 +390,23 @@ function setupTabPanelObservers() {
           mutation.attributeName === 'class' ||
           mutation.attributeName === 'hidden'
         ) {
-          // Check if the panel is visible using computed style
           const isVisible = window.getComputedStyle(runTabPanel).display !== 'none' && 
                            !runTabPanel.hasAttribute('hidden');
           
           if (isVisible) {
-            //console.log('Run tab panel visibility detected!');
             runTabPanelFunction();
             // initAdminAuth(); // Initialize admin authentication if needed
-            
-            // Optional: Stop observing after it's visible once
-            // runObserver.disconnect();
           }
         }
       });
     });
-    
-    // Start observing
     runObserver.observe(runTabPanel, { 
       attributes: true, 
       attributeFilter: ['style', 'class', 'hidden'] 
     });
-    //console.log('Run tab panel observer initialized');
   } else {
     console.warn('Run tab panel element not found');
   }
-  
-  // Set up observer for the 'page_settings' tab panel
   if (settingsTabPanel) {
     const settingsObserver = new MutationObserver(mutations => {
       mutations.forEach(mutation => {
@@ -453,16 +415,12 @@ function setupTabPanelObservers() {
           mutation.attributeName === 'class' ||
           mutation.attributeName === 'hidden'
         ) {
-          // Check if the panel is visible using computed style
           const isVisible = window.getComputedStyle(settingsTabPanel).display !== 'none' && 
                            !settingsTabPanel.hasAttribute('hidden');
           
           if (isVisible) {
-            //console.log('Settings tab panel visibility detected!');
             settingsTabPanelFunction();
             // initAdminAuth(); // Initialize admin authentication if needed
-            // Optional: Stop observing after it's visible once
-            // settingsObserver.disconnect();
           }
         }
       });
@@ -473,36 +431,22 @@ function setupTabPanelObservers() {
       attributes: true, 
       attributeFilter: ['style', 'class', 'hidden'] 
     });
-    //console.log('Settings tab panel observer initialized');
   } else {
     console.warn('Settings tab panel element not found');
   }
-  
-  // Set up observer for the 'tide_manipulation' tab panel
   if (tideManipulationTabPanel) {
-    // Function to run when the 'tide_manipulation' tab panel becomes visible
+   
     function tideManipulationTabPanelFunction() {
-      //console.log('Tide Manipulation tab panel is now visible!');
-      // Add custom code here for when the tide manipulation panel becomes visible
-      // For example:
-      // - Load existing tide data
-      // - Initialize tide manipulation controls
-      // - Set up form validation
-      
-      // Fetch all tides to populate any dropdown or list in this panel
+    
       fetch('/api/getAllTides')
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            //console.log('Loaded tides for manipulation:', data.tides.length);
-            // Update UI with tide data if needed
           }
         })
         .catch(error => {
           console.error('Error loading tides for manipulation:', error);
         });
-        
-      // Initialize admin authentication if needed
       // initAdminAuth();
     }
     
@@ -513,38 +457,37 @@ function setupTabPanelObservers() {
           mutation.attributeName === 'class' ||
           mutation.attributeName === 'hidden'
         ) {
-          // Check if the panel is visible using computed style
           const isVisible = window.getComputedStyle(tideManipulationTabPanel).display !== 'none' && 
                            !tideManipulationTabPanel.hasAttribute('hidden');
-          
           if (isVisible) {
-            //console.log('Tide Manipulation tab panel visibility detected!');
             tideManipulationTabPanelFunction();
-            
-            // Optional: Stop observing after it's visible once
-            // tideManipulationObserver.disconnect();
           }
         }
       });
     });
-    
-    // Start observing
     tideManipulationObserver.observe(tideManipulationTabPanel, { 
       attributes: true, 
       attributeFilter: ['style', 'class', 'hidden'] 
     });
-    //console.log('Tide Manipulation tab panel observer initialized');
   } else {
     console.warn('Tide Manipulation tab panel element not found');
   }
   
 }
-
-// Add this to your init function or call it directly
 document.addEventListener('DOMContentLoaded', () => {
   setupTabPanelObservers();
 });
 
-// Or add this line to your existing init function:
 // setupTabPanelObservers();
+
+// Add event listener to stop CSV recording when the window is closed
+window.addEventListener('beforeunload', () => {
+  stopRecording()
+    .then(() => {
+      // Recording stopped successfully
+    })
+    .catch(() => {
+      // Silent handling of errors
+    });
+});
 
