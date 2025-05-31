@@ -43,5 +43,10 @@
     "name": "Tide_26",
     "range": 26,
     "offset": 36
+  },
+  {
+    "name": "af",
+    "range": 323,
+    "offset": 232
   }
 ]

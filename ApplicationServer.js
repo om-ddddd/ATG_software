@@ -218,252 +218,38 @@ class AbstractServer {
                 }
             });
         });
-        const tidePath = path__default["default"].join(__dirname, 'tide.json');
-        const settingsPath = path__default["default"].join(__dirname, 'settings.json');
-
-        // Settings Management Routes
-        
-        // 1. Create a new setting
-        this.app.post('/api/createSetting', (req, res) => {
-            try {
-                const { name, calibrationFactor, offset, fineOffset, kp, ki } = req.body;
-
-                if (!name || typeof calibrationFactor !== 'number' || typeof offset !== 'number' || 
-                    typeof fineOffset !== 'number' || typeof kp !== 'number' || typeof ki !== 'number') {
-                    return res.status(400).json({ success: false, message: 'Invalid setting data' });
-                }
-
-                const settingsData = fs__default["default"].existsSync(settingsPath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
-                    : [];
-
-                // Check for duplicate setting name
-                if (settingsData.some(setting => setting.name === name)) {
-                    return res.status(409).json({ success: false, message: 'Setting with this name already exists' });
-                }
-
-                settingsData.push({ name, calibrationFactor, offset, fineOffset, kp, ki });
-                fs__default["default"].writeFileSync(settingsPath, JSON.stringify(settingsData, null, 2), 'utf8');
-
-                res.status(201).json({ success: true, message: 'Setting created successfully' });
-            } catch (error) {
-                console.error('Error creating setting:', error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
-            }
+        // Importing and setting up the static file serving
+        // Import and setup Settings Management Routes
+        const setupSettingsRoutes = require('./backendRoutes/settingsRoutes');
+        // Initialize the settings management routes
+        setupSettingsRoutes(this.app, {
+            fs_module: fs__default["default"],
+            path_module: path__default["default"],
+            json5_module: JSON5__default["default"]
         });
-
-        // 2. Get all settings
-        this.app.get('/api/getAllSettings', (req, res) => {
-            try {
-                const settingsData = fs__default["default"].existsSync(settingsPath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
-                    : [];
-
-                res.status(200).json({ success: true, settings: settingsData });
-            } catch (error) {
-                console.error('Error reading settings:', error);
-                res.status(500).json({ success: false, message: 'Failed to read settings data' });
-            }
+        // Import and setup Tide Management Routes
+        const setupTideRoutes = require('./backendRoutes/tideRoutes');     
+        // Initialize the tide management routes
+        setupTideRoutes(this.app, {
+            fs_module: fs__default["default"],
+            path_module: path__default["default"],
+            json5_module: JSON5__default["default"]
         });
-
-        // 3. Modify a setting
-        this.app.post('/api/modifySetting', (req, res) => {
-            try {
-                const { name, newCalibrationFactor, newOffset, newFineOffset, newKp, newKi } = req.body;
-
-                if (!name || typeof newCalibrationFactor !== 'number' || typeof newOffset !== 'number' || 
-                    typeof newFineOffset !== 'number' || typeof newKp !== 'number' || typeof newKi !== 'number') {
-                    return res.status(400).json({ success: false, message: 'Invalid input' });
-                }
-
-                const settingsData = fs__default["default"].existsSync(settingsPath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
-                    : [];
-
-                const index = settingsData.findIndex(setting => setting.name === name);
-
-                if (index === -1) {
-                    return res.status(404).json({ success: false, message: 'Setting not found' });
-                }
-
-                settingsData[index].calibrationFactor = newCalibrationFactor;
-                settingsData[index].offset = newOffset;
-                settingsData[index].fineOffset = newFineOffset;
-                settingsData[index].kp = newKp;
-                settingsData[index].ki = newKi;
-
-                fs__default["default"].writeFileSync(settingsPath, JSON.stringify(settingsData, null, 2), 'utf8');
-
-                res.status(200).json({ success: true, message: 'Setting updated successfully' });
-            } catch (error) {
-                console.error('Error modifying setting:', error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
-            }
-        });
-
-        // 4. Delete a setting
-        this.app.post('/api/deleteSetting', (req, res) => {
-            try {
-                const { name } = req.body;
-
-                if (!name) {
-                    return res.status(400).json({ success: false, message: 'Setting name is required' });
-                }
-
-                const settingsData = fs__default["default"].existsSync(settingsPath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(settingsPath, 'utf8'))
-                    : [];
-
-                const updatedSettings = settingsData.filter(setting => setting.name !== name);
-
-                if (updatedSettings.length === settingsData.length) {
-                    return res.status(404).json({ success: false, message: 'Setting not found' });
-                }
-
-                fs__default["default"].writeFileSync(settingsPath, JSON.stringify(updatedSettings, null, 2), 'utf8');
-
-                res.status(200).json({ success: true, message: 'Setting deleted successfully' });
-            } catch (error) {
-                console.error('Error deleting setting:', error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
-            }
-        });
-
-        // Tide Management Routes (existing)
-
-        // 1. Create a new tide
-        this.app.post('/api/createTide', (req, res) => {
-            try {
-                const { name, range, offset } = req.body;
-
-                if (!name || typeof range !== 'number' || typeof offset !== 'number') {
-                    return res.status(400).json({ success: false, message: 'Invalid tide data' });
-                }
-
-                const tidesData = fs__default["default"].existsSync(tidePath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-                    : [];
-
-                // Check for duplicate tide name
-                if (tidesData.some(tide => tide.name === name)) {
-                    return res.status(409).json({ success: false, message: 'Tide with this name already exists' });
-                }
-
-                tidesData.push({ name, range, offset });
-                fs__default["default"].writeFileSync(tidePath, JSON.stringify(tidesData, null, 2), 'utf8');
-
-                res.status(201).json({ success: true, message: 'Tide created successfully' });
-            } catch (error) {
-                console.error('Error creating tide:', error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
-            }
-        });
-
-        // 2. Get all tides
-        this.app.get('/api/getAllTides', (req, res) => {
-            try {
-                const tidesData = fs__default["default"].existsSync(tidePath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-                    : [];
-
-                res.status(200).json({ success: true, tides: tidesData });
-            } catch (error) {
-                console.error('Error reading tides:', error);
-                res.status(500).json({ success: false, message: 'Failed to read tide data' });
-            }
-        });
-
-        // 3. Modify a tide
-        this.app.post('/api/modifyTide', (req, res) => {
-            try {
-                const { name, newRange, newOffset } = req.body;
-
-                if (!name || typeof newRange !== 'number' || typeof newOffset !== 'number') {
-                    return res.status(400).json({ success: false, message: 'Invalid input' });
-                }
-
-                const tidesData = fs__default["default"].existsSync(tidePath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-                    : [];
-
-                const index = tidesData.findIndex(tide => tide.name === name);
-
-                if (index === -1) {
-                    return res.status(404).json({ success: false, message: 'Tide not found' });
-                }
-
-                tidesData[index].range = newRange;
-                tidesData[index].offset = newOffset;
-
-                fs__default["default"].writeFileSync(tidePath, JSON.stringify(tidesData, null, 2), 'utf8');
-
-                res.status(200).json({ success: true, message: 'Tide updated successfully' });
-            } catch (error) {
-                console.error('Error modifying tide:', error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
-            }
-        });
-        this.app.post('/api/deleteTide', (req, res) => {
-            try {
-                const { name } = req.body;
-
-                if (!name) {
-                    return res.status(400).json({ success: false, message: 'Tide name is required' });
-                }
-
-                const tidesData = fs__default["default"].existsSync(tidePath)
-                    ? JSON5__default["default"].parse(fs__default["default"].readFileSync(tidePath, 'utf8'))
-                    : [];
-
-                const updatedTides = tidesData.filter(tide => tide.name !== name);
-
-                if (updatedTides.length === tidesData.length) {
-                    return res.status(404).json({ success: false, message: 'Tide not found' });
-                }
-
-                fs__default["default"].writeFileSync(tidePath, JSON.stringify(updatedTides, null, 2), 'utf8');
-
-                res.status(200).json({ success: true, message: 'Tide deleted successfully' });
-            } catch (error) {
-                console.error('Error deleting tide:', error);
-                res.status(500).json({ success: false, message: 'Internal server error' });
-            }
-        });
-
-
-        this.app.post('/api/changeUser', (req, res) => {
-            try {
-                const { userType, newUserName, currentPassword, newPassword } = req.body;
-                const usersPath = path__default["default"].join(__dirname, 'users.json');
-
-                // Read the users.json file
-                const usersData = JSON5__default["default"].parse(fs__default["default"].readFileSync(usersPath, 'utf8'));
-
-                // Verify the current password
-                if (!usersData[userType] || usersData[userType].password !== currentPassword) {
-                    return res.status(401).json({ success: false, message: 'Current password is incorrect' });
-                }
-
-                // Update username if provided
-                if (newUserName && newUserName !== usersData[userType].username) {
-                    usersData[userType].username = newUserName;
-                }
-
-                // Update password if provided
-                if (newPassword && newPassword.length >= 3) {
-                    usersData[userType].password = newPassword;
-                } else if (newPassword) {
-                    return res.status(400).json({ success: false, message: 'Password must be at least 3 characters' });
-                }
-
-                // Save the updated user data
-                fs__default["default"].writeFileSync(usersPath, JSON.stringify(usersData, null, 2), 'utf8');
-
-                res.status(200).json({ success: true, message: 'Credentials updated successfully' });
-            } catch (error) {
-                console.error('Error updating user:', error);
-                res.status(500).json({ success: false, message: 'Error updating user information' });
-            }
+        // Import and setup User Management Routes
+        const setupUserRoutes = require('./backendRoutes/userRoutes');       
+        // Initialize the user management routes
+        setupUserRoutes(this.app, {
+            fs_module: fs__default["default"],
+            path_module: path__default["default"],
+            json5_module: JSON5__default["default"]
+        });       
+        // Import and setup Water Levels CSV Management Routes
+        const setupWaterLevelRoutes = require('./backendRoutes/waterLevelRoutes');        
+        // Initialize the water level routes with our app instance, file system modules, and a custom data path
+        setupWaterLevelRoutes(this.app, {
+            fs_module: fs__default["default"],
+            path_module: path__default["default"],
+            data_path: path__default["default"].join(__dirname, '/home/ece/Desktop/ATG_DATA/csv')  // Hardcoded custom path for water level data
         });
         try {
             // initialize the services
