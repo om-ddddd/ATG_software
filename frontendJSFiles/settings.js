@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add settings.css to document header
     const linkElement = document.createElement('link');
     linkElement.rel = 'stylesheet';
-    linkElement.href = './settings.css';
+    linkElement.href = './css/settings.css';
     document.head.appendChild(linkElement);
 });
 
