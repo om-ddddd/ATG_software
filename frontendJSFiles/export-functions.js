@@ -1,5 +1,6 @@
 import html2canvas from "../node_modules/html2canvas/dist/html2canvas.esm.js";
 import { downloadCsvData } from './csv-handler.js';
+import { downloadScreenshotOnDemand } from './screenshot-handler.js';
 export function initializeExportFunctions() {
   const saveBtn = document.getElementById('save_btn');
   const printBtn = document.getElementById('print_btn');
@@ -51,29 +52,41 @@ export function initializeExportFunctions() {
       downloadWaterLevelData();
     });
   }
-
   function captureScreenshot() {
-    const element = document.getElementById('main_tab');
-    if (!element) {
-      return;
+    try {
+      // Generate a custom filename for the screenshot using our existing function
+      const screenshotFilename = generateFilename('png');
+      
+      // Use the screenshot-handler.js function to capture and download the screenshot
+      downloadScreenshotOnDemand(screenshotFilename)
+        .then(result => {
+          // Provide feedback that screenshot was taken
+          const saveBtn = document.getElementById('save_btn');
+          if (saveBtn) {
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Downloaded!';
+            saveBtn.disabled = true;
+            
+            // Reset button after short delay
+            setTimeout(() => {
+              saveBtn.textContent = originalText;
+              saveBtn.disabled = false;
+            }, 2000);
+          }
+        })
+        .catch(error => {
+          console.error('Error capturing screenshot:', error);
+          // Show error feedback to user
+          alert('Failed to capture screenshot. Please try again.');
+        });
+    } catch (error) {
+      console.error('Failed to capture screenshot:', error);
+      alert('Failed to capture screenshot. Please try again.');
     }
-    const options = {
-      allowTaint: true,
-      useCORS: true,
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: document.documentElement.scrollWidth,
-      windowHeight: document.documentElement.scrollHeight,
-      scale: window.devicePixelRatio || 1,
-    };    html2canvas(element, options).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = imgData;link.download = generateFilename('png');
-      link.click();
-    }).catch(error => {
-      console.error('Error capturing screenshot:', error);
-    });
-  }  function downloadWaterLevelData() {
+  } 
+  
+  
+  function downloadWaterLevelData() {
     try {
       // Get selected tide name for user feedback
       const selectedTideName = localStorage.getItem('selectedTideName') || 'default';
@@ -110,3 +123,23 @@ export function initializeExportFunctions() {
     }
   }
 }
+    // const element = document.getElementById('main_tab');
+    // if (!element) {
+    //   return;
+    // }
+    // const options = {
+    //   allowTaint: true,
+    //   useCORS: true,
+    //   scrollX: 0,
+    //   scrollY: 0,
+    //   windowWidth: document.documentElement.scrollWidth,
+    //   windowHeight: document.documentElement.scrollHeight,
+    //   scale: window.devicePixelRatio || 1,
+    // };    html2canvas(element, options).then(canvas => {
+    //   const imgData = canvas.toDataURL('image/png');
+    //   const link = document.createElement('a');
+    //   link.href = imgData;link.download = generateFilename('png');
+    //   link.click();
+    // }).catch(error => {
+    //   console.error('Error capturing screenshot:', error);
+    // });

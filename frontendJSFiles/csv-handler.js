@@ -288,11 +288,6 @@ export function listCsvFiles() {
 export function isCurrentlyRecording() {
     return isRecording;
 }
-
-/**
- * Initialize CSV handlers
- * This sets up any initial state or event listeners
- */
 export function initializeCsvHandlers() {
     // Ensure we clean up properly when the page unloads
     window.addEventListener('beforeunload', () => {

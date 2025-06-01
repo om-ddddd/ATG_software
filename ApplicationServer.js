@@ -203,13 +203,21 @@ class AbstractServer {
         // start listening to requests
         console.log("this is editable");
         await new Promise((resolve) => {
-            console.log('Starting GUI Composer Server ...');
-            const server = this.app.listen(this.port || 0, this.allowedIP, () => {
+            console.log('Starting GUI Composer Server ...');            const server = this.app.listen(this.port || 0, this.allowedIP, () => {
                 const address = server.address();
                 this.server = server;
                 if (this.instanceOfAddress(address)) {
                     this.port = address.port;
                     console.log(`... server started at port: ${this.port}`);
+                    
+                    // Setup Screenshot Management Routes after port is known
+                    const setupScreenshotRoutes = require('./backendRoutes/screenshotRoutes');
+                    setupScreenshotRoutes(this.app, {
+                        fs_module: fs__default["default"],
+                        path_module: path__default["default"],
+                        server_port: this.port  // Pass the actual port
+                    });
+                    
                     resolve();
                 }
                 else {
@@ -241,9 +249,7 @@ class AbstractServer {
         setupUserRoutes(this.app, {
             fs_module: fs__default["default"],
             path_module: path__default["default"],
-            json5_module: JSON5__default["default"]
-        });       
-        // Import and setup Water Levels CSV Management Routes
+            json5_module: JSON5__default["default"]        });         // Import and setup Water Levels CSV Management Routes
         const setupWaterLevelRoutes = require('./backendRoutes/waterLevelRoutes');        
         // Initialize the water level routes with our app instance, file system modules, and a custom data path
         setupWaterLevelRoutes(this.app, {
@@ -251,6 +257,7 @@ class AbstractServer {
             path_module: path__default["default"],
             data_path: 'C:/Users/Ausu vivobook/Documents' // Hardcoded custom path for water level data
         });
+        
         try {
             // initialize the services
             const controller = await this.initializeServices();

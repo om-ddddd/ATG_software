@@ -13,8 +13,10 @@
     },
     "node-remote": "*://*/*",
     "dependencies": {
+        "canvas": "^3.1.0",
         "html2canvas": "^1.4.1",
         "nodemon": "^3.1.10",
-        "puppeteer": "^24.9.0"
+        "puppeteer": "^24.9.0",
+        "screenshot-desktop": "^1.15.1"
     }
 }
