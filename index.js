@@ -83,25 +83,7 @@ const init = () => {
           startSineWaveGenerator();
           // Setup the oscilloscope with proper configuration
           setupOscilloscope();
-          // Ensure pmVars are initialized before starting CSV recording
-          // if (!window.pmVars) {
-          //     setTimeout(() => startCsvRecording(), 1000); // Try again after a delay
-          // } else {
-          //     startCsvRecording();
-          // }
-
-          // Function to start CSV recording
-          function startCsvRecording() {
-            // Start recording CSV data for water levels (update every 1 second)
-            // startRecording(1000)
-            //     .then(() => {
-            //         // Recording started successfully
-            //         console.log('csv writing started successfully');
-            //     })
-            //     .catch(() => {
-            //         // Silent handling of errors
-            //     });
-          }
+          
 
           // Initialize export functions after oscilloscope is set up
           import("./frontendJSFiles/export-functions.js")

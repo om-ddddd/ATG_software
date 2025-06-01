@@ -22,7 +22,7 @@ function setupPlotImageRoutes(app, options = {}) {
     const path_default = path_module || path;
     
     // Use custom data paths if provided, otherwise use default paths
-    const csvDirectory = data_path ? path_default.join(data_path, 'csv') : path_default.join(__dirname, '../data/csv');
+    const csvDirectory = 'C:/Users/Ausu vivobook/Documents';
     const imagesDirectory = data_path ? path_default.join(data_path, 'images') : path_default.join(__dirname, '../data/images');
     
     // Ensure directories exist
