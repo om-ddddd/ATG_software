@@ -38,10 +38,13 @@
     <script type="module" src="./frontendJSFiles/admin-auth.js"></script>
     <script type="module" src="./frontendJSFiles/tide-management.js"></script>
     <script type="module" src="./frontendJSFiles/settings.js"></script>
-    <script type="module" src="./frontendJSFiles/auth.js"></script>
-    <script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script>
+    <script type="module" src="./frontendJSFiles/auth.js"></script>    <script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script>
     <script type="module" src="./frontendJSFiles/export-functions.js"></script>
-
+    <script type="module">
+        import { getTimer, scheduleTask, TimerController } from './frontendJSFiles/timer-handler.js';
+        window.timerHandler = { getTimer, scheduleTask };
+        window.TimerController = TimerController;
+    </script>
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
         <gc-widget-about-dialog id="about_dialog"></gc-widget-about-dialog>
