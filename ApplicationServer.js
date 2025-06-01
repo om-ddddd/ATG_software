@@ -209,10 +209,17 @@ class AbstractServer {
                 if (this.instanceOfAddress(address)) {
                     this.port = address.port;
                     console.log(`... server started at port: ${this.port}`);
-                    
-                    // Setup Screenshot Management Routes after port is known
+                      // Setup Screenshot Management Routes after port is known
                     const setupScreenshotRoutes = require('./backendRoutes/screenshotRoutes');
                     setupScreenshotRoutes(this.app, {
+                        fs_module: fs__default["default"],
+                        path_module: path__default["default"],
+                        server_port: this.port  // Pass the actual port
+                    });
+                    
+                    // Setup Plot Image Generation Routes after port is known
+                    const setupPlotImageRoutes = require('./backendRoutes/plotImageRoutes');
+                    setupPlotImageRoutes(this.app, {
                         fs_module: fs__default["default"],
                         path_module: path__default["default"],
                         server_port: this.port  // Pass the actual port
