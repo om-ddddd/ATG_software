@@ -535,36 +535,6 @@
             }
         });
     </script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const quickHoldCheckbox = document.getElementById("quick_hold");
-        const container3 = document.getElementById("container3");
-        const quickEnterBtn = document.getElementById("quick_enter");
-        const quickInputField = document.getElementById("quick_input");
-
-        // Uncheck checkbox and hide container3 initially
-        quickHoldCheckbox.checked = false;
-        container3.style.display = "none";
-
-        // Toggle visibility of container3 based on checkbox
-        quickHoldCheckbox.addEventListener("change", function() {
-            container3.style.display = quickHoldCheckbox.checked ? "flex" : "none";
-        });
-
-        // On Enter click, set values to pmVars
-        quickEnterBtn.addEventListener("click", function() {
-            const quick_input = quickInputField.value;
-
-            if (window.pmVars) {
-                window.pmVars.quick_input = parseFloat(quick_input);
-                window.pmVars.quick_hold = 1;
-            }
-
-            //console.log("Quick Input:", quick_input);
-            //console.log("pmVars.quick_hold set to 1");
-        });
-    });
-</script>
 
     <script type="module">
         addEventListener('DOMContentLoaded', () => {
