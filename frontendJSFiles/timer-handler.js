@@ -281,6 +281,48 @@ const TimerController = {
             elapsed: timer.getElapsedTime(),
             taskCount: timer.callbacks.length
         };
+    },
+    
+    /**
+     * Generate plot from current CSV data
+     * @returns {Promise<Object>} Plot generation result
+     */
+    generatePlotFromCurrentCSV: async () => {
+        try {
+            // Get current CSV filename from localStorage
+            const currentCsvFilename = localStorage.getItem('currentRecordingFilename');
+            
+            if (!currentCsvFilename) {
+                throw new Error('No current recording filename found in localStorage');
+            }
+            
+            // Get selected tide name for title
+            const selectedTideName = localStorage.getItem('selectedTideName') || 'default';
+            
+            // Generate plot filename by changing CSV extension to PNG
+            const plotFilename = currentCsvFilename.replace(/\.csv$/i, '.png');
+            const plotTitle = `Auto Plot - ${selectedTideName} - ${new Date().toLocaleString()}`;
+            
+            console.log(`Generating auto plot from: ${currentCsvFilename} -> ${plotFilename}`);
+            
+            // Use global plotHandler to create plot
+            if (typeof plotHandler === 'undefined') {
+                throw new Error('plotHandler is not available globally');
+            }
+            
+            const result = await plotHandler.createPlot(
+                currentCsvFilename,
+                plotTitle,
+                plotFilename
+            );
+            
+            console.log('Auto plot generated successfully:', result.data.fileName);
+            return result;
+            
+        } catch (error) {
+            console.error('Failed to generate auto plot:', error);
+            throw error;
+        }
     }
 };
 
@@ -289,14 +331,26 @@ if (typeof window !== 'undefined') {
     window.TimerController = TimerController;
 }
 
-// Add a demo task for testing
-TimerController.addDemoTask = () => {
-    const demoTask = ({ elapsedTime }) => {
-        console.log(`Demo task executed! Elapsed time: ${elapsedTime}ms`);
+/**
+ * Add automatic plotting task that generates plots from current CSV data
+ * @returns {string} Task ID
+ */
+TimerController.addAutoPlotTask = () => {
+    const autoPlotTask = async ({ elapsedTime }) => {
+        console.log(`Auto Plot Task executed at ${elapsedTime}ms`);
+        
+        try {
+            // Generate plot from current CSV data
+            await TimerController.generatePlotFromCurrentCSV();
+            console.log('Auto plot generated successfully');
+        } catch (error) {
+            console.error('Auto plot task failed:', error);
+        }
     };
     
-    const id = TimerController.addTask(demoTask);
-    console.log('Demo task added. Use TimerController.start() to begin execution.');
+    // Add the plotting task to the timer
+    const id = TimerController.addTask ? TimerController.addTask(autoPlotTask) : null;
+    console.log('Auto plot task added with ID:', id);
     return id;
 };
 
@@ -320,4 +374,19 @@ export default {
  * TimerController.pause();      // Pause the timer
  * TimerController.resume();     // Resume the timer
  * TimerController.stop();       // Stop and reset
+ * 
+ * // Start auto plotting every 30 seconds (default)
+ * timerController.startAutoPlot();
+ * 
+ * // Start auto plotting every 1 minute
+ * timerController.startAutoPlot(60000);
+ * 
+ * // Stop auto plotting
+ * timerController.stopAutoPlot();
+ * 
+ * // Add auto plot as a task (if using task-based system)
+ * timerController.addAutoPlotTask();
+ * 
+ * // Check if auto plotting is running
+ * console.log('Auto plotting active:', timerController.isAutoPlottingActive());
  */

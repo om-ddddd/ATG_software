@@ -42,13 +42,20 @@ class PlotHandler {
      * Generate a plot from CSV file
      * @param {string} csvFileName - Name of the CSV file to plot
      * @param {string} title - Optional plot title
-     * @param {string} outputFileName - Optional output filename
+     * @param {string} outputFileName - Optional output filename (if null, uses same name as CSV with .png extension)
      * @returns {Promise<Object>} Generation result
      */
     async createPlot(csvFileName, title = null, outputFileName = null) {
         const payload = { csvFileName };
         if (title) payload.title = title;
-        if (outputFileName) payload.outputFileName = outputFileName;
+        
+        // If no outputFileName provided, use same name as CSV but with .png extension
+        if (!outputFileName) {
+            outputFileName = csvFileName.replace(/\.csv$/i, '.png');
+            console.log('Auto-generated plot filename from CSV:', outputFileName);
+        }
+        
+        payload.outputFileName = outputFileName;
 
         return await this.makeRequest(`${this.apiPath}/generate`, {
             method: 'POST',

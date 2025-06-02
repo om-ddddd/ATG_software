@@ -84,7 +84,7 @@ const init = () => {
           startSineWaveGenerator();
           // Setup the oscilloscope with proper configuration
           setupOscilloscope();
-          
+
 
           // Initialize export functions after oscilloscope is set up
           import("./frontendJSFiles/export-functions.js")
@@ -225,6 +225,8 @@ function setupOscilloscope() {
     if (!isNaN(value)) {
       TimerController.start(value * timePeriod * 1000);
       console.info(`Timer started for ${value * timePeriod} seconds`);
+      TimerController.addAutoPlotTask();  // Add auto plot task
+      TimerController.status();  // Check status
     }
   }
   // Calculate the time period from frequency (T = 1/f)
@@ -445,7 +447,7 @@ function setupTabPanelObservers() {
       });
   }
 
-  function settingsTabPanelFunction() {}
+  function settingsTabPanelFunction() { }
   if (runTabPanel) {
     const runObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -523,7 +525,7 @@ function setupTabPanelObservers() {
         ) {
           const isVisible =
             window.getComputedStyle(tideManipulationTabPanel).display !==
-              "none" && !tideManipulationTabPanel.hasAttribute("hidden");
+            "none" && !tideManipulationTabPanel.hasAttribute("hidden");
           if (isVisible) {
             tideManipulationTabPanelFunction();
           }

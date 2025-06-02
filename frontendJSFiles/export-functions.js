@@ -44,7 +44,7 @@ export function initializeExportFunctions() {
     });
   }  if (saveBtn) {
     saveBtn.addEventListener('click', () => {
-      // captureScreenshot();
+       captureScreenshot();
     });
   } 
   if (saveCsvBtn) {
@@ -52,38 +52,93 @@ export function initializeExportFunctions() {
       downloadWaterLevelData();
     });
   }
-  // function captureScreenshot() {
-  //   try {
-  //     // Generate a custom filename for the screenshot using our existing function
-  //     const screenshotFilename = generateFilename('png');
+  async function captureScreenshot() {
+    try {
+      // Get the current recording filename from localStorage
+      const currentCsvFilename = localStorage.getItem('currentRecordingFilename');
+      console.log('creating plot from CSV:', currentCsvFilename);
+      if (!currentCsvFilename) {
+        alert('No current recording found. Please start recording first.');
+        return;
+      }
       
-  //     // Use the screenshot-handler.js function to capture and download the screenshot
-  //     downloadScreenshotOnDemand(screenshotFilename)
-  //       .then(result => {
-  //         // Provide feedback that screenshot was taken
-  //         const saveBtn = document.getElementById('save_btn');
-  //         if (saveBtn) {
-  //           const originalText = saveBtn.textContent;
-  //           saveBtn.textContent = 'Downloaded!';
-  //           saveBtn.disabled = true;
-            
-  //           // Reset button after short delay
-  //           setTimeout(() => {
-  //             saveBtn.textContent = originalText;
-  //             saveBtn.disabled = false;
-  //           }, 2000);
-  //         }
-  //       })
-  //       .catch(error => {
-  //         console.error('Error capturing screenshot:', error);
-  //         // Show error feedback to user
-  //         alert('Failed to capture screenshot. Please try again.');
-  //       });
-  //   } catch (error) {
-  //     console.error('Failed to capture screenshot:', error);
-  //     alert('Failed to capture screenshot. Please try again.');
-  //   }
-  // } 
+      // Extract the base filename without .csv extension for the plot title
+      const baseFilename = currentCsvFilename.replace(/\.csv$/i, '');
+      const plotTitle = `${baseFilename || 'default'}`;
+      
+      // Update button to show processing state
+      const saveBtn = document.getElementById('save_btn');
+      if (saveBtn) {
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'Creating Plot...';
+        saveBtn.disabled = true;
+        
+        try {
+          // Create plot from current CSV data - don't pass outputFileName so it uses CSV name with .png
+          console.log('Creating plot from CSV:', currentCsvFilename, '-> Plot will have same name with .png extension');
+          const plotResult = await plotHandler.createPlot(
+            currentCsvFilename,
+            plotTitle
+            // No outputFileName parameter - plot-handler will auto-generate from CSV name
+          );
+          
+          console.log('Plot created successfully:', plotResult.data.fileName);
+          
+          // Update button to show download state
+          saveBtn.textContent = 'Downloading...';
+          
+          // Wait a moment for plot to be fully generated, then download
+          setTimeout(async () => {
+            try {
+              // Use plotHandler's existing downloadPlot method
+              console.log('Downloading plot:', plotResult.data.fileName);
+              
+              // Use the existing plotHandler downloadPlot method
+              await plotHandler.downloadPlot(plotResult.data.fileName);
+              
+              // Provide feedback that download was initiated
+              saveBtn.textContent = 'Downloaded!';
+              
+              // Reset button after delay
+              setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+              }, 2000);
+              
+            } catch (downloadError) {
+              console.error('Error downloading plot:', downloadError);
+              saveBtn.textContent = 'Download Failed';
+              setTimeout(() => {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+              }, 2000);
+              alert('Failed to download plot. Please try again.');
+            }
+          }, 1000);
+          
+        } catch (plotError) {
+          console.error('Error creating plot:', plotError);
+          saveBtn.textContent = 'Plot Failed';
+          setTimeout(() => {
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+          }, 2000);
+          alert('Failed to create plot from CSV data. Please ensure you have recorded some data.');
+        }
+      }
+      
+    } catch (error) {
+      console.error('Failed to capture screenshot:', error);
+      alert('Failed to create plot. Please try again.');
+      
+      // Reset button state
+      const saveBtn = document.getElementById('save_btn');
+      if (saveBtn) {
+        saveBtn.textContent = 'Save Image';
+        saveBtn.disabled = false;
+      }
+    }
+  }
   
   
   function downloadWaterLevelData() {
@@ -143,3 +198,34 @@ export function initializeExportFunctions() {
     // }).catch(error => {
     //   console.error('Error capturing screenshot:', error);
     // });
+
+      //   try {
+  //     // Generate a custom filename for the screenshot using our existing function
+  //     const screenshotFilename = generateFilename('png');
+      
+  //     // Use the screenshot-handler.js function to capture and download the screenshot
+  //     downloadScreenshotOnDemand(screenshotFilename)
+  //       .then(result => {
+  //         // Provide feedback that screenshot was taken
+  //         const saveBtn = document.getElementById('save_btn');
+  //         if (saveBtn) {
+  //           const originalText = saveBtn.textContent;
+  //           saveBtn.textContent = 'Downloaded!';
+  //           saveBtn.disabled = true;
+            
+  //           // Reset button after short delay
+  //           setTimeout(() => {
+  //             saveBtn.textContent = originalText;
+  //             saveBtn.disabled = false;
+  //           }, 2000);
+  //         }
+  //       })
+  //       .catch(error => {
+  //         console.error('Error capturing screenshot:', error);
+  //         // Show error feedback to user
+  //         alert('Failed to capture screenshot. Please try again.');
+  //       });
+  //   } catch (error) {
+  //     console.error('Failed to capture screenshot:', error);
+  //     alert('Failed to capture screenshot. Please try again.');
+  //   }
