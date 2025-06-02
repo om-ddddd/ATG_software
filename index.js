@@ -19,6 +19,7 @@ import {
 // Initialize the application when the DOM is fully loaded
 
 import { initAdminAuth } from "./frontendJSFiles/admin-auth.js";
+import { TimerController } from "./frontendJSFiles/timer-handler.js";
 
 let startTime = null;
 
@@ -105,6 +106,8 @@ const init = () => {
             // Set initial values for quick input and hold for syncing mainoutput with cum_sineinput
             pmVars.quick_input = pmVars.mainoutput;
             pmVars.quick_hold = 1;
+            TimerController.pause();
+            console.log('timer paused');
 
             // Add listeners for future changes
             window.pmVars.addListener("mainoutput", updateActualWLSpan);
@@ -121,6 +124,8 @@ const init = () => {
       hButton.addEventListener("click", () => {
         if (window.pmVars) {
           window.pmVars.hold_status = 1;
+          TimerController.pause();
+          console.log('timer paused');
           stopRecording()
             .then(() => {
               // Recording stopped successfully
@@ -138,6 +143,8 @@ const init = () => {
         if (window.pmVars) {
           window.pmVars.hold_status = 0;
           window.pmVars.quick_hold = 0;
+          TimerController.resume();
+          console.log('timer resumed');
           startRecording(1000)
             .then(() => {
               // Recording started successfully
@@ -171,6 +178,8 @@ const init = () => {
     if (window.pmVars) {
       window.pmVars.quick_input = parseFloat(quick_input);
       window.pmVars.quick_hold = 1;
+      TimerController.pause();
+      console.log('timer paused');
     }
 
     //console.log("Quick Input:", quick_input);
@@ -191,6 +200,12 @@ function startSineWaveGenerator() {
 }
 let capValue = 707; //
 function setupOscilloscope() {
+  let timePeriod = 0;
+  if (window.pmVars && window.pmVars.frequency) {
+    timePeriod = 1 / window.pmVars.frequency;
+    console.log(`Time Period: ${timePeriod.toFixed(2)}s based on frequency: ${window.pmVars.frequency}Hz`);
+  }
+  console.log(`Time Period: ${timePeriod.toFixed(2)}s`);
   const osc = document.getElementById("oscilloscope");
   const waveInput = document.getElementById("no._of_waves");
 
@@ -202,9 +217,17 @@ function setupOscilloscope() {
   if (waveInput && waveInput.value) {
     const value = parseFloat(waveInput.value);
     if (!isNaN(value)) {
-      capValue = Math.round(value * sampleRate * 707);
+      localStorage.setItem("no_of_waves", value);
+    }
+    if (!isNaN(value)) {
+      capValue = Math.round(value * sampleRate * timePeriod);
+    }
+    if (!isNaN(value)) {
+      TimerController.start(value * timePeriod * 1000);
+      console.info(`Timer started for ${value * timePeriod} seconds`);
     }
   }
+  // Calculate the time period from frequency (T = 1/f)
   osc.setAttribute("capacity", 1);
   osc.setAttribute("trigger-mode", "manual");
   osc.setAttribute("trigger-armed", true);
@@ -222,7 +245,7 @@ function setupOscilloscope() {
     waveInput.addEventListener("input", function () {
       const value = parseFloat(this.value);
       if (isNaN(value)) return;
-      capValue = Math.round(value * sampleRate * 707);
+      capValue = Math.round(value * sampleRate * timePeriod);
       osc.setAttribute("capacity", capValue);
       const hPositionSlider = document.getElementById("h_position");
       if (hPositionSlider) {

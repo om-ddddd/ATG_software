@@ -7,6 +7,7 @@
 let isRecording = false;
 let recordingInterval = null;
 const DEFAULT_INTERVAL = 1000; // Default to 1 second between readings
+let dataPointCounter = 0; // Counter for data points instead of using timestamps
 
 /**
  * Generate a CSV filename based on the selected tide and session timestamp
@@ -24,35 +25,18 @@ function generateCsvFilename() {
 }
 
 /**
- * Get the current timestamp in Kolkata timezone (IST)
- * @returns {string} Formatted timestamp in IST
+ * Reset the data point counter to 0
  */
-function getKolkataTimestamp() {
-    const now = new Date();
-    
-    // Format the date and time in Kolkata timezone using Intl.DateTimeFormat
-    const dateOptions = { 
-        timeZone: 'Asia/Kolkata',
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit',
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit',
-        hour12: false // Use 24-hour format
-    };
-    
-    // Format the date using Intl API with Kolkata timezone
-    const kolkataFormatter = new Intl.DateTimeFormat('en-IN', dateOptions);
-    const formattedParts = kolkataFormatter.formatToParts(now);
-    
-    // Extract date parts and construct the formatted string (YYYY-MM-DD HH:MM:SS)
-    const dateParts = {};
-    formattedParts.forEach(part => {
-        dateParts[part.type] = part.value;
-    });
-    
-    return `${dateParts.year}-${dateParts.month}-${dateParts.day} ${dateParts.hour}:${dateParts.minute}:${dateParts.second}`;
+function resetCounter() {
+    dataPointCounter = 0;
+}
+
+/**
+ * Get the current counter value and increment it
+ * @returns {number} Current counter value before increment
+ */
+function getAndIncrementCounter() {
+    return dataPointCounter++;
 }
 
 /**
@@ -70,7 +54,10 @@ export function startRecording(interval = DEFAULT_INTERVAL, onSuccess = null, on
     }
     
     return new Promise((resolve, reject) => {
-        try {            // Verify that pmVars is initialized
+        try {
+            // Note: Counter is not reset here anymore to maintain continuous numbering
+            
+            // Verify that pmVars is initialized
             if (!window.pmVars) {
                 console.warn('pmVars not initialized, attempting to proceed with default values');
             }
@@ -184,8 +171,8 @@ export function recordDataPoint(filename = null) {
                 if (isNaN(requiredWaterLevel)) requiredWaterLevel = 0;
             }
             
-            // Get current timestamp in Kolkata time
-            const timestamp = getKolkataTimestamp();
+            // Get counter value as timestamp
+            const counter = getAndIncrementCounter();
               // Make API request to write the data point
             fetch('/api/writeWaterLevel', {
                 method: 'POST',
@@ -193,7 +180,7 @@ export function recordDataPoint(filename = null) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    timestamp,
+                    timestamp: counter.toString(),
                     actual_water_level: actualWaterLevel,
                     required_water_level: requiredWaterLevel,
                     filename: csvFilename
@@ -204,7 +191,7 @@ export function recordDataPoint(filename = null) {
                     resolve({
                         success: true,
                         message: 'Data point recorded',
-                        timestamp,
+                        counter,
                         actualWaterLevel,
                         requiredWaterLevel,
                         filename: csvFilename
@@ -309,6 +296,6 @@ export default {
     listCsvFiles,
     isCurrentlyRecording,
     initializeCsvHandlers,
-    getKolkataTimestamp,
+    // getKolkataTimestamp,
     generateCsvFilename
 };

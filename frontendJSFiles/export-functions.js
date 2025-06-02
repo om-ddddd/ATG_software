@@ -44,7 +44,7 @@ export function initializeExportFunctions() {
     });
   }  if (saveBtn) {
     saveBtn.addEventListener('click', () => {
-      captureScreenshot();
+      // captureScreenshot();
     });
   } 
   if (saveCsvBtn) {
@@ -52,38 +52,38 @@ export function initializeExportFunctions() {
       downloadWaterLevelData();
     });
   }
-  function captureScreenshot() {
-    try {
-      // Generate a custom filename for the screenshot using our existing function
-      const screenshotFilename = generateFilename('png');
+  // function captureScreenshot() {
+  //   try {
+  //     // Generate a custom filename for the screenshot using our existing function
+  //     const screenshotFilename = generateFilename('png');
       
-      // Use the screenshot-handler.js function to capture and download the screenshot
-      downloadScreenshotOnDemand(screenshotFilename)
-        .then(result => {
-          // Provide feedback that screenshot was taken
-          const saveBtn = document.getElementById('save_btn');
-          if (saveBtn) {
-            const originalText = saveBtn.textContent;
-            saveBtn.textContent = 'Downloaded!';
-            saveBtn.disabled = true;
+  //     // Use the screenshot-handler.js function to capture and download the screenshot
+  //     downloadScreenshotOnDemand(screenshotFilename)
+  //       .then(result => {
+  //         // Provide feedback that screenshot was taken
+  //         const saveBtn = document.getElementById('save_btn');
+  //         if (saveBtn) {
+  //           const originalText = saveBtn.textContent;
+  //           saveBtn.textContent = 'Downloaded!';
+  //           saveBtn.disabled = true;
             
-            // Reset button after short delay
-            setTimeout(() => {
-              saveBtn.textContent = originalText;
-              saveBtn.disabled = false;
-            }, 2000);
-          }
-        })
-        .catch(error => {
-          console.error('Error capturing screenshot:', error);
-          // Show error feedback to user
-          alert('Failed to capture screenshot. Please try again.');
-        });
-    } catch (error) {
-      console.error('Failed to capture screenshot:', error);
-      alert('Failed to capture screenshot. Please try again.');
-    }
-  } 
+  //           // Reset button after short delay
+  //           setTimeout(() => {
+  //             saveBtn.textContent = originalText;
+  //             saveBtn.disabled = false;
+  //           }, 2000);
+  //         }
+  //       })
+  //       .catch(error => {
+  //         console.error('Error capturing screenshot:', error);
+  //         // Show error feedback to user
+  //         alert('Failed to capture screenshot. Please try again.');
+  //       });
+  //   } catch (error) {
+  //     console.error('Failed to capture screenshot:', error);
+  //     alert('Failed to capture screenshot. Please try again.');
+  //   }
+  // } 
   
   
   function downloadWaterLevelData() {
