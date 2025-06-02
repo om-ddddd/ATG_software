@@ -549,6 +549,10 @@ footer {
     padding: 20px 0;
     --gc-background-color: #118899;
     --gc-overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #page_home_product_name {
@@ -1481,11 +1485,11 @@ input.auth_error {
 }
 
 #image {
-    height: 600px;
-    position: absolute;
-    width: 1000px;
-    top: 213px;
-    left: 411px;
+   position: relative;
+    top: 10vh;
+    width: 50vw;
+    height: 50vh;
+    border: 3px black solid;
 }
 
 #container_4 {
