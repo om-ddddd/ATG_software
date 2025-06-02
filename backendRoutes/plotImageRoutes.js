@@ -140,6 +140,43 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
         ctx.lineTo(plotArea.right, plotArea.bottom);
         ctx.stroke();
         
+        // Calculate dynamic Y-axis range - always start from 0, scale max according to data
+        const actualLevels = data.map(d => d.actualLevel).filter(val => !isNaN(val));
+        const requiredLevels = data.map(d => d.requiredLevel).filter(val => !isNaN(val));
+        const allValues = [...actualLevels, ...requiredLevels];
+        
+        let yAxisMin = 0; // Always start from 0
+        let yAxisMax = 120; // Default fallback
+        
+        if (allValues.length > 0) {
+            const dataMax = Math.max(...allValues);
+            
+            // Add some padding above the maximum value (10% padding)
+            const padding = dataMax * 0.1;
+            yAxisMax = Math.ceil(dataMax + padding);
+            
+            // Ensure minimum range for better visibility (minimum 20 units)
+            if (yAxisMax < 20) {
+                yAxisMax = 20;
+            }
+        }
+        
+        console.log(`Y-axis range: 0 to ${yAxisMax}`);
+        
+        // Calculate number of grid steps (aim for 8-12 steps)
+        let stepSize = Math.ceil(yAxisMax / 10);
+        
+        // Round step size to nice numbers
+        if (stepSize <= 1) stepSize = 1;
+        else if (stepSize <= 2) stepSize = 2;
+        else if (stepSize <= 5) stepSize = 5;
+        else if (stepSize <= 10) stepSize = 10;
+        else if (stepSize <= 20) stepSize = 20;
+        else if (stepSize <= 50) stepSize = 50;
+        else stepSize = Math.ceil(stepSize / 10) * 10;
+        
+        const yAxisSteps = Math.ceil(yAxisMax / stepSize);
+        
         // Draw grid lines and Y-axis labels
         ctx.strokeStyle = PLOT_CONFIG.colors.grid;
         ctx.lineWidth = 1;
@@ -147,18 +184,21 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
         ctx.textAlign = 'right';
         ctx.fillStyle = PLOT_CONFIG.colors.text;
         
-        for (let i = 0; i <= PLOT_CONFIG.yAxis.steps; i++) {
-            const yValue = (i / PLOT_CONFIG.yAxis.steps) * PLOT_CONFIG.yAxis.max;
-            const yPos = plotArea.bottom - (i / PLOT_CONFIG.yAxis.steps) * plotHeight;
+        for (let i = 0; i <= yAxisSteps; i++) {
+            const yValue = i * stepSize;
+            const yPos = plotArea.bottom - (yValue / yAxisMax) * plotHeight;
             
-            // Grid line
-            ctx.beginPath();
-            ctx.moveTo(plotArea.left, yPos);
-            ctx.lineTo(plotArea.right, yPos);
-            ctx.stroke();
-            
-            // Label
-            ctx.fillText(yValue.toFixed(0), plotArea.left - 10, yPos + 4);
+            // Only draw if within plot area and within our max range
+            if (yPos >= plotArea.top && yPos <= plotArea.bottom && yValue <= yAxisMax) {
+                // Grid line
+                ctx.beginPath();
+                ctx.moveTo(plotArea.left, yPos);
+                ctx.lineTo(plotArea.right, yPos);
+                ctx.stroke();
+                
+                // Label
+                ctx.fillText(yValue.toFixed(0), plotArea.left - 10, yPos + 4);
+            }
         }
         
         // Y-axis label
@@ -173,7 +213,7 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
         // X-axis label
         ctx.font = '16px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Row Number', PLOT_CONFIG.width / 2, PLOT_CONFIG.height - 15);
+        ctx.fillText('TIME', PLOT_CONFIG.width / 2, PLOT_CONFIG.height - 15);
         
         if (data.length === 0) {
             // No data message
@@ -187,9 +227,9 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
         // Calculate scaling factors
         const maxRowNumber = data.length;
         const xScale = plotWidth / Math.max(maxRowNumber - 1, 1);
-        const yScale = plotHeight / PLOT_CONFIG.yAxis.max;
+        const yScale = plotHeight / yAxisMax;
         
-        // Draw X-axis labels (row numbers)
+        // Draw X-axis labels (starting from 0)
         ctx.font = '10px Arial';
         ctx.textAlign = 'center';
         ctx.fillStyle = PLOT_CONFIG.colors.text;
@@ -197,10 +237,10 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
         
         for (let i = 0; i < data.length; i += labelStep) {
             const xPos = plotArea.left + i * xScale;
-            ctx.fillText((i + 1).toString(), xPos, plotArea.bottom + 15);
+            ctx.fillText(i.toString(), xPos, plotArea.bottom + 15); // Changed from (i + 1) to i - now starts from 0
         }
         
-        // Draw data lines
+        // Draw data lines with dynamic Y-axis scaling (starting from 0)
         function drawDataLine(dataKey, color, label) {
             const validPoints = data.filter(d => !isNaN(d[dataKey]) && d[dataKey] !== null);
             if (validPoints.length < 2) return;
@@ -212,7 +252,8 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
             validPoints.forEach((point, index) => {
                 const originalIndex = data.indexOf(point);
                 const x = plotArea.left + originalIndex * xScale;
-                const y = plotArea.bottom - (point[dataKey] / PLOT_CONFIG.yAxis.max) * plotHeight;
+                // Y-axis scaling from 0 to dynamic max
+                const y = plotArea.bottom - (point[dataKey] / yAxisMax) * plotHeight;
                 
                 if (index === 0) {
                     ctx.moveTo(x, y);
@@ -223,15 +264,16 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
             
             ctx.stroke();
             
-            // Draw points
+            // Draw points with same thickness as line
             ctx.fillStyle = color;
             validPoints.forEach((point) => {
                 const originalIndex = data.indexOf(point);
                 const x = plotArea.left + originalIndex * xScale;
-                const y = plotArea.bottom - (point[dataKey] / PLOT_CONFIG.yAxis.max) * plotHeight;
+                // Y-axis scaling from 0 to dynamic max
+                const y = plotArea.bottom - (point[dataKey] / yAxisMax) * plotHeight;
                 
                 ctx.beginPath();
-                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.arc(x, y, 1, 0, 2 * Math.PI);
                 ctx.fill();
             });
         }
