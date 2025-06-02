@@ -1,52 +1,7 @@
 [
   {
-    "name": "kokata",
+    "name": "test1",
     "range": 10,
     "offset": 10
-  },
-  {
-    "name": "asf",
-    "range": 10,
-    "offset": 100
-  },
-  {
-    "name": "test2 26-5",
-    "range": 40,
-    "offset": 40
-  },
-  {
-    "name": "test3_26/5",
-    "range": 30,
-    "offset": 25
-  },
-  {
-    "name": "hfgu",
-    "range": 1,
-    "offset": 1
-  },
-  {
-    "name": "test4_sinhasir",
-    "range": 40,
-    "offset": 60
-  },
-  {
-    "name": "test5_26/5",
-    "range": 40,
-    "offset": 50
-  },
-  {
-    "name": "test6_26/5",
-    "range": 40,
-    "offset": 55
-  },
-  {
-    "name": "Tide_26",
-    "range": 26,
-    "offset": 36
-  },
-  {
-    "name": "af",
-    "range": 323,
-    "offset": 232
   }
 ]

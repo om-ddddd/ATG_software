@@ -299,3 +299,28 @@ export default {
     // getKolkataTimestamp,
     generateCsvFilename
 };
+
+// Make CSV handler functions globally accessible for browser console
+if (typeof window !== 'undefined') {
+    window.csvHandler = {
+        startRecording,
+        stopRecording,
+        recordDataPoint,
+        downloadCsvData,
+        listCsvFiles,
+        isCurrentlyRecording,
+        initializeCsvHandlers,
+        generateCsvFilename,
+        resetCounter,
+        getAndIncrementCounter
+    };
+    
+    // Also make individual functions available for convenience
+    window.startRecording = startRecording;
+    window.stopRecording = stopRecording;
+    window.downloadCsvData = downloadCsvData;
+    window.listCsvFiles = listCsvFiles;
+    window.isCurrentlyRecording = isCurrentlyRecording;
+    
+    console.log('CSV handler functions made globally available');
+}
