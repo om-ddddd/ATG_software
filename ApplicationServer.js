@@ -262,7 +262,7 @@ class AbstractServer {
         setupWaterLevelRoutes(this.app, {
             fs_module: fs__default["default"],
             path_module: path__default["default"],
-            data_path: 'C:/Users/Ausu vivobook/Documents' // Hardcoded custom path for water level data
+            data_path: path__default["default"].join(os__default["default"].homedir(), 'ATG', 'csv')// Hardcoded custom path for water level data
         });
         
         try {

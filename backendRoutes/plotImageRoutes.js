@@ -22,8 +22,9 @@ function setupPlotImageRoutes(app, options = {}) {
     const path_default = path_module || path;
     
     // Use custom data paths if provided, otherwise use default paths
-    const csvDirectory = 'C:/Users/Ausu vivobook/Documents';
-    const imagesDirectory = data_path ? path_default.join(data_path, 'images') : path_default.join(__dirname, '../data/images');
+   // Change this line in plotImageRoutes.js
+const csvDirectory = path_default.join(options.data_path || path_default.join(require('os').homedir(), 'ATG', 'csv'));
+const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots'); // Store plot images in ~/ATG/plots
     
     // Ensure directories exist
     try {
