@@ -1,33 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 
 <head>
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-    <meta name="keywords" content="GUI Composer, GC, Gallery">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups" />
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp" />
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta name="keywords" content="GUI Composer, GC, Gallery" />
     <meta name="description"
-        content="This application is powered by GUI Composer, visit https://dev.ti.com/gc for more detail.">
-    <meta name="root-win">
-    <link rel="icon" href="assets/app.ico">
+        content="This application is powered by GUI Composer, visit https://dev.ti.com/gc for more detail." />
+    <meta name="root-win" />
+    <link rel="icon" href="assets/app.ico" />
     <title>main</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css">
-    <link rel="stylesheet" href="./css/index.css">
-    <link rel="stylesheet" href="./css/tide-management.css">
-    <link rel="stylesheet" href="./css/run.css">
-    <link rel="stylesheet" href="./css/main_tab.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css" />
+    <link rel="stylesheet" href="./css/index.css" />
+    <link rel="stylesheet" href="./css/tide-management.css" />
+    <link rel="stylesheet" href="./css/run.css" />
+    <link rel="stylesheet" href="./css/main_tab.css" />
     <script src="https://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript"></script>
-    <script> if (typeof nw != 'undefined') { window.$ti_nw_main_window = true; } </script>
+    <script>
+        if (typeof nw != "undefined") {
+            window.$ti_nw_main_window = true;
+        }
+    </script>
 </head>
 
 <body>
-    <div id="progressDiv"
-        style='width:100%; height:100%; z-index: 999999; background-color: #f7f7f7; position: absolute;'>
-        <div
-            style="width: 100%; height: 100%; background: url('components/@ti/assets/images/progress.svg') no-repeat center">
-        </div>
+    <div id="progressDiv" style="
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        background-color: #f7f7f7;
+        position: absolute;
+      ">
+        <div style="
+          width: 100%;
+          height: 100%;
+          background: url('components/@ti/assets/images/progress.svg') no-repeat
+            center;
+        "></div>
     </div>
 
     <!--gist-begin-->
@@ -45,10 +57,14 @@
     <script type="module" src="./frontendJSFiles/export-functions.js"></script>
     <script src="./frontendJSFiles/plot-handler.js"></script>
     <script type="module">
-        import { getTimer, scheduleTask, TimerController } from './frontendJSFiles/timer-handler.js';
+        import {
+            getTimer,
+            scheduleTask,
+            TimerController,
+        } from "./frontendJSFiles/timer-handler.js";
         window.TimerController = TimerController;
         window.plotHandler = new PlotHandler();
-        console.log('Plot handler initialized and available globally');
+        console.log("Plot handler initialized and available globally");
     </script>
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -79,11 +95,11 @@
             </gc-widget-menubar>
         </header>
         <div>
-            <img class="svg" id="home_svg" src="./assets/home_svg.svg" alt="Tide Manipulation">
-            <img class="svg" id="settings_svg" src="./assets/settings_svg.svg" alt="Tide Manipulation">
-            <img class="svg" id="tide_svg" src="./assets/tide_manipulation.svg" alt="Tide Manipulation">
-            <img class="svg" id="run_svg" src="./assets/run_svg.svg" alt="Tide Manipulation">
-            <img class="svg" id="main_svg" src="./assets/main.svg" alt="Tide Manipulation">
+            <img class="svg" id="home_svg" src="./assets/home_svg.svg" alt="Tide Manipulation" />
+            <img class="svg" id="settings_svg" src="./assets/settings_svg.svg" alt="Tide Manipulation" />
+            <img class="svg" id="tide_svg" src="./assets/tide_manipulation.svg" alt="Tide Manipulation" />
+            <img class="svg" id="run_svg" src="./assets/run_svg.svg" alt="Tide Manipulation" />
+            <img class="svg" id="main_svg" src="./assets/main.svg" alt="Tide Manipulation" />
         </div>
 
         <gc-widget-container id="viewport" flex one vertical layout>
@@ -101,12 +117,17 @@
 
                 <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="routnd:aifrjsi"
                     vertical layout has-heading tooltip="Calibration and settings">
-
                     <div class="s_settings-container">
                         <div class="s_button-container">
-                            <button id="s_create-setting-btn" class="s_setting-btn">Create New Setting</button>
-                            <button id="s_modify-setting-btn" class="s_setting-btn">Modify Setting</button>
-                            <button id="s_delete-setting-btn" class="s_setting-btn">Delete Setting</button>
+                            <button id="s_create-setting-btn" class="s_setting-btn">
+                                Create New Setting
+                            </button>
+                            <button id="s_modify-setting-btn" class="s_setting-btn">
+                                Modify Setting
+                            </button>
+                            <button id="s_delete-setting-btn" class="s_setting-btn">
+                                Delete Setting
+                            </button>
                         </div>
 
                         <div class="s_setting-selection-container">
@@ -129,10 +150,11 @@
 
                         <div class="s_mainoutput">
                             <div class="s_pot-output-container">
-                                <input type="checkbox" id="s_show_pot_output" class="s_pot-checkbox">
+                                <input type="checkbox" id="s_show_pot_output" class="s_pot-checkbox" />
                                 <label for="s_show_pot_output">Show ADC Reading</label>
-                                <div id="s_pot_output_display" class="s_pot-display">ADC Reading: <span
-                                        id="s_pot_output_value">0.00</span></div>
+                                <div id="s_pot_output_display" class="s_pot-display">
+                                    ADC Reading: <span id="s_pot_output_value">0.00</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -145,31 +167,33 @@
                             <form id="s_create-setting-form">
                                 <div class="s_form-group">
                                     <label for="s_setting-name">Setting Name:</label>
-                                    <input type="text" id="s_setting-name" required>
+                                    <input type="text" id="s_setting-name" required />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_calibration-factor">Calibration Factor:</label>
-                                    <input type="number" id="s_calibration-factor" required step="0.01">
+                                    <input type="number" id="s_calibration-factor" required step="0.01" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_offset">Offset:</label>
-                                    <input type="number" id="s_offset" required step="0.01">
+                                    <input type="number" id="s_offset" required step="0.01" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_fine-offset">Fine Offset:</label>
-                                    <input type="number" id="s_fine-offset" required step="0.001">
+                                    <input type="number" id="s_fine-offset" required step="0.001" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_kp">Kp:</label>
-                                    <input type="number" id="s_kp" required step="0.01">
+                                    <input type="number" id="s_kp" required step="0.01" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_ki">Ki:</label>
-                                    <input type="number" id="s_ki" required step="0.01">
+                                    <input type="number" id="s_ki" required step="0.01" />
                                 </div>
                                 <div class="s_form-actions">
                                     <button type="submit" class="s_submit-btn">Create</button>
-                                    <button type="button" class="s_cancel-btn s_close-dialog">Cancel</button>
+                                    <button type="button" class="s_cancel-btn s_close-dialog">
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -190,27 +214,29 @@
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_modify-calibration-factor">Calibration Factor:</label>
-                                    <input type="number" id="s_modify-calibration-factor" required step="0.01">
+                                    <input type="number" id="s_modify-calibration-factor" required step="0.01" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_modify-offset">Offset:</label>
-                                    <input type="number" id="s_modify-offset" required step="0.01">
+                                    <input type="number" id="s_modify-offset" required step="0.01" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_modify-fine-offset">Fine Offset:</label>
-                                    <input type="number" id="s_modify-fine-offset" required step="0.001">
+                                    <input type="number" id="s_modify-fine-offset" required step="0.001" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_modify-kp">Kp:</label>
-                                    <input type="number" id="s_modify-kp" required step="0.01">
+                                    <input type="number" id="s_modify-kp" required step="0.01" />
                                 </div>
                                 <div class="s_form-group">
                                     <label for="s_modify-ki">Ki:</label>
-                                    <input type="number" id="s_modify-ki" required step="0.01">
+                                    <input type="number" id="s_modify-ki" required step="0.01" />
                                 </div>
                                 <div class="s_form-actions">
                                     <button type="submit" class="s_submit-btn">Update</button>
-                                    <button type="button" class="s_cancel-btn s_close-dialog">Cancel</button>
+                                    <button type="button" class="s_cancel-btn s_close-dialog">
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -233,20 +259,30 @@
                                     Warning: This action cannot be undone.
                                 </div>
                                 <div class="s_form-actions">
-                                    <button type="submit" class="s_submit-btn s_delete-confirm-btn">Delete</button>
-                                    <button type="button" class="s_cancel-btn s_close-dialog">Cancel</button>
+                                    <button type="submit" class="s_submit-btn s_delete-confirm-btn">
+                                        Delete
+                                    </button>
+                                    <button type="button" class="s_cancel-btn s_close-dialog">
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="tide_manipulation" class="container" label="Tide Manipulation"
-                    icon-name="round:act" vertical layout has-heading tooltip="Calibration and settings">
+                    icon-name="round:act" vertical layout has-heading tooltip="Manage Tide Details">
                     <div class="tide-manipulation-container">
                         <div class="button-container">
-                            <button id="create-tide-btn" class="tide-btn">Create New Tide</button>
-                            <button id="modify-tide-btn" class="tide-btn">Modify Tide</button>
-                            <button id="delete-tide-btn" class="tide-btn">Delete Tide</button>
+                            <button id="create-tide-btn" class="tide-btn">
+                                Create New Tide
+                            </button>
+                            <button id="modify-tide-btn" class="tide-btn">
+                                Modify Tide
+                            </button>
+                            <button id="delete-tide-btn" class="tide-btn">
+                                Delete Tide
+                            </button>
                         </div>
 
                         <div class="tide-table-container">
@@ -265,19 +301,21 @@
                             <form id="create-tide-form">
                                 <div class="form-group">
                                     <label for="tide-name">Tide Name:</label>
-                                    <input type="text" id="tide-name" required>
+                                    <input type="text" id="tide-name" required />
                                 </div>
                                 <div class="form-group">
                                     <label for="tide-range-input">Range:</label>
-                                    <input type="number" id="tide-range-input" required step="0.1">
+                                    <input type="number" id="tide-range-input" required step="0.1" />
                                 </div>
                                 <div class="form-group">
                                     <label for="tide-offset">Offset:</label>
-                                    <input type="number" id="tide-offset" required step="0.1">
+                                    <input type="number" id="tide-offset" required step="0.1" />
                                 </div>
                                 <div class="form-actions">
                                     <button type="submit" class="submit-btn">Create</button>
-                                    <button type="button" class="cancel-btn close-dialog">Cancel</button>
+                                    <button type="button" class="cancel-btn close-dialog">
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -297,15 +335,17 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="modify-range">Range:</label>
-                                    <input type="number" id="modify-range" required step="0.1">
+                                    <input type="number" id="modify-range" required step="0.1" />
                                 </div>
                                 <div class="form-group">
                                     <label for="modify-offset">Offset:</label>
-                                    <input type="number" id="modify-offset" required step="0.1">
+                                    <input type="number" id="modify-offset" required step="0.1" />
                                 </div>
                                 <div class="form-actions">
                                     <button type="submit" class="submit-btn">Update</button>
-                                    <button type="button" class="cancel-btn close-dialog">Cancel</button>
+                                    <button type="button" class="cancel-btn close-dialog">
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -327,8 +367,12 @@
                                     Warning: This action cannot be undone.
                                 </div>
                                 <div class="form-actions">
-                                    <button type="submit" class="submit-btn delete-confirm-btn">Delete</button>
-                                    <button type="button" class="cancel-btn close-dialog">Cancel</button>
+                                    <button type="submit" class="submit-btn delete-confirm-btn">
+                                        Delete
+                                    </button>
+                                    <button type="button" class="cancel-btn close-dialog">
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -353,27 +397,35 @@
                             <gc-widget-container id="container_9">
                                 <gc-widget-label id="label_tides_per_screen"
                                     label="No. of Tides Per Screen"></gc-widget-label>
-                                <input type="number" id="no._of_waves" name="tentacles" min="0" max="10">
+                                <input type="number" id="no._of_waves" name="tentacles" min="0" max="10" />
                             </gc-widget-container>
                         </div>
                         <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
                     </div>
                     <gc-widget-container id="container_90">
                         <gc-widget-label id="manual_check" label="Enter Range and Offset Manually"></gc-widget-label>
-                        <input type="checkbox" name="checkbox" id="m_check"
-                            style="width: 20px; position: absolute; left: 74px; top: 69px; height: 16px;" />
+                        <input type="checkbox" name="checkbox" id="m_check" style="
+                  width: 20px;
+                  position: absolute;
+                  left: 74px;
+                  top: 69px;
+                  height: 16px;
+                " />
                         <gc-widget-input id="input_5" placeholder="Offset"></gc-widget-input>
                         <gc-widget-label id="label_9" label="Offset"></gc-widget-label>
                         <gc-widget-input id="input_6"></gc-widget-input>
                         <gc-widget-label id="label_4" label="Tide Range"></gc-widget-label>
                     </gc-widget-container>
                 </gc-widget-tab-panel>
-                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:actione" vertical layout
-                    has-heading>
+                <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:actione" vertical layout>
                     <div id="container_5">
                         <div id="container_1">
-                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value">00.00</span></div>
-                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value">00.00</span></div>
+                            <div id="actual_wl_span">
+                                Actual WL: <span id="actual_wl_value">00.00</span>
+                            </div>
+                            <div id="required_wl_span">
+                                Requi. WL: <span id="required_wl_value">00.00</span>
+                            </div>
                         </div>
                         <div id="container_2">
                             <gc-widget-button id="button" label="H"></gc-widget-button>
@@ -381,11 +433,11 @@
                         </div>
                         <div id="container2">
                             <div id="container4">
-                                <input type="checkbox" id="quick_hold">
+                                <input type="checkbox" id="quick_hold" />
                                 <label for="quick_hold" id="quick_label">Quick Hold</label>
                             </div>
                             <div id="container3">
-                                <input id="quick_input" type="number">
+                                <input id="quick_input" type="number" />
                                 <button id="quick_enter">Enter</button>
                             </div>
                         </div>
@@ -397,8 +449,10 @@
                         </div>
                         <div id="container5">
                             <span id="motor">MOTOR</span>
-                            <button id="stop" style="width:58px"> STOP </button>
-                            <button id="start" style="width:58px"> START </button>
+                            <div id="motor-buttons">
+                                <button id="stop" style="width: 58px">STOP</button>
+                                <button id="start" style="width: 58px">START</button>
+                            </div>
                         </div>
                     </div>
                     <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="6.30"
@@ -420,8 +474,9 @@
                     </div>
                     <div id="container_6">
                         <div id="container_3" horizontal layout center-justified end>
-                            <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
-                            <gc-widget-led id="led"></gc-widget-led>
+                            <div id="label_2">
+                                Gate Status
+                            </div>
                         </div>
 
                         <div id="container_4">
@@ -429,28 +484,24 @@
                             <gc-widget-label id="label_8" label="----- : Required WL "></gc-widget-label>
                         </div>
                         <div class="slider-container">
-                            <div class="PB-range-slider-div"
-                                style=" z-index: 11111; width: 176px; height: 35px;">
+                            <div class="PB-range-slider-div" style="z-index: 11111; width: 176px; height: 35px">
                                 <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
-                                    id="h_scale">
+                                    id="h_scale" />
                                 <p class="PB-range-slidervalue">H. Scale</p>
                             </div>
-                            <div class="PB-range-slider-div"
-                                style=" width: 176px; z-index: 1111; height: 35px;">
+                            <div class="PB-range-slider-div" style="width: 176px; z-index: 1111; height: 35px">
                                 <input type="range" min="0" max="100" value="1" class="PB-range-slider" step="0.01"
-                                    id="h_position">
+                                    id="h_position" />
                                 <p class="PB-range-slidervalue">H. Position</p>
                             </div>
-                            <div class="PB-range-slider-div"
-                                style=" z-index: 11111; width: 176px; height: 35px;">
+                            <div class="PB-range-slider-div" style="z-index: 11111; width: 176px; height: 35px">
                                 <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
-                                    id="v_scale">
+                                    id="v_scale" />
                                 <p class="PB-range-slidervalue">V. Scale</p>
                             </div>
-                            <div class="PB-range-slider-div"
-                                style=" width: 176px; z-index: 1111; height: 35px;">
+                            <div class="PB-range-slider-div" style="width: 176px; z-index: 1111; height: 35px">
                                 <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
-                                    id="v_position">
+                                    id="v_position" />
                                 <p class="PB-range-slidervalue">V. Position</p>
                             </div>
                         </div>
@@ -469,20 +520,20 @@
     <gc-widget-firmware-update-dialog id="firmwareUpdate"></gc-widget-firmware-update-dialog>
 
     <!-- Login Dialog -->
-    <div id="loginDialog" class="modal" style="display:block;">
+    <div id="loginDialog" class="modal" style="display: block">
         <div class="modal-content">
             <form id="loginForm">
                 <h3>Administrator Credentials Required</h3>
                 <div class="form-group">
                     <label for="loginUsername">Username:</label>
-                    <input type="text" id="loginUsername" name="loginUsername" required autocomplete="username">
+                    <input type="text" id="loginUsername" name="loginUsername" required autocomplete="username" />
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Password:</label>
                     <input type="password" id="loginPassword" name="loginPassword" required
-                        autocomplete="current-password">
+                        autocomplete="current-password" />
                 </div>
-                <div class="error-message" id="loginError" style="display: none;"></div>
+                <div class="error-message" id="loginError" style="display: none"></div>
                 <div class="button-group">
                     <button type="button" id="loginButton">Enter</button>
                 </div>
@@ -491,32 +542,33 @@
     </div>
     <!-- Administration Button -->
 
-
     <!-- Change User Dialog -->
-    <div id="changeUserDialog" class="auth-modal" style="display:none;">
+    <div id="changeUserDialog" class="auth-modal" style="display: none">
         <div class="auth-modal-content">
             <span class="auth-close" id="closeChangeUserDialog">&times;</span>
             <form id="changeUserForm">
                 <h3>Change User Name/Password</h3>
                 <div class="auth-radio-group">
-                    <label><input type="radio" name="userType" value="admin" checked> Administrator</label>
-                    <label><input type="radio" name="userType" value="user"> User</label>
+                    <label><input type="radio" name="userType" value="admin" checked />
+                        Administrator</label>
+                    <label><input type="radio" name="userType" value="user" /> User</label>
                 </div>
                 <div class="auth-form-group">
                     <label for="newUserName">New User Name:</label>
-                    <input type="text" id="newUserName" name="newUserName">
+                    <input type="text" id="newUserName" name="newUserName" />
                 </div>
                 <div class="auth-form-group">
                     <label for="currentPassword">Current Password:</label>
-                    <input type="password" id="currentPassword" name="currentPassword">
+                    <input type="password" id="currentPassword" name="currentPassword" />
                 </div>
                 <div class="auth-form-group">
-                    <label for="newPassword">New Password:<br><span class="auth-hint">(Min. 3 Characters)</span></label>
-                    <input type="password" id="newPassword" name="newPassword">
+                    <label for="newPassword">New Password:<br /><span class="auth-hint">(Min. 3
+                            Characters)</span></label>
+                    <input type="password" id="newPassword" name="newPassword" />
                 </div>
                 <div class="auth-form-group">
                     <label for="retypePassword">Re-Type Password:</label>
-                    <input type="password" id="retypePassword" name="retypePassword">
+                    <input type="password" id="retypePassword" name="retypePassword" />
                 </div>
                 <!-- Message will be inserted here by JavaScript -->
                 <div class="auth-button-group">
@@ -527,9 +579,9 @@
         </div>
     </div>
     <script>
-        const checkbox = document.getElementById('m_check');
-        const elem = document.getElementById('container_90')
-        checkbox.addEventListener('change', function () {
+        const checkbox = document.getElementById("m_check");
+        const elem = document.getElementById("container_90");
+        checkbox.addEventListener("change", function () {
             if (checkbox.checked) {
                 elem.style.opacity = 1;
                 //console.log('Checkbox is checked ✅');
@@ -543,34 +595,37 @@
     </script>
 
     <script type="module">
-        addEventListener('DOMContentLoaded', () => {
-            var progressDiv = document.querySelector('#progressDiv')
+        addEventListener("DOMContentLoaded", () => {
+            var progressDiv = document.querySelector("#progressDiv");
             if (progressDiv) {
-                setTimeout(() => progressDiv.parentNode.removeChild(progressDiv), 1000);
+                setTimeout(
+                    () => progressDiv.parentNode.removeChild(progressDiv),
+                    1000
+                );
             }
         });
 
         // Show the Change User dialog when Administration menu is clicked
-        addEventListener('DOMContentLoaded', () => {
-            const adminMenu = document.getElementById('mm_administration');
-            const dialog = document.getElementById('changeUserDialog');
-            const closeBtn = document.getElementById('closeChangeUserDialog');
-            const cancelBtn = document.getElementById('cancelChangeUser');
+        addEventListener("DOMContentLoaded", () => {
+            const adminMenu = document.getElementById("mm_administration");
+            const dialog = document.getElementById("changeUserDialog");
+            const closeBtn = document.getElementById("closeChangeUserDialog");
+            const cancelBtn = document.getElementById("cancelChangeUser");
             if (adminMenu && dialog) {
-                adminMenu.addEventListener('click', () => {
-                    dialog.style.display = 'block';
+                adminMenu.addEventListener("click", () => {
+                    dialog.style.display = "block";
                 });
             }
             if (closeBtn) {
-                closeBtn.onclick = () => dialog.style.display = 'none';
+                closeBtn.onclick = () => (dialog.style.display = "none");
             }
             if (cancelBtn) {
-                cancelBtn.onclick = () => dialog.style.display = 'none';
+                cancelBtn.onclick = () => (dialog.style.display = "none");
             }
             // Hide dialog when clicking outside
             window.onclick = function (event) {
                 if (event.target === dialog) {
-                    dialog.style.display = 'none';
+                    dialog.style.display = "none";
                 }
             };
         });
@@ -578,13 +633,18 @@
     <script>
         // Monitor hold status and update the indicator
         document.addEventListener("DOMContentLoaded", function () {
-            const holdIndicatorLight = document.getElementById("hold_indicator_light");
+            const holdIndicatorLight = document.getElementById(
+                "hold_indicator_light"
+            );
 
             // Function to check hold status and update indicator
             function updateHoldIndicator() {
                 if (window.pmVars) {
                     // Check if either hold_status or quick_hold is active (equals 1)
-                    if (window.pmVars.hold_status === 1 || window.pmVars.quick_hold === 1) {
+                    if (
+                        window.pmVars.hold_status === 1 ||
+                        window.pmVars.quick_hold === 1
+                    ) {
                         holdIndicatorLight.style.backgroundColor = "#17de63"; // Green
                     } else {
                         holdIndicatorLight.style.backgroundColor = "red";

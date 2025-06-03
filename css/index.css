@@ -602,25 +602,6 @@ footer {
     height: 39px
 }
 
-
-
-#container_4 {
-    width: 131px;
-    height: 65px;
-    position: absolute;
-    left: 99px;
-    top: 194px;
-    border-style: solid;
-    border-width: 1px;
-    scale: 1.4;
-}
-
-
-
-
-
-
-
 /* Modal styles for Change User Name/Password dialog */
 .modal {
     display: none;
