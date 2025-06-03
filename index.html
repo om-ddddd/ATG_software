@@ -116,7 +116,7 @@
                 </gc-widget-tab-panel>
 
                 <gc-widget-tab-panel id="page_settings" class="container" label="Settings" icon-name="routnd:aifrjsi"
-                    vertical layout has-heading tooltip="Calibration and settings">
+                    vertical layout has-heading tooltip="Calibration and PID Settings">
                     <div class="s_settings-container">
                         <div class="s_button-container">
                             <button id="s_create-setting-btn" class="s_setting-btn">
@@ -165,10 +165,14 @@
                             <span class="s_close s_close-dialog">&times;</span>
                             <h3>Create New Setting</h3>
                             <form id="s_create-setting-form">
+                                
                                 <div class="s_form-group">
                                     <label for="s_setting-name">Setting Name:</label>
                                     <input type="text" id="s_setting-name" required />
                                 </div>
+                                <div class="s_settings-category">
+                                    Calibration Settings
+                                   </div> 
                                 <div class="s_form-group">
                                     <label for="s_calibration-factor">Calibration Factor:</label>
                                     <input type="number" id="s_calibration-factor" required step="0.01" />
@@ -181,6 +185,9 @@
                                     <label for="s_fine-offset">Fine Offset:</label>
                                     <input type="number" id="s_fine-offset" required step="0.001" />
                                 </div>
+                                <div class="s_settings-category">
+                                    PID Settings
+                                   </div> 
                                 <div class="s_form-group">
                                     <label for="s_kp">Kp:</label>
                                     <input type="number" id="s_kp" required step="0.01" />
@@ -212,31 +219,39 @@
                                         <!-- Options will be populated dynamically, excluding Default -->
                                     </select>
                                 </div>
-                                <div class="s_form-group">
-                                    <label for="s_modify-calibration-factor">Calibration Factor:</label>
-                                    <input type="number" id="s_modify-calibration-factor" required step="0.01" />
+                                <div>
+                                   <div class="s_settings-category">
+                                    Calibration Settings
+                                   </div> 
+                                    <div class="s_form-group">
+                                        <label for="s_modify-calibration-factor">Calibration Factor:</label>
+                                        <input type="number" id="s_modify-calibration-factor" required step="0.01" />
+                                    </div>
+                                    <div class="s_form-group">
+                                        <label for="s_modify-offset">Offset:</label>
+                                        <input type="number" id="s_modify-offset" required step="0.01" />
+                                    </div>
+                                    <div class="s_form-group">
+                                        <label for="s_modify-fine-offset">Fine Offset:</label>
+                                        <input type="number" id="s_modify-fine-offset" required step="0.001" />
+                                    </div>
                                 </div>
-                                <div class="s_form-group">
-                                    <label for="s_modify-offset">Offset:</label>
-                                    <input type="number" id="s_modify-offset" required step="0.01" />
-                                </div>
-                                <div class="s_form-group">
-                                    <label for="s_modify-fine-offset">Fine Offset:</label>
-                                    <input type="number" id="s_modify-fine-offset" required step="0.001" />
-                                </div>
-                                <div class="s_form-group">
-                                    <label for="s_modify-kp">Kp:</label>
-                                    <input type="number" id="s_modify-kp" required step="0.01" />
-                                </div>
-                                <div class="s_form-group">
-                                    <label for="s_modify-ki">Ki:</label>
-                                    <input type="number" id="s_modify-ki" required step="0.01" />
-                                </div>
-                                <div class="s_form-actions">
-                                    <button type="submit" class="s_submit-btn">Update</button>
-                                    <button type="button" class="s_cancel-btn s_close-dialog">
-                                        Cancel
-                                    </button>
+                                <div>
+                                    <div class="s_settings-category"> PID Settings</div>
+                                    <div class="s_form-group">
+                                        <label for="s_modify-kp">Kp:</label>
+                                        <input type="number" id="s_modify-kp" required step="0.01" />
+                                    </div>
+                                    <div class="s_form-group">
+                                        <label for="s_modify-ki">Ki:</label>
+                                        <input type="number" id="s_modify-ki" required step="0.01" />
+                                    </div>
+                                    <div class="s_form-actions">
+                                        <button type="submit" class="s_submit-btn">Update</button>
+                                        <button type="button" class="s_cancel-btn s_close-dialog">
+                                            Cancel
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -443,8 +458,8 @@
                         </div>
                         <div id="container6">
                             <div id="hold_indicator">
-                                <div id="hold_indicator_light"></div>
                                 <span>Hold Status</span>
+                                <div id="hold_indicator_light"></div>
                             </div>
                         </div>
                         <div id="container5">
@@ -477,6 +492,7 @@
                             <div id="label_2">
                                 Gate Status
                             </div>
+                            <div id="gate_status_display">Closed</div>
                         </div>
 
                         <div id="container_4">
@@ -742,6 +758,39 @@
             }
         });
     </script> -->
+    <script>
+        // Monitor gate status and update the display
+        document.addEventListener("DOMContentLoaded", function () {
+            const gateStatusDisplay = document.getElementById("gate_status_display");
+
+            // Function to update gate status display
+            function updateGateStatus() {
+                if (window.pmVars && typeof window.pmVars.gate_status !== 'undefined') {
+                    if (window.pmVars.gate_status === 1) {
+                        gateStatusDisplay.textContent = "Open";
+                        gateStatusDisplay.style.backgroundColor = "#4caf50"; // Green
+                    } else {
+                        gateStatusDisplay.textContent = "Closed";
+                        gateStatusDisplay.style.backgroundColor = "#f44336"; // Red
+                    }
+                }
+                else{
+                    console.log("pmVars or gate_status is not defined");
+                }
+            }
+
+            // Update status immediately when DOM is loaded
+            setTimeout(updateGateStatus, 10000);
+
+            // Set up interval to check status regularly
+            setInterval(updateGateStatus, 1000);
+
+            // Set up event listener for gate_status changes
+            if (window.pmVars) {
+                window.pmVars.addListener("gate_status", updateGateStatus);
+            }
+        });
+    </script>
 </body>
 
 </html>

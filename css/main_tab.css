@@ -149,6 +149,18 @@
     scale: 1.4;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+#gate_status_display {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: #f44336;
+    color: white;
+    transition: background-color 0.3s ease;
 }
 
 #container_4 {
@@ -288,4 +300,25 @@
     height: 24px;
     --gc-off-color: #f9230b;
     --gc-on-color: #17de63
+}
+
+#hold_indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+}
+
+#hold_indicator_light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    background-color: red;
+    transition: background-color 0.3s ease;
+}
+
+#hold_indicator span {
+    font-size: 14px;
+    font-weight: bold;
 }

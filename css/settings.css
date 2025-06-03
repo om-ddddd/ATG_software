@@ -287,3 +287,13 @@
         margin: 20% auto;
     }
 }
+.s_settings-category{
+    position: relative;
+    left: 0;
+    color: blue;
+    font-weight: 1000;
+    display: flex;
+    font-size: large;
+    align-items: center;
+    justify-content: center;
+}
