@@ -164,11 +164,11 @@ const init = () => {
 
   // Uncheck checkbox and hide container3 initially
   quickHoldCheckbox.checked = false;
-  container3.style.display = "none";
+  container3.style.opacity = "0";
 
   // Toggle visibility of container3 based on checkbox
   quickHoldCheckbox.addEventListener("change", function () {
-    container3.style.display = quickHoldCheckbox.checked ? "flex" : "none";
+    container3.style.opacity = quickHoldCheckbox.checked ? 1 : 0;
   });
 
   // On Enter click, set values to pmVars

@@ -13,11 +13,6 @@
             "propertyName": "value"
         },
         {
-            "widgetId": "led",
-            "serverBindName": "widget.pm.gate_status",
-            "propertyName": "glow"
-        },
-        {
             "widgetId": "input_1",
             "serverBindName": "widget.pm.cum_sineinput",
             "propertyName": "point"
