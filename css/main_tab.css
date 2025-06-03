@@ -1,0 +1,259 @@
+#main_tab {
+    --gc-padding: 0;
+    margin: 0;
+    height: 93vh;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+#container_5 {
+    left: 9vw;
+    width: 42vw;
+    top: 1vh;
+    height: 6vh;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 1vw;
+    scale: 1.2;
+}
+#container_1 {
+    width: 14vw;
+    height: 6vh;
+    position: relative;
+    border-width: 1px;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#actual_wl_span {
+    width: 8vw;
+    height: 3vh;
+    position: relative;
+}
+#required_wl_span {
+    width: 8vw;
+    height: 3vh;
+    position: relative;
+}
+#container_2 {
+    width: 8vw;
+    height: 6vh;
+    position: relative;
+    border-style: solid;
+    border-width: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#button, #button_1{
+    position: relative;
+    width: 53px;
+    height: 42px;
+}
+#container2 {
+    width: 21vh;
+    height: 6vh;
+    position: relative;
+    border-style: solid;
+    border-width: 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+#container4{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+#container3{
+    display: flex;
+    position: relative;
+    justify-content: center;
+    width: 5vw;
+    align-items: center;
+    gap: 5px;
+}
+
+#oscilloscope {
+    height: 87vh;
+    width: 94vw;
+    z-index: 0;
+    position: relative;
+    top: -6vh;
+}
+
+#input_1 {
+    position: absolute;
+    left: 318px;
+    top: 203px;
+    z-index: -1
+}
+#input {
+    position: absolute;
+    left: 557px;
+    top: 204px;
+    opacity: 1;
+    z-index: -1
+}
+#export_options_container {
+    right: 23vw;
+    position: fixed;
+    top: 11vh;
+    scale: 1.3;
+}
+#container_6 {
+    top: 0.5vh;
+    height: 57vh;
+    position: absolute;
+    z-index: 10;
+    background: white;
+    right: 3vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3vh;
+    width: 15vw;
+}
+#container_3 {
+    width: 7vw;
+    height: 5vh;
+    position: relative;
+    border-style: solid;
+    border-width: 1PX;
+    display: flex;
+    scale: 1.4;
+}
+#container_4 {
+    width: 7vw;
+    height: 5vh;
+    position: relative;
+    left: 0;
+    border-style: solid;
+    border-width: 1px;
+    scale: 1.4;
+    top: 0;
+}
+
+#label_7 {
+    position: relative;
+    color: green;
+}
+
+#label_8 {
+    position: relative;
+
+    color: orange;
+}
+#slider-container{
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+.PB-range-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 5px;
+    background: #D5DBE1;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.PB-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #000000;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.PB-range-slider::-webkit-slider-thumb:hover {
+    box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.16);
+    transition: 0.3s ease-in-out;
+}
+
+.PB-range-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #000000;
+    cursor: pointer;
+}
+
+.PB-range-slider-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #C6CACE;
+    box-shadow: 0px 1px 2px 0px #1F1E241F;
+}
+
+.PB-range-slidervalue {
+    font-weight: 600;
+}
+
+
+#container5{
+    width: 20vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px black solid;
+    height: 6vh;
+    justify-content: center;
+    align-items: center;
+}
+#container6{
+    position: relative;
+    width: 10vw;
+    height: 6vh;
+    border: black solid 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#quick_hold{
+    position: relative;
+    width: 13px;
+}
+#quick_input{
+    width: 2vw;
+}
+#quick_enter{
+    position: relative;
+}
+#quick_label{
+    width: 4vw;
+    position: relative;
+    display: block;
+}
+#label_2 {
+    position: absolute;
+    left: 27px;
+    top: 3px;
+    display: flex;
+}
+
+#led {
+    width: 23px;
+    height: 24px;
+    --gc-off-color: #f9230b;
+    --gc-on-color: #17de63
+}
+

@@ -12,10 +12,12 @@
     <link rel="icon" href="assets/app.ico">
     <title>main</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">    <link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" type="text/css" href="components/@ti/assets/stylesheets/gc-core-stylesheet.css">
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/tide-management.css">
     <link rel="stylesheet" href="./css/run.css">
+    <link rel="stylesheet" href="./css/main_tab.css">
     <script src="https://www.ti.com/assets/js/headerfooter/analytics.js" type="text/javascript"></script>
     <script> if (typeof nw != 'undefined') { window.$ti_nw_main_window = true; } </script>
 </head>
@@ -351,8 +353,7 @@
                             <gc-widget-container id="container_9">
                                 <gc-widget-label id="label_tides_per_screen"
                                     label="No. of Tides Per Screen"></gc-widget-label>
-                                <input type="number" id="no._of_waves" name="tentacles" min="0" max="10"
-                                    >
+                                <input type="number" id="no._of_waves" name="tentacles" min="0" max="10">
                             </gc-widget-container>
                         </div>
                         <gc-widget-button id="accept_button" button-type="primary" label="ACCEPT"></gc-widget-button>
@@ -369,63 +370,16 @@
                 </gc-widget-tab-panel>
                 <gc-widget-tab-panel id="main_tab" class="container" label="" icon-name="round:actione" vertical layout
                     has-heading>
-                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="6.30"
-                        trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
-                        trigger-timeout="0.1">
-                        <gc-widget-container id="container_6">
-                            <gc-widget-container id="container_3" horizontal layout center-justified end>
-                                <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
-                                <gc-widget-led id="led"></gc-widget-led>
-                            </gc-widget-container>
-
-                            <gc-widget-container id="container_4">
-                                <gc-widget-label id="label_7" label="----- : Actual WL "></gc-widget-label>
-                                <gc-widget-label id="label_8" label="----- : Required WL "></gc-widget-label>
-                            </gc-widget-container>
-                        </gc-widget-container>
-                        <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" "
-                            vertical-units-per-division="13" vertical-pos="-4"
-                            vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
-                        <gc-widget-virtual-oscilloscope-input id="input" legend-name=" "
-                            vertical-units-per-division="13" vertical-pos="-4"
-                            vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
-                        <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1507px; top: 359px; z-index: 11111; width: 176px; height: 35px;">
-                            <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
-                                id="h_scale">
-                            <p class="PB-range-slidervalue">H. Scale</p>
+                    <div id="container_5">
+                        <div id="container_1">
+                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value">00.00</span></div>
+                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value">00.00</span></div>
                         </div>
-                        <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1507px; top: 438px; width: 176px; z-index: 1111; height: 35px;">
-                            <input type="range" min="0" max="100" value="1" class="PB-range-slider" step="0.01"
-                                id="h_position">
-                            <p class="PB-range-slidervalue">H. Position</p>
-                        </div>
-                        <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1507px; top: 515px; z-index: 11111; width: 176px; height: 35px;">
-                            <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
-                                id="v_scale">
-                            <p class="PB-range-slidervalue">V. Scale</p>
-                        </div>
-                        <div class="PB-range-slider-div"
-                            style="position: absolute; left: 1507px; top: 594px; width: 176px; z-index: 1111; height: 35px;">
-                            <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
-                                id="v_position">
-                            <p class="PB-range-slidervalue">V. Position</p>
-                        </div>
-                    </gc-widget-virtual-oscilloscope>
-                    <gc-widget-container id="container_5">
-                        <gc-widget-container id="container_1">
-                            <div id="actual_wl_span">Actual WL: <span id="actual_wl_value"
-                                    style="position: fixed;left: 127px;">00.00</span></div>
-                            <div id="required_wl_span">Requi. WL: <span id="required_wl_value"
-                                    style="position: fixed;left: 127px;">00.00</span></div>
-                        </gc-widget-container>
-                        <gc-widget-container id="container_2">
+                        <div id="container_2">
                             <gc-widget-button id="button" label="H"></gc-widget-button>
                             <gc-widget-button id="button_1" label="R"></gc-widget-button>
-                        </gc-widget-container>
-                        <gc-widget-container id="container2">
+                        </div>
+                        <div id="container2">
                             <div id="container4">
                                 <input type="checkbox" id="quick_hold">
                                 <label for="quick_hold" id="quick_label">Quick Hold</label>
@@ -434,7 +388,7 @@
                                 <input id="quick_input" type="number">
                                 <button id="quick_enter">Enter</button>
                             </div>
-                        </gc-widget-container>
+                        </div>
                         <div id="container6">
                             <div id="hold_indicator">
                                 <div id="hold_indicator_light"></div>
@@ -446,18 +400,61 @@
                             <button id="stop" style="width:58px"> STOP </button>
                             <button id="start" style="width:58px"> START </button>
                         </div>
-                    </gc-widget-container>
-                    <gc-widget-container id="export_options_container">
+                    </div>
+                    <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="6.30"
+                        trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
+                        trigger-timeout="0.1">
+                        <gc-widget-virtual-oscilloscope-input id="input_1" legend-name=" "
+                            vertical-units-per-division="13" vertical-pos="-4"
+                            vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
+                        <gc-widget-virtual-oscilloscope-input id="input" legend-name=" "
+                            vertical-units-per-division="13" vertical-pos="-4"
+                            vertical-scale="1"></gc-widget-virtual-oscilloscope-input>
+                    </gc-widget-virtual-oscilloscope>
+                    <div id="export_options_container">
                         <div class="export-controls">
                             <button id="print_btn" class="export-btn">Print</button>
                             <button id="save_btn" class="export-btn">Save Image</button>
                             <button id="save_btn_csv" class="export-btn">Save CSV</button>
-                            <div class="export-checkbox">
-                                <input type="checkbox" id="autosave_checkbox">
-                                <label for="autosave_checkbox">Auto Save</label>
+                        </div>
+                    </div>
+                    <div id="container_6">
+                        <div id="container_3" horizontal layout center-justified end>
+                            <gc-widget-label id="label_2" label="Gate Status"></gc-widget-label>
+                            <gc-widget-led id="led"></gc-widget-led>
+                        </div>
+
+                        <div id="container_4">
+                            <gc-widget-label id="label_7" label="----- : Actual WL "></gc-widget-label>
+                            <gc-widget-label id="label_8" label="----- : Required WL "></gc-widget-label>
+                        </div>
+                        <div class="slider-container">
+                            <div class="PB-range-slider-div"
+                                style=" z-index: 11111; width: 176px; height: 35px;">
+                                <input type="range" min="0" max="5" value="1" class="PB-range-slider" step="0.1"
+                                    id="h_scale">
+                                <p class="PB-range-slidervalue">H. Scale</p>
+                            </div>
+                            <div class="PB-range-slider-div"
+                                style=" width: 176px; z-index: 1111; height: 35px;">
+                                <input type="range" min="0" max="100" value="1" class="PB-range-slider" step="0.01"
+                                    id="h_position">
+                                <p class="PB-range-slidervalue">H. Position</p>
+                            </div>
+                            <div class="PB-range-slider-div"
+                                style=" z-index: 11111; width: 176px; height: 35px;">
+                                <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
+                                    id="v_scale">
+                                <p class="PB-range-slidervalue">V. Scale</p>
+                            </div>
+                            <div class="PB-range-slider-div"
+                                style=" width: 176px; z-index: 1111; height: 35px;">
+                                <input type="range" min="-4" max="4" value="1" class="PB-range-slider" step="0.1"
+                                    id="v_position">
+                                <p class="PB-range-slidervalue">V. Position</p>
                             </div>
                         </div>
-                    </gc-widget-container>
+                    </div>
                 </gc-widget-tab-panel>
             </gc-widget-tab-container>
         </gc-widget-container>
