@@ -2,12 +2,16 @@
     width: 50vw;
     height: 30vh;
     position: relative;
-    left: 0;
-    top: 0;
+    left: 24vw;
+    top: 20vh;
     border-style: solid;
     border-width: 1px;
-    scale: 1;
     display: flex;
+    flex-direction: column;
+    gap: 10vh;
+    justify-content: center;
+    align-items: center;
+    scale: 1.4;
 }
 #tide-range {
     position: relative;
@@ -17,7 +21,12 @@
     height: 3vh;
     font-size: 11px;
 }
-
+#container7{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 #label_tide {
    position: relative;
     left: 0;
@@ -43,12 +52,7 @@
     opacity: 0
 }
 #accept_button {
-   
-    position: relative;
-    left: 0;
-    top: 0;
-    scale: 1;
-
+    width: 100px;
 }
 #input_5 {
     position: absolute;
@@ -66,7 +70,7 @@
     height: 27px;
 }
 #container_7 {
-    width: 20vw;
+    width: 15vw;
     position: relative;
     left: 0;
     top: 0;
@@ -78,7 +82,7 @@
 }
 
 #container_9 {
-    width: 22vw;
+    width: 15vw;
     height: 4vh;
     position: relative;
     left: 0;
