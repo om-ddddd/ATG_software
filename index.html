@@ -492,7 +492,7 @@
                             <div id="label_2">
                                 Gate Status
                             </div>
-                            <div id="gate_status_display">Closed</div>
+                            <div id="gate_status_display">Closing</div>
                         </div>
 
                         <div id="container_4">
@@ -767,10 +767,10 @@
             function updateGateStatus() {
                 if (window.pmVars && typeof window.pmVars.gate_status !== 'undefined') {
                     if (window.pmVars.gate_status === 1) {
-                        gateStatusDisplay.textContent = "Open";
+                        gateStatusDisplay.textContent = "Opening";
                         gateStatusDisplay.style.backgroundColor = "#4caf50"; // Green
                     } else {
-                        gateStatusDisplay.textContent = "Closed";
+                        gateStatusDisplay.textContent = "Closing";
                         gateStatusDisplay.style.backgroundColor = "#f44336"; // Red
                     }
                 }
