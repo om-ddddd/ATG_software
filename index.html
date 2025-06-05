@@ -82,12 +82,8 @@
             <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
                 <gc-widget-menuitem id="mm_administration" label="Administration" layout vertical>
                 </gc-widget-menuitem>
-                <gc-widget-menuitem id="mm_help" label="Help" layout vertical>
-                    <gc-widget-menuaction id="ma_about" label="About" action-id="cmd_open_about_dialog"
-                        icon="round:action:help"></gc-widget-menuaction>
-                    <gc-widget-menuaction id="ma_widget_readme" label="View README.md" action-id="cmd_open_readme"
-                        icon="round:action:description"></gc-widget-menuaction>
-                </gc-widget-menuitem>
+                <button id="ma_about" type="button" style="color: white; background: #bb2719; border: 0px;">About</button>
+                <button id="ma_help" type="button" style="color: white; background: #bb2719; border: 0px;">Help</button>
                 <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
                     <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x"
                         icon="round:action:exit_to_app"></gc-widget-menuaction>
@@ -791,6 +787,55 @@
             }
         });
     </script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the correct about button
+    const aboutButton = document.getElementById('ma_about');
+    const aboutFrame = document.getElementById('aboutDialogFrame');
+    
+    // Show iframe when about button is clicked
+    if (aboutButton && aboutFrame) {
+        aboutButton.addEventListener('click', () => {
+            aboutFrame.style.display = 'block';
+        });
+    }
+    
+    // Listen for messages from the iframe to close
+    window.addEventListener('message', (event) => {
+        if (event.data === 'closeDialog') {
+            aboutFrame.style.display = 'none';
+        }
+    });
+    
+    // Close iframe when clicking outside (optional)
+    aboutFrame.addEventListener('click', (event) => {
+        if (event.target === aboutFrame) {
+            aboutFrame.style.display = 'none';
+        }
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Help button PDF functionality
+    const helpButton = document.getElementById('ma_help');
+    
+    if (helpButton) {
+        helpButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Option 1: Open in new tab (simple)
+            window.open('./docs/user-manual.pdf', '_blank');
+            
+            // Option 2: Show download dialog
+            // const link = document.createElement('a');
+            // link.href = './docs/user-manual.pdf';
+            // link.download = 'ATG-User-Manual.pdf';
+            // link.click();
+        });
+    }
+});
+</script>
+  <iframe id="aboutDialogFrame" src="./about-dialog.html" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
 </body>
 
 </html>
