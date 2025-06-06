@@ -104,7 +104,7 @@ function setupScreenshotRoutes(app, options = {}) {
       // Core screenshot capture function using screenshot-desktop with hardcoded bounding box
     const captureScreenshot = async () => {
         try {
-            console.log('Capturing screenshot of current window with hardcoded bounding box');
+            // console.log('Capturing screenshot of current window with hardcoded bounding box');
             
             // Capture the entire screen
             const imgBuffer = await screenshot({ format: 'png' });
@@ -167,7 +167,7 @@ function setupScreenshotRoutes(app, options = {}) {
             const imageBuffer = Buffer.from(result.screenshot, 'base64');
             fs_default.writeFileSync(screenshotPath, imageBuffer);
               // Log the save operation
-            console.log(`[${new Date().toISOString()}] Screenshot saved to backend: ${finalFilename} (area: ${SCREENSHOT_CONFIG.areaName}) by user: om-ddddd`);
+            // console.log(`[${new Date().toISOString()}] Screenshot saved to backend: ${finalFilename} (area: ${SCREENSHOT_CONFIG.areaName}) by user: om-ddddd`);
             
             res.status(201).json({
                 success: true,
@@ -210,7 +210,7 @@ function setupScreenshotRoutes(app, options = {}) {
             const suggestedFilename = validateFilename(filename || defaultFilename, 'png');
             
             // Log the capture operation
-            console.log(`[${new Date().toISOString()}] Screenshot captured for frontend download (area: ${SCREENSHOT_CONFIG.areaName}) by user: om-ddddd`);
+            // console.log(`[${new Date().toISOString()}] Screenshot captured for frontend download (area: ${SCREENSHOT_CONFIG.areaName}) by user: om-ddddd`);
             
             // Return screenshot data for frontend download dialog
             res.status(200).json({
@@ -274,7 +274,7 @@ function setupScreenshotRoutes(app, options = {}) {
             fileStream.pipe(res);
             
             // Log download
-            console.log(`[${new Date().toISOString()}] Screenshot downloaded: ${downloadFilename} by user: om-ddddd`);
+            // console.log(`[${new Date().toISOString()}] Screenshot downloaded: ${downloadFilename} by user: om-ddddd`);
             
         } catch (error) {
             console.error('Error downloading screenshot:', error);
@@ -346,7 +346,7 @@ function setupScreenshotRoutes(app, options = {}) {
             
             fs_default.unlinkSync(screenshotPath);
             
-            console.log(`[${new Date().toISOString()}] Screenshot deleted: ${filename} by user: om-ddddd`);
+            // console.log(`[${new Date().toISOString()}] Screenshot deleted: ${filename} by user: om-ddddd`);
             
             res.status(200).json({
                 success: true,

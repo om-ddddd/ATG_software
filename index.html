@@ -56,6 +56,7 @@
     <script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script>
     <script type="module" src="./frontendJSFiles/export-functions.js"></script>
     <script src="./frontendJSFiles/plot-handler.js"></script>
+    <script type="module" src="./frontendJSFiles/quick_start.js"></script>
     <script type="module">
         import {
             getTimer,
@@ -64,7 +65,7 @@
         } from "./frontendJSFiles/timer-handler.js";
         window.TimerController = TimerController;
         window.plotHandler = new PlotHandler();
-        console.log("Plot handler initialized and available globally");
+        // console.log("Plot handler initialized and available globally");
     </script>
     <div id="editorRoot" layout vertical one flex>
         <gc-widget-theme id="theme" selected-theme-index="0" hidden></gc-widget-theme>
@@ -442,6 +443,10 @@
                             <gc-widget-button id="button" label="H"></gc-widget-button>
                             <gc-widget-button id="button_1" label="R"></gc-widget-button>
                         </div>
+                         <div id="container10">
+                                <input type="checkbox" id="quick_start" checked=/>
+                                <label for="quick_start" id="quick_start_label">Quick Start</label>
+                        </div>
                         <div id="container2">
                             <div id="container4">
                                 <input type="checkbox" id="quick_hold" />
@@ -687,7 +692,7 @@
             stopButton.addEventListener("click", function () {
                 if (window.pmVars) {
                     window.pmVars.stop = 1;
-                    console.log("Stop button pressed - pmVars.stop = 1");
+                    // console.log("Stop button pressed - pmVars.stop = 1");
                 }
             });
 
@@ -695,7 +700,7 @@
             startButton.addEventListener("click", function () {
                 if (window.pmVars) {
                     window.pmVars.stop = 0;
-                    console.log("Start button pressed - pmVars.stop = 0");
+                    // console.log("Start button pressed - pmVars.stop = 0");
                 }
             });
         });
@@ -771,7 +776,7 @@
                     }
                 }
                 else{
-                    console.log("pmVars or gate_status is not defined");
+                    // console.log("pmVars or gate_status is not defined");
                 }
             }
 
@@ -835,7 +840,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-  <iframe id="aboutDialogFrame" src="./about-dialog.html" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
+ <iframe id="aboutDialogFrame" src="./about-dialog.html" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
 </body>
-
 </html>

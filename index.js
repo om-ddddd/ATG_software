@@ -12,7 +12,7 @@ import { GcUtils } from "./components/@ti/gc-core-assets/lib/GcUtils"; // Core u
 import { GcConsole } from "./components/@ti/gc-core-assets/lib/GcConsole"; // Console logging system for debugging
 import { GcWidget } from "./components/@ti/gc-widget-base/lib/GcWidget"; // Base widget functionality for UI components
 import { ActionRegistry } from "./components/@ti/gc-widget-menu/lib/ActionRegistry"; // Register and manage UI actions
-
+import { quickstart } from "./frontendJSFiles/quick_start.js";
 // ===============================================
 // APPLICATION-SPECIFIC IMPORTS - Custom modules
 // ===============================================
@@ -36,7 +36,7 @@ let animationId = null; // Store animation frame ID for cancellation
 // ===============================================
 const console = new GcConsole("myapp"); // Create dedicated console instance for this application
 GcConsole.setLevel("myapp", 4); // Set logging level (4 = all messages including debug)
-console.info("index.js is loaded..."); // Log successful initialization
+//console.info("index.js is loaded..."); // Log successful initialization
 
 // ===============================================
 // MAIN INITIALIZATION FUNCTION
@@ -59,7 +59,7 @@ const init = () => {
   // ===============================================
   GcWidget.querySelector("#accept_button").then((acceptButton) => {
     acceptButton.addEventListener("click", () => {
-      console.info("Accept button clicked - transitioning to main application");
+      //console.info("Accept button clicked - transitioning to main application");
       
       // ===============================================
       // TAB NAVIGATION - Switch to main application tab
@@ -112,7 +112,7 @@ const init = () => {
           
           // Store session instance timestamp in localStorage for tracking
           localStorage.setItem("instance", formattedDateTime);
-          console.info(`Session instance timestamp saved: ${formattedDateTime}`);
+          //console.info(`Session instance timestamp saved: ${formattedDateTime}`);
 
           // ===============================================
           // CORE COMPONENT INITIALIZATION - Start main application functions
@@ -133,7 +133,7 @@ const init = () => {
               if (typeof module.initializeExportFunctions === "function") {
                 // Initialize data export capabilities (CSV, plots, etc.)
                 module.initializeExportFunctions();
-                console.info("Export functions initialized successfully");
+                //console.info("Export functions initialized successfully");
               }
             })
             .catch((error) => {
@@ -155,11 +155,13 @@ const init = () => {
             // Sync quick input with current main output value
             pmVars.quick_input = pmVars.mainoutput;
             pmVars.quick_hold = 1; // Enable hold mode initially
-            
+          const quickStartCheckbox = document.getElementById("quick_start");
+          quickStartCheckbox.checked = true;
+            quickstart(); // Call quickstart function to handle initial state
             // Pause timer controller to start in controlled state
             TimerController.pause();
-            console.log('Timer paused - application in initial hold state');
-
+            // console.log('Timer paused - application in initial hold state');
+            
             // ===============================================
             // EVENT LISTENERS REGISTRATION - Real-time data updates
             // ===============================================
@@ -180,21 +182,22 @@ const init = () => {
   GcWidget.querySelector("#button").then((hButton) => {
     if (hButton) {
       hButton.addEventListener("click", () => {
-        console.info("Hold button clicked - pausing system operations");
+        //console.info("Hold button clicked - pausing system operations");
         
         if (window.pmVars) {
           // Set system to hold state
           window.pmVars.hold_status = 1; // Enable hold mode
-          
+          const quickStartCheckbox = document.getElementById("quick_start");
+          quickStartCheckbox.checked = false;
           // Pause timer operations
           TimerController.pause();
-          console.log('Timer paused via hold button');
+          // console.log('Timer paused via hold button');
           
           // Stop CSV data recording
           stopRecording()
             .then(() => {
               // Recording stopped successfully - silent success handling
-              console.info("CSV recording stopped successfully");
+              //console.info("CSV recording stopped successfully");
             })
             .catch(() => {
               // Silent handling of recording stop errors
@@ -211,7 +214,7 @@ const init = () => {
   GcWidget.querySelector("#button_1").then((rButton) => {
     if (rButton) {
       rButton.addEventListener("click", () => {
-        console.info("Resume button clicked - starting system operations");
+        //console.info("Resume button clicked - starting system operations");
         
         if (window.pmVars) {
           // Release system from hold state
@@ -220,13 +223,13 @@ const init = () => {
           
           // Resume timer operations
           TimerController.resume();
-          console.log('Timer resumed via resume button');
+          // console.log('Timer resumed via resume button');
           
           // Start CSV data recording with 1 second interval
           startRecording(1000)
             .then(() => {
               // Recording started successfully
-              console.log("CSV writing started successfully");
+              // console.log("CSV writing started successfully");
             })
             .catch(() => {
               // Silent handling of recording start errors
@@ -259,7 +262,7 @@ const init = () => {
   // Toggle visibility of quick input container based on checkbox state
   quickHoldCheckbox.addEventListener("change", function () {
     container3.style.opacity = quickHoldCheckbox.checked ? 1 : 0;
-    console.info(`Quick input controls ${quickHoldCheckbox.checked ? 'shown' : 'hidden'}`);
+    //console.info(`Quick input controls ${quickHoldCheckbox.checked ? 'shown' : 'hidden'}`);
   });
 
   // ===============================================
@@ -268,16 +271,17 @@ const init = () => {
   // Handle manual water level input submission
   quickEnterBtn.addEventListener("click", function () {
     const quick_input = quickInputField.value;
-    console.info(`Quick input submitted: ${quick_input}`);
+    //console.info(`Quick input submitted: ${quick_input}`);
 
     if (window.pmVars) {
       // Set the manual input value and enable hold mode
       window.pmVars.quick_input = parseFloat(quick_input);
       window.pmVars.quick_hold = 1; // Enable quick hold mode
-      
+      const quickStartCheckbox = document.getElementById("quick_start");
+      quickStartCheckbox.checked = false; // Ensure quick start is enabled
       // Pause timer to maintain manual override
       TimerController.pause();
-      console.log('Timer paused - quick input mode activated');
+      // console.log('Timer paused - quick input mode activated');
     }
 
     // Debug logging (commented out for production)
@@ -310,7 +314,7 @@ function startSineWaveGenerator() {
 
   // Start the animation loop
   animationId = requestAnimationFrame(updateSineValue);
-  console.info("Sine wave generator started");
+  //console.info("Sine wave generator started");
 }
 
 // ===============================================
@@ -331,9 +335,9 @@ function setupOscilloscope() {
   if (window.pmVars && window.pmVars.frequency) {
     // Calculate time period using T = 1/f formula
     timePeriod = 1 / window.pmVars.frequency;
-    console.log(`Time Period: ${timePeriod.toFixed(2)}s based on frequency: ${window.pmVars.frequency}Hz`);
+    // console.log(`Time Period: ${timePeriod.toFixed(2)}s based on frequency: ${window.pmVars.frequency}Hz`);
   }
-  console.log(`Time Period: ${timePeriod.toFixed(2)}s`);
+  // console.log(`Time Period: ${timePeriod.toFixed(2)}s`);
   
   // ===============================================
   // DOM ELEMENT RETRIEVAL - Get oscilloscope and input elements
@@ -352,7 +356,7 @@ function setupOscilloscope() {
   // ===============================================
   // Get sample rate from oscilloscope attributes (default: 7.09)
   const sampleRate = parseFloat(osc.getAttribute("sample-rate") || 7.09);
-  console.info(`Oscilloscope sample rate: ${sampleRate}`);
+  //console.info(`Oscilloscope sample rate: ${sampleRate}`);
   
   // ===============================================
   // WAVE COUNT PROCESSING - Calculate capacity and timer settings
@@ -363,20 +367,20 @@ function setupOscilloscope() {
     // Store wave count in localStorage for persistence
     if (!isNaN(value)) {
       localStorage.setItem("no_of_waves", value);
-      console.info(`Wave count saved to localStorage: ${value}`);
+      //console.info(`Wave count saved to localStorage: ${value}`);
     }
     
     // Calculate oscilloscope capacity based on waves, sample rate, and time period
     if (!isNaN(value)) {
       capValue = Math.round(value * sampleRate * timePeriod);
-      console.info(`Calculated oscilloscope capacity: ${capValue}`);
+      //console.info(`Calculated oscilloscope capacity: ${capValue}`);
     }
     
     // Start timer controller with calculated duration
     if (!isNaN(value)) {
       const durationMs = value * timePeriod * 1000; // Convert to milliseconds
       TimerController.start(durationMs);
-      console.info(`Timer started for ${value * timePeriod} seconds (${durationMs}ms)`);
+      //console.info(`Timer started for ${value * timePeriod} seconds (${durationMs}ms)`);
       
       // Add automatic plotting task and check status
       TimerController.addAutoPlotTask();  // Schedule auto plot generation
@@ -399,11 +403,11 @@ function setupOscilloscope() {
   setTimeout(() => {
     // Apply calculated capacity value
     osc.setAttribute("capacity", capValue);
-    console.info(`Oscilloscope capacity set to: ${capValue}`);
+    //console.info(`Oscilloscope capacity set to: ${capValue}`);
     
     // Switch to automatic trigger mode for continuous operation
     osc.setAttribute("trigger-mode", "auto");
-    console.info("Oscilloscope switched to auto trigger mode");
+    //console.info("Oscilloscope switched to auto trigger mode");
 
     // ===============================================
     // HORIZONTAL POSITION SLIDER SYNC - Update UI controls
@@ -412,7 +416,7 @@ function setupOscilloscope() {
     const hPositionSlider = document.getElementById("h_position");
     if (hPositionSlider) {
       hPositionSlider.setAttribute("max", capValue);
-      console.info(`Horizontal position slider max set to: ${capValue}`);
+      //console.info(`Horizontal position slider max set to: ${capValue}`);
     }
   }, 100); // 100ms delay to ensure proper initialization order
   
@@ -432,7 +436,7 @@ function setupOscilloscope() {
       
       // Recalculate capacity based on new wave count
       capValue = Math.round(value * sampleRate * timePeriod);
-      console.info(`Wave input changed: ${value} waves, new capacity: ${capValue}`);
+      //console.info(`Wave input changed: ${value} waves, new capacity: ${capValue}`);
       
       // Update oscilloscope capacity immediately
       osc.setAttribute("capacity", capValue);
@@ -441,7 +445,7 @@ function setupOscilloscope() {
       const hPositionSlider = document.getElementById("h_position");
       if (hPositionSlider) {
         hPositionSlider.setAttribute("max", capValue);
-        console.info(`Horizontal slider updated for new capacity: ${capValue}`);
+        //console.info(`Horizontal slider updated for new capacity: ${capValue}`);
       }
     });
   } else {
@@ -508,12 +512,12 @@ function initWaterLevelDisplays() {
   // Set default display values
   if (actualWLValue) {
     actualWLValue.textContent = "00.00";
-    console.info("Actual water level display initialized");
+    //console.info("Actual water level display initialized");
   }
 
   if (requiredWLValue) {
     requiredWLValue.textContent = "00.00";
-    console.info("Required water level display initialized");
+    //console.info("Required water level display initialized");
   }
 }
 
@@ -547,14 +551,14 @@ function setupTideRangeListener() {
   const tideRangeDropdown = document.getElementById("tide-range");
   
   if (tideRangeDropdown) {
-    console.info("Setting up tide range dropdown listener");
+    //console.info("Setting up tide range dropdown listener");
     
     // ===============================================
     // SAVED SELECTION RESTORATION - Load previous choice
     // ===============================================
     const savedTideName = localStorage.getItem("selectedTideName");
     if (savedTideName) {
-      console.info(`Restoring saved tide selection: ${savedTideName}`);
+      //console.info(`Restoring saved tide selection: ${savedTideName}`);
       
       // Use setTimeout to ensure dropdown options are loaded
       setTimeout(() => {
@@ -570,7 +574,7 @@ function setupTideRangeListener() {
           // Trigger change event to load associated data
           const changeEvent = new Event("change");
           tideRangeDropdown.dispatchEvent(changeEvent);
-          console.info(`Saved tide selection restored and triggered: ${savedTideName}`);
+          //console.info(`Saved tide selection restored and triggered: ${savedTideName}`);
         }
       }, 500); // 500ms delay to ensure dropdown is populated
     }
@@ -580,7 +584,7 @@ function setupTideRangeListener() {
     // ===============================================
     tideRangeDropdown.addEventListener("change", (event) => {
       const selectedTideName = event.target.value;
-      console.info(`Tide selection changed to: ${selectedTideName}`);
+      //console.info(`Tide selection changed to: ${selectedTideName}`);
       
       if (selectedTideName) {
         // ===============================================
@@ -597,7 +601,7 @@ function setupTideRangeListener() {
         
         // Save selection to localStorage for persistence
         localStorage.setItem("selectedTideName", selectedTideName);
-        console.info(`Tide selection saved to localStorage: ${selectedTideName}`);
+        //console.info(`Tide selection saved to localStorage: ${selectedTideName}`);
 
         // ===============================================
         // TIDE DATA RETRIEVAL - Fetch tide details from API
@@ -606,7 +610,7 @@ function setupTideRangeListener() {
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              console.info("Tide data retrieved successfully");
+              //console.info("Tide data retrieved successfully");
               
               // Find the selected tide in the response data
               const selectedTide = data.tides.find(
@@ -614,7 +618,7 @@ function setupTideRangeListener() {
               );
               
               if (selectedTide) {
-                console.info(`Selected tide details:`, selectedTide);
+                //console.info(`Selected tide details:`, selectedTide);
                 
                 // ===============================================
                 // UI UPDATES - Populate offset input field
@@ -622,7 +626,7 @@ function setupTideRangeListener() {
                 const offsetInput = document.getElementById("input_6");
                 if (offsetInput) {
                   offsetInput.value = selectedTide.offset || "";
-                  console.info(`Offset input updated: ${selectedTide.offset}`);
+                  //console.info(`Offset input updated: ${selectedTide.offset}`);
                 }
                 
                 // ===============================================
@@ -630,7 +634,7 @@ function setupTideRangeListener() {
                 // ===============================================
                 if (window.pmVars) {
                   window.pmVars.sineinput = selectedTide.range;
-                  console.info(`Sine input range set to: ${selectedTide.range}`);
+                  //console.info(`Sine input range set to: ${selectedTide.range}`);
                   
                   // Update the required water level display
                   updateRequiredWLSpan();
@@ -697,7 +701,7 @@ ActionRegistry.registerAction("cmd_exit", {
   run() {
     // Check if running in NW.js environment or browser and close accordingly
     GcUtils.isNW ? require("nw.gui").Window.get().close() : window.close();
-    console.info("Application exit command executed");
+    //console.info("Application exit command executed");
   },
 });
 
@@ -724,14 +728,14 @@ function setupTabPanelObservers() {
    * Loads tide data and populates the dropdown
    */
   function runTabPanelFunction() {
-    console.info("Run tab panel became visible - loading tide data");
+    //console.info("Run tab panel became visible - loading tide data");
     
     // Fetch all available tides from the API
     fetch("/api/getAllTides")
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.info(`Loaded ${data.tides.length} tides for run tab`);
+          //console.info(`Loaded ${data.tides.length} tides for run tab`);
           
           const dropdown = document.getElementById("tide-range");
           if (dropdown) {
@@ -760,7 +764,7 @@ function setupTabPanelObservers() {
             // Select previously saved tide from localStorage if available
             const savedTideName = localStorage.getItem("selectedTideName");
             if (savedTideName) {
-              console.info(`Restoring saved tide selection in run tab: ${savedTideName}`);
+              //console.info(`Restoring saved tide selection in run tab: ${savedTideName}`);
               
               // Find and select the saved option if it exists
               const savedOption = Array.from(dropdown.options).find(
@@ -772,7 +776,7 @@ function setupTabPanelObservers() {
                 // Trigger change event to load tide data
                 const changeEvent = new Event("change");
                 dropdown.dispatchEvent(changeEvent);
-                console.info(`Saved tide selection restored and triggered in run tab`);
+                //console.info(`Saved tide selection restored and triggered in run tab`);
               }
             }
           }
@@ -793,7 +797,7 @@ function setupTabPanelObservers() {
    * Currently empty - placeholder for future settings functionality
    */
   function settingsTabPanelFunction() {
-    console.info("Settings tab panel became visible");
+    //console.info("Settings tab panel became visible");
     // TODO: Add settings tab specific functionality here
   }
   
@@ -801,7 +805,7 @@ function setupTabPanelObservers() {
   // RUN TAB OBSERVER SETUP - Monitor run tab visibility
   // ===============================================
   if (runTabPanel) {
-    console.info("Setting up run tab panel observer");
+    //console.info("Setting up run tab panel observer");
     
     // Create mutation observer to watch for visibility changes
     const runObserver = new MutationObserver((mutations) => {
@@ -818,7 +822,7 @@ function setupTabPanelObservers() {
             !runTabPanel.hasAttribute("hidden");
 
           if (isVisible) {
-            console.info("Run tab panel became visible - executing tab function");
+            //console.info("Run tab panel became visible - executing tab function");
             runTabPanelFunction(); // Execute run tab specific functionality
             // Note: initAdminAuth() could be called here if admin authentication is needed
           }
@@ -839,7 +843,7 @@ function setupTabPanelObservers() {
   // SETTINGS TAB OBSERVER SETUP - Monitor settings tab visibility
   // ===============================================
   if (settingsTabPanel) {
-    console.info("Setting up settings tab panel observer");
+    //console.info("Setting up settings tab panel observer");
     
     // Create mutation observer for settings tab visibility changes
     const settingsObserver = new MutationObserver((mutations) => {
@@ -856,7 +860,7 @@ function setupTabPanelObservers() {
             !settingsTabPanel.hasAttribute("hidden");
 
           if (isVisible) {
-            console.info("Settings tab panel became visible - executing tab function");
+            //console.info("Settings tab panel became visible - executing tab function");
             settingsTabPanelFunction(); // Execute settings tab specific functionality
             // Note: initAdminAuth() could be called here if admin authentication is needed
           }
@@ -877,21 +881,21 @@ function setupTabPanelObservers() {
   // TIDE MANIPULATION TAB OBSERVER SETUP - Monitor tide management tab visibility
   // ===============================================
   if (tideManipulationTabPanel) {
-    console.info("Setting up tide manipulation tab panel observer");
+    //console.info("Setting up tide manipulation tab panel observer");
     
     /**
      * Function to execute when the 'tide manipulation' tab panel becomes visible
      * Loads tide data for management operations
      */
     function tideManipulationTabPanelFunction() {
-      console.info("Tide manipulation tab panel became visible - loading tide data");
+      //console.info("Tide manipulation tab panel became visible - loading tide data");
       
       // Fetch all available tides for manipulation
       fetch("/api/getAllTides")
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            console.info(`Loaded ${data.tides.length} tides for manipulation tab`);
+            //console.info(`Loaded ${data.tides.length} tides for manipulation tab`);
             // TODO: Implement tide manipulation specific UI updates here
           } else {
             console.error("Failed to load tides for manipulation tab:", data.message);
@@ -918,7 +922,7 @@ function setupTabPanelObservers() {
             "none" && !tideManipulationTabPanel.hasAttribute("hidden");
             
           if (isVisible) {
-            console.info("Tide manipulation tab panel became visible - executing tab function");
+            //console.info("Tide manipulation tab panel became visible - executing tab function");
             tideManipulationTabPanelFunction(); // Execute tide manipulation specific functionality
           }
         }
@@ -940,7 +944,7 @@ function setupTabPanelObservers() {
 // ===============================================
 // Initialize tab panel observers when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
-  console.info("DOM loaded - setting up tab panel observers");
+  //console.info("DOM loaded - setting up tab panel observers");
   setupTabPanelObservers();
 });
 
@@ -952,13 +956,13 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===============================================
 // Add event listener to stop CSV recording when the window is closed
 window.addEventListener("beforeunload", () => {
-  console.info("Window closing - stopping CSV recording");
+  //console.info("Window closing - stopping CSV recording");
   
   // Ensure CSV recording is stopped before window closes
   stopRecording()
     .then(() => {
       // Recording stopped successfully - silent success handling
-      console.info("CSV recording stopped successfully on window close");
+      //console.info("CSV recording stopped successfully on window close");
     })
     .catch(() => {
       // Silent handling of recording stop errors

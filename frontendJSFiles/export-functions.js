@@ -56,7 +56,7 @@ export function initializeExportFunctions() {
     try {
       // Get the current recording filename from localStorage
       const currentCsvFilename = localStorage.getItem('currentRecordingFilename');
-      console.log('creating plot from CSV:', currentCsvFilename);
+      // console.log('creating plot from CSV:', currentCsvFilename);
       if (!currentCsvFilename) {
         alert('No current recording found. Please start recording first.');
         return;
@@ -75,14 +75,14 @@ export function initializeExportFunctions() {
         
         try {
           // Create plot from current CSV data - don't pass outputFileName so it uses CSV name with .png
-          console.log('Creating plot from CSV:', currentCsvFilename, '-> Plot will have same name with .png extension');
+          // console.log('Creating plot from CSV:', currentCsvFilename, '-> Plot will have same name with .png extension');
           const plotResult = await plotHandler.createPlot(
             currentCsvFilename,
             plotTitle
             // No outputFileName parameter - plot-handler will auto-generate from CSV name
           );
           
-          console.log('Plot created successfully:', plotResult.data.fileName);
+          // console.log('Plot created successfully:', plotResult.data.fileName);
           
           // Update button to show download state
           saveBtn.textContent = 'Downloading...';
@@ -91,7 +91,7 @@ export function initializeExportFunctions() {
           setTimeout(async () => {
             try {
               // Use plotHandler's existing downloadPlot method
-              console.log('Downloading plot:', plotResult.data.fileName);
+              // console.log('Downloading plot:', plotResult.data.fileName);
               
               // Use the existing plotHandler downloadPlot method
               await plotHandler.downloadPlot(plotResult.data.fileName);

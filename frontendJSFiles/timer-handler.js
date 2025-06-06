@@ -96,7 +96,7 @@ class Timer {
                         deltaTime: delta
                     });
                 } catch (error) {
-                    console.error('Error in timer callback:', error);
+                    //console.error('Error in timer callback:', error);
                 }
             });
         }, this.interval);
@@ -213,7 +213,7 @@ export function scheduleTask(callback, interval = 1000) {
     };
 }
 
-// Global timer controller for easy console access
+// Global timer controller for easy //console access
 const TimerController = {
     start: (interval = 1000) => {
         const timer = getTimer();
@@ -221,14 +221,14 @@ const TimerController = {
         if (!timer.isActive()) {
             timer.start();
         }
-        console.log(`Timer started with ${interval}ms interval`);
+        // //console.log(`Timer started with ${interval}ms interval`);
         return timer;
     },
     
     pause: () => {
         const timer = getTimer();
         timer.stop();
-        console.log('Timer paused');
+        // //console.log('Timer paused');
         return timer;
     },
     
@@ -236,45 +236,45 @@ const TimerController = {
         const timer = getTimer();
         timer.stop();
         timer.reset();
-        console.log('Timer stopped and reset');
+        // //console.log('Timer stopped and reset');
         return timer;
     },
     
     resume: () => {
         const timer = getTimer();
         timer.start();
-        console.log('Timer resumed');
+        // //console.log('Timer resumed');
         return timer;
     },
     
     setInterval: (interval) => {
         const timer = getTimer();
         timer.setInterval(interval);
-        console.log(`Timer interval set to ${interval}ms`);
+        // //console.log(`Timer interval set to ${interval}ms`);
         return timer;
     },
     
     addTask: (taskFunction) => {
         const timer = getTimer();
         const id = timer.addCallback(taskFunction);
-        console.log(`Task added with ID: ${id}`);
+        //console.log(`Task added with ID: ${id}`);
         return id;
     },
     
     removeTask: (id) => {
         const timer = getTimer();
         const removed = timer.removeCallback(id);
-        console.log(`Task ${id} ${removed ? 'removed' : 'not found'}`);
+        //console.log(`Task ${id} ${removed ? 'removed' : 'not found'}`);
         return removed;
     },
     
     status: () => {
         const timer = getTimer();
-        console.log(`Timer Status:
-- Running: ${timer.isActive()}
-- Interval: ${timer.getCurrentInterval()}ms
-- Elapsed: ${timer.getElapsedTime()}ms
-- Active tasks: ${timer.callbacks.length}`);
+//         console.log(`Timer Status:
+// - Running: ${timer.isActive()}
+// - Interval: ${timer.getCurrentInterval()}ms
+// - Elapsed: ${timer.getElapsedTime()}ms
+// - Active tasks: ${timer.callbacks.length}`);
         return {
             running: timer.isActive(),
             interval: timer.getCurrentInterval(),
@@ -303,7 +303,7 @@ const TimerController = {
             const plotFilename = currentCsvFilename.replace(/\.csv$/i, '.png');
             const plotTitle = `Auto Plot - ${selectedTideName} - ${new Date().toLocaleString()}`;
             
-            console.log(`Generating auto plot from: ${currentCsvFilename} -> ${plotFilename}`);
+            //console.log(`Generating auto plot from: ${currentCsvFilename} -> ${plotFilename}`);
             
             // Use global plotHandler to create plot
             if (typeof plotHandler === 'undefined') {
@@ -316,11 +316,11 @@ const TimerController = {
                 plotFilename
             );
             
-            console.log('Auto plot generated successfully:', result.data.fileName);
+            //console.log('Auto plot generated successfully:', result.data.fileName);
             return result;
             
         } catch (error) {
-            console.error('Failed to generate auto plot:', error);
+            //console.error('Failed to generate auto plot:', error);
             throw error;
         }
     }
@@ -337,20 +337,20 @@ if (typeof window !== 'undefined') {
  */
 TimerController.addAutoPlotTask = () => {
     const autoPlotTask = async ({ elapsedTime }) => {
-        console.log(`Auto Plot Task executed at ${elapsedTime}ms`);
+        //console.log(`Auto Plot Task executed at ${elapsedTime}ms`);
         
         try {
             // Generate plot from current CSV data
             await TimerController.generatePlotFromCurrentCSV();
-            console.log('Auto plot generated successfully');
+            //console.log('Auto plot generated successfully');
         } catch (error) {
-            console.error('Auto plot task failed:', error);
+            //console.error('Auto plot task failed:', error);
         }
     };
     
     // Add the plotting task to the timer
     const id = TimerController.addTask ? TimerController.addTask(autoPlotTask) : null;
-    console.log('Auto plot task added with ID:', id);
+    //console.log('Auto plot task added with ID:', id);
     return id;
 };
 
@@ -367,7 +367,7 @@ export default {
 /**
  * Example usage of the timer system:
  * 
- * // Console-friendly usage:
+ * // //console-friendly usage:
  * TimerController.start(2000);  // Start with 2 second interval
  * TimerController.addDemoTask(); // Add a demo task
  * TimerController.status();     // Check status
@@ -388,5 +388,5 @@ export default {
  * timerController.addAutoPlotTask();
  * 
  * // Check if auto plotting is running
- * console.log('Auto plotting active:', timerController.isAutoPlottingActive());
+ * //console.log('Auto plotting active:', timerController.isAutoPlottingActive());
  */

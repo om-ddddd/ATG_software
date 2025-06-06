@@ -52,7 +52,7 @@ class PlotHandler {
         // If no outputFileName provided, use same name as CSV but with .png extension
         if (!outputFileName) {
             outputFileName = csvFileName.replace(/\.csv$/i, '.png');
-            console.log('Auto-generated plot filename from CSV:', outputFileName);
+            // console.log('Auto-generated plot filename from CSV:', outputFileName);
         }
         
         payload.outputFileName = outputFileName;
@@ -86,13 +86,13 @@ const plotHandler = new PlotHandler();
  */
 async function createPlot(csvFileName, customName = null) {
     try {
-        console.log('Creating plot...');
+        // console.log('Creating plot...');
         const result = await plotHandler.createPlot(
             csvFileName,
             'Water Level Analysis',
             customName
         );
-        console.log('Plot created successfully:', result.data.fileName);
+        // console.log('Plot created successfully:', result.data.fileName);
         return result;
     } catch (error) {
         console.error('Failed to create plot:', error.message);
@@ -106,9 +106,9 @@ async function createPlot(csvFileName, customName = null) {
  */
 async function downloadPlot(fileName) {
     try {
-        console.log('Downloading plot:', fileName);
+        // console.log('Downloading plot:', fileName);
         await plotHandler.downloadPlot(fileName);
-        console.log('Download initiated');
+        // console.log('Download initiated');
     } catch (error) {
         console.error('Failed to download plot:', error.message);
         throw error;

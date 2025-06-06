@@ -136,7 +136,7 @@ export function downloadScreenshotOnDemand(customFilename = null) {
  * @returns {Object} Status of initialization
  */
 export function initializeScreenshotHandlers() {
-    console.log('Screenshot handlers initialized');
+    // console.log('Screenshot handlers initialized');
     return { success: true };
 }
 

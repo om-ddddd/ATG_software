@@ -35,7 +35,7 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
             fs_default.mkdirSync(imagesDirectory, { recursive: true });
         }
     } catch (error) {
-        console.log('Directory creation will be attempted on first operation');
+        // console.log('Directory creation will be attempted on first operation');
     }
 
     // Plot configuration
@@ -161,7 +161,7 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
             }
         }
         
-        console.log(`Y-axis range: 0 to ${yAxisMax}`);
+        // console.log(`Y-axis range: 0 to ${yAxisMax}`);
         
         // Calculate number of grid steps (aim for 8-12 steps)
         let stepSize = Math.ceil(yAxisMax / 10);
@@ -515,7 +515,7 @@ const imagesDirectory = path_default.join(require('os').homedir(), 'ATG', 'plots
         }
     });
 
-    console.log('Plot image generation routes registered successfully');
+    // console.log('Plot image generation routes registered successfully');
 }
 
 module.exports = setupPlotImageRoutes;

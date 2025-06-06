@@ -3,5 +3,10 @@
     "name": "test1",
     "range": 10,
     "offset": 10
+  },
+  {
+    "name": "test2",
+    "range": 10,
+    "offset": 15
   }
 ]

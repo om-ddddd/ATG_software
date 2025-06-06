@@ -283,7 +283,7 @@ export function initializeCsvHandlers() {
         }
     });
     
-    console.log('CSV data handlers initialized');
+    // console.log('CSV data handlers initialized');
     return { success: true };
 }
 
@@ -322,5 +322,5 @@ if (typeof window !== 'undefined') {
     window.listCsvFiles = listCsvFiles;
     window.isCurrentlyRecording = isCurrentlyRecording;
     
-    console.log('CSV handler functions made globally available');
+    // console.log('CSV handler functions made globally available');
 }

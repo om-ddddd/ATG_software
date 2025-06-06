@@ -8,14 +8,14 @@
 }
 
 #container_5 {
-   left: 9vw;
-    width: 42vw;
+  left: 9vw;
+    width: 44vw;
     top: 4vh;
     height: 6vh;
     position: relative;
     z-index: 1;
     display: flex;
-    gap: 1vw;
+    gap: 0.2vw;
     scale: 1.2;
 }
 
@@ -62,16 +62,15 @@
 }
 
 #container2 {
-    width: 21vh;
+       width: 21vh;
     height: 6vh;
     position: relative;
-    border-style: solid;
-    border-width: 1px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    border: black solid 1px;
 }
 
 #container4 {
@@ -291,7 +290,7 @@
 }
 
 #quick_label {
-    width: 5vw;
+   width: 4vw;
     position: relative;
     display: block;
 }
@@ -351,4 +350,12 @@
     justify-content: center;
     align-items: flex-start;
     }
+}
+#container10{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 8vw;
+    border: black solid 1px;
+    height: 6vh;
 }
