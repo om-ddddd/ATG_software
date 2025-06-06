@@ -1,17 +1,25 @@
 [
   {
     "name": "Default",
-    "calibrationFactor": 1,
-    "offset": 0,
+    "calibrationFactor": 8.1,
+    "offset": 1261,
     "fineOffset": 0,
-    "kp": 0.5,
-    "ki": 0.3
+    "kp": 1800,
+    "ki": 10
   },
   {
     "name": "vji",
     "calibrationFactor": 11,
     "offset": 1,
     "fineOffset": 1,
+    "kp": 1,
+    "ki": 1
+  },
+  {
+    "name": "gfg",
+    "calibrationFactor": 1,
+    "offset": 0,
+    "fineOffset": 0,
     "kp": 1,
     "ki": 1
   }
