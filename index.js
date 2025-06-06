@@ -226,7 +226,7 @@ const init = () => {
           // console.log('Timer resumed via resume button');
           
           // Start CSV data recording with 1 second interval
-          startRecording(1000)
+          (1000)
             .then(() => {
               // Recording started successfully
               // console.log("CSV writing started successfully");
@@ -234,7 +234,7 @@ const init = () => {
             .catch(() => {
               // Silent handling of recording start errors
               console.warn("Error starting CSV recording (handled silently)");
-            });
+            });startRecording
         }
       });
     }

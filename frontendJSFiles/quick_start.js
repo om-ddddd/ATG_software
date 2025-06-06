@@ -28,7 +28,15 @@ export function quickstart() {
                     // ===============================================
                     window.pmVars.hold_status = 0;  // Release main hold
                     window.pmVars.quick_hold = 0;   // Release quick hold
-                    
+                      startRecording(1000)
+                                .then(() => {
+                                  // Recording started successfully
+                                  // console.log("CSV writing started successfully");
+                                })
+                                .catch(() => {
+                                  // Silent handling of recording start errors
+                                  console.log("Error starting CSV recording (handled silently)");
+                                });
                     // Resume timer operations
                     if (window.TimerController) {
                         window.TimerController.resume();
