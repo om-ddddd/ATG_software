@@ -336,7 +336,17 @@
         gap: 0.2vw;
         scale: 1.2;
     }
-
+    #tide-details {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    width: 12vw;
+    border: black solid 1px;
+    height: 6vh;
+    font-size: 10px;
+    justify-content: center;
+    padding-left: 7px;
+}
     #container_1 {
         width: 8vw;
         height: 6vh;
