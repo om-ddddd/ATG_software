@@ -168,6 +168,26 @@ const init = () => {
             // Register listeners for real-time water level updates
             window.pmVars.addListener("mainoutput", updateActualWLSpan); // Listen for actual water level changes
             window.pmVars.addListener("cum_sineinput", updateRequiredWLSpan); // Listen for required water level changes
+            
+            // ===============================================
+            // TIDE DETAILS INITIALIZATION - Display current selection
+            // ===============================================
+            // Update tide details display with any existing localStorage data
+            updateTideDetailsDisplay();
+            
+            // ===============================================
+            // STORAGE EVENT LISTENER - Auto-update on localStorage changes
+            // ===============================================
+            // Listen for localStorage changes to automatically update tide details
+            window.addEventListener('storage', (event) => {
+              // Check if the change is related to tide data
+              if (event.key === 'selectedTideName' || 
+                  event.key === 'selectedTideRange' || 
+                  event.key === 'selectedTideOffset') {
+                //console.info(`localStorage change detected for ${event.key}: ${event.newValue}`);
+                updateTideDetailsDisplay();
+              }
+            });
           } else {
             console.error("pmVars not available for adding listeners - data binding failed");
           }
@@ -226,7 +246,7 @@ const init = () => {
           // console.log('Timer resumed via resume button');
           
           // Start CSV data recording with 1 second interval
-          (1000)
+          startRecording(1000)
             .then(() => {
               // Recording started successfully
               // console.log("CSV writing started successfully");
@@ -234,7 +254,7 @@ const init = () => {
             .catch(() => {
               // Silent handling of recording start errors
               console.warn("Error starting CSV recording (handled silently)");
-            });startRecording
+            });
         }
       });
     }
@@ -522,6 +542,49 @@ function initWaterLevelDisplays() {
 }
 
 // ===============================================
+// TIDE DETAILS DISPLAY FUNCTION - Show selected tide information
+// ===============================================
+/**
+ * Updates the tide details display with information from localStorage
+ * Shows the currently selected tide's name, range, and offset values
+ * Called when tide selection changes or page loads
+ */
+function updateTideDetailsDisplay() {
+  const tideDetailsDiv = document.getElementById("tide-details");
+  
+  if (tideDetailsDiv) {
+    // Retrieve tide data from localStorage
+    const selectedTideName = localStorage.getItem("selectedTideName");
+    const selectedTideRange = localStorage.getItem("selectedTideRange");
+    const selectedTideOffset = localStorage.getItem("selectedTideOffset");
+    
+    // Check if tide data exists
+    if (selectedTideName && selectedTideRange && selectedTideOffset) {
+      // Create formatted display content using CSS classes
+      tideDetailsDiv.innerHTML = `
+      
+          <div><strong>Tide Details:</strong></div>
+          <div><strong>Name:</strong> ${selectedTideName}</div>
+          <div><strong>Range:</strong> ${selectedTideRange}</div>
+          <div><strong>Offset:</strong> ${selectedTideOffset}</div>
+      
+      `;
+      //console.info(`Tide details displayed: ${selectedTideName}, Range: ${selectedTideRange}, Offset: ${selectedTideOffset}`);
+    } else {
+      // Display default message when no tide is selected
+      tideDetailsDiv.innerHTML = `
+        <div class="tide-info-container no-tide-message">
+          <p>No tide selected. Please select a tide from the Run tab.</p>
+        </div>
+      `;
+      //console.info("No tide details available - showing default message");
+    }
+  } else {
+    console.warn("Tide details div element not found");
+  }
+}
+
+// ===============================================
 // DOM READY STATE HANDLING - Early initialization
 // ===============================================
 // Check if DOM is already loaded and initialize immediately, or wait for DOMContentLoaded
@@ -532,11 +595,13 @@ if (
   // DOM is already ready, initialize immediately
   initWaterLevelDisplays();
   setupTideRangeListener();
+  updateTideDetailsDisplay();
 } else {
   // DOM not ready yet, wait for DOMContentLoaded event
   document.addEventListener("DOMContentLoaded", () => {
     initWaterLevelDisplays();
     setupTideRangeListener();
+    updateTideDetailsDisplay();
   });
 }
 
@@ -626,6 +691,7 @@ function setupTideRangeListener() {
                 const offsetInput = document.getElementById("input_6");
                 if (offsetInput) {
                   offsetInput.value = selectedTide.offset || "";
+                  localStorage.setItem("selectedTideOffset",selectedTide.offset );
                   //console.info(`Offset input updated: ${selectedTide.offset}`);
                 }
                 
@@ -634,10 +700,14 @@ function setupTideRangeListener() {
                 // ===============================================
                 if (window.pmVars) {
                   window.pmVars.sineinput = selectedTide.range;
+                  localStorage.setItem("selectedTideRange",selectedTide.range );
                   //console.info(`Sine input range set to: ${selectedTide.range}`);
                   
                   // Update the required water level display
                   updateRequiredWLSpan();
+                  
+                  // Update the tide details display with new selection
+                  updateTideDetailsDisplay();
                 }
               } else {
                 console.warn(`Selected tide '${selectedTideName}' not found in API response`);

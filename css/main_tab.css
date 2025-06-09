@@ -8,8 +8,8 @@
 }
 
 #container_5 {
-    left: 9vw;
-    width: 44vw;
+      left: 9vw;
+    width: 50vw;
     top: 4vh;
     height: 6vh;
     position: relative;
@@ -62,7 +62,7 @@
 }
 
 #container2 {
-    width: 21vh;
+    width: 8vw;
     height: 6vh;
     position: relative;
     display: flex;
@@ -113,12 +113,12 @@
 }
 
 #export_options_container {
-    right: 23.3vw;
+    right: 5.3vw;
     position: fixed;
-    top: 10vh;
+    top: 6vh;
     scale: 1.3;
-
 }
+
 
 #export_options_container button {
     background-color: deepskyblue;
@@ -257,7 +257,7 @@
 
 
 #container5 {
-    width: 20vh;
+    width: 8vw;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -269,7 +269,7 @@
 
 #container6 {
     position: relative;
-    width: 10vw;
+    width: 8vw;
     height: 6vh;
     border: black solid 1px;
     display: flex;
@@ -338,7 +338,7 @@
     }
 
     #container_1 {
-        width: 10vw;
+        width: 8vw;
         height: 6vh;
         position: relative;
         border-width: 1px;
@@ -443,4 +443,15 @@
     width: 8vw;
     border: black solid 1px;
     height: 6vh;
+}
+#tide-details{
+     display: flex;
+    align-items: start;
+    flex-direction: column;
+    width: 12vw;
+    border: black solid 1px;
+    height: 6vh;
+    font-size: 14px;
+    justify-content: center;
+    padding-left: 7px;
 }

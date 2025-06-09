@@ -83,7 +83,8 @@
             <gc-widget-menubar id="mb" has-window-buttons product-name="ATG" layout horizontal>
                 <gc-widget-menuitem id="mm_administration" label="Administration" layout vertical>
                 </gc-widget-menuitem>
-                <button id="ma_about" type="button" style="color: white; background: #bb2719; border: 0px;">About</button>
+                <button id="ma_about" type="button"
+                    style="color: white; background: #bb2719; border: 0px;">About</button>
                 <button id="ma_help" type="button" style="color: white; background: #bb2719; border: 0px;">Help</button>
                 <gc-widget-menuitem id="mm_exit" label="Exit" layout vertical>
                     <gc-widget-menuaction id="ma_exit" label="Exit" action-id="cmd_exit" hotkey="ctrl+x"
@@ -162,14 +163,14 @@
                             <span class="s_close s_close-dialog">&times;</span>
                             <h3>Create New Setting</h3>
                             <form id="s_create-setting-form">
-                                
+
                                 <div class="s_form-group">
                                     <label for="s_setting-name">Setting Name:</label>
                                     <input type="text" id="s_setting-name" required />
                                 </div>
                                 <div class="s_settings-category">
                                     Calibration Settings
-                                   </div> 
+                                </div>
                                 <div class="s_form-group">
                                     <label for="s_calibration-factor">Calibration Factor:</label>
                                     <input type="number" id="s_calibration-factor" required step="0.01" />
@@ -184,7 +185,7 @@
                                 </div>
                                 <div class="s_settings-category">
                                     PID Settings
-                                   </div> 
+                                </div>
                                 <div class="s_form-group">
                                     <label for="s_kp">Kp:</label>
                                     <input type="number" id="s_kp" required step="0.01" />
@@ -217,9 +218,9 @@
                                     </select>
                                 </div>
                                 <div>
-                                   <div class="s_settings-category">
-                                    Calibration Settings
-                                   </div> 
+                                    <div class="s_settings-category">
+                                        Calibration Settings
+                                    </div>
                                     <div class="s_form-group">
                                         <label for="s_modify-calibration-factor">Calibration Factor:</label>
                                         <input type="number" id="s_modify-calibration-factor" required step="0.01" />
@@ -390,6 +391,7 @@
                         </div>
                     </div>
                 </gc-widget-tab-panel>
+                <!--run tab panel--->
                 <gc-widget-tab-panel id="run" class="container" label="Run" icon-name="round:image:" vertical layout
                     has-heading start-justified start>
                     <!--
@@ -416,13 +418,7 @@
                     </div>
                     <gc-widget-container id="container_90">
                         <gc-widget-label id="manual_check" label="Enter Range and Offset Manually"></gc-widget-label>
-                        <input type="checkbox" name="checkbox" id="m_check" style="
-                  width: 20px;
-                  position: absolute;
-                  left: 74px;
-                  top: 69px;
-                  height: 16px;
-                " />
+                        <input type="checkbox" name="checkbox" id="m_check" style="width: 20px; position: absolute;left: 74px;top: 69px;height: 16px;" />
                         <gc-widget-input id="input_5" placeholder="Offset"></gc-widget-input>
                         <gc-widget-label id="label_9" label="Offset"></gc-widget-label>
                         <gc-widget-input id="input_6"></gc-widget-input>
@@ -443,9 +439,9 @@
                             <gc-widget-button id="button" label="H"></gc-widget-button>
                             <gc-widget-button id="button_1" label="R"></gc-widget-button>
                         </div>
-                         <div id="container10">
-                                <input type="checkbox" id="quick_start" checked=/>
-                                <label for="quick_start" id="quick_start_label">Quick Start</label>
+                        <div id="container10">
+                            <input type="checkbox" id="quick_start" checked= />
+                            <label for="quick_start" id="quick_start_label">Quick Start</label>
                         </div>
                         <div id="container2">
                             <div id="container4">
@@ -470,6 +466,7 @@
                                 <button id="start" style="width: 58px">START</button>
                             </div>
                         </div>
+                        <div id = "tide-details"></div>
                     </div>
                     <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="6.30"
                         trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
@@ -775,7 +772,7 @@
                         gateStatusDisplay.style.backgroundColor = "#f44336"; // Red
                     }
                 }
-                else{
+                else {
                     // console.log("pmVars or gate_status is not defined");
                 }
             }
@@ -792,54 +789,56 @@
             }
         });
     </script>
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the correct about button
-    const aboutButton = document.getElementById('ma_about');
-    const aboutFrame = document.getElementById('aboutDialogFrame');
-    
-    // Show iframe when about button is clicked
-    if (aboutButton && aboutFrame) {
-        aboutButton.addEventListener('click', () => {
-            aboutFrame.style.display = 'block';
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the correct about button
+            const aboutButton = document.getElementById('ma_about');
+            const aboutFrame = document.getElementById('aboutDialogFrame');
+
+            // Show iframe when about button is clicked
+            if (aboutButton && aboutFrame) {
+                aboutButton.addEventListener('click', () => {
+                    aboutFrame.style.display = 'block';
+                });
+            }
+
+            // Listen for messages from the iframe to close
+            window.addEventListener('message', (event) => {
+                if (event.data === 'closeDialog') {
+                    aboutFrame.style.display = 'none';
+                }
+            });
+
+            // Close iframe when clicking outside (optional)
+            aboutFrame.addEventListener('click', (event) => {
+                if (event.target === aboutFrame) {
+                    aboutFrame.style.display = 'none';
+                }
+            });
         });
-    }
-    
-    // Listen for messages from the iframe to close
-    window.addEventListener('message', (event) => {
-        if (event.data === 'closeDialog') {
-            aboutFrame.style.display = 'none';
-        }
-    });
-    
-    // Close iframe when clicking outside (optional)
-    aboutFrame.addEventListener('click', (event) => {
-        if (event.target === aboutFrame) {
-            aboutFrame.style.display = 'none';
-        }
-    });
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Help button PDF functionality
-    const helpButton = document.getElementById('ma_help');
-    
-    if (helpButton) {
-        helpButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Option 1: Open in new tab (simple)
-            window.open('./docs/user-manual.pdf', '_blank');
-            
-            // Option 2: Show download dialog
-            // const link = document.createElement('a');
-            // link.href = './docs/user-manual.pdf';
-            // link.download = 'ATG-User-Manual.pdf';
-            // link.click();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Help button PDF functionality
+            const helpButton = document.getElementById('ma_help');
+
+            if (helpButton) {
+                helpButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    // Option 1: Open in new tab (simple)
+                    window.open('./docs/user-manual.pdf', '_blank');
+
+                    // Option 2: Show download dialog
+                    // const link = document.createElement('a');
+                    // link.href = './docs/user-manual.pdf';
+                    // link.download = 'ATG-User-Manual.pdf';
+                    // link.click();
+                });
+            }
         });
-    }
-});
-</script>
- <iframe id="aboutDialogFrame" src="./about-dialog.html" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
+    </script>
+    <iframe id="aboutDialogFrame" src="./about-dialog.html"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
 </body>
+
 </html>
