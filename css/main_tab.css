@@ -9,7 +9,7 @@
 
 #container_5 {
       left: 9vw;
-    width: 50vw;
+    width: 59vw;
     top: 4vh;
     height: 6vh;
     position: relative;
@@ -327,7 +327,7 @@
 @media screen and (min-width: 1200px) and (max-width: 1440px) {
     #container_5 {
         left: 9vw;
-        width: 55vw;
+        width: 59vw;
         top: 4vh;
         height: 6vh;
         position: relative;
@@ -464,4 +464,14 @@
     font-size: 14px;
     justify-content: center;
     padding-left: 7px;
+}
+#adc_value{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 8vw;
+    border: black solid 1px;
+    height: 6vh;
+    flex-direction: column;
+    font-weight: 500;
 }

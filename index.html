@@ -467,6 +467,11 @@
                             </div>
                         </div>
                         <div id = "tide-details"></div>
+                        <div id = "adc_value">
+                           ADC Value
+                            <div id="pot_value"></div>
+                        </div>
+
                     </div>
                     <gc-widget-virtual-oscilloscope id="oscilloscope" capacity="100" sample-rate="6.30"
                         trigger-level="-4" plot-title=" " x-axis-title="Time" horizontal-pos="0" horizontal-zoom="1"
@@ -837,6 +842,18 @@
             }
         });
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    function updatePotValue() {
+        const potValueDiv = document.getElementById('pot_value');
+        if (potValueDiv && window.pmVars) {
+            potValueDiv.textContent = (window.pmVars.pot_output || 0).toFixed(3);
+        }
+    }
+    
+    setInterval(updatePotValue, 100);
+});
+</script>
     <iframe id="aboutDialogFrame" src="./about-dialog.html"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
 </body>
