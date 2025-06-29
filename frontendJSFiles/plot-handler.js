@@ -26,7 +26,7 @@ class PlotHandler {
             });
 
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
             }
@@ -48,13 +48,13 @@ class PlotHandler {
     async createPlot(csvFileName, title = null, outputFileName = null) {
         const payload = { csvFileName };
         if (title) payload.title = title;
-        
+
         // If no outputFileName provided, use same name as CSV but with .png extension
         if (!outputFileName) {
             outputFileName = csvFileName.replace(/\.csv$/i, '.png');
             // console.log('Auto-generated plot filename from CSV:', outputFileName);
         }
-        
+
         payload.outputFileName = outputFileName;
 
         return await this.makeRequest(`${this.apiPath}/generate`, {
@@ -70,7 +70,13 @@ class PlotHandler {
      */
     async downloadPlot(fileName) {
         const url = `${this.baseUrl}${this.apiPath}/download/${encodeURIComponent(fileName)}`;
-        window.open(url, '_blank');
+        // Create a hidden link and trigger click for download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 }
 

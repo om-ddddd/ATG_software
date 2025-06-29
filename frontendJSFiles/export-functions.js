@@ -1,6 +1,4 @@
-import html2canvas from "../node_modules/html2canvas/dist/html2canvas.esm.js";
 import { downloadCsvData } from './csv-handler.js';
-import { downloadScreenshotOnDemand } from './screenshot-handler.js';
 export function initializeExportFunctions() {
   const saveBtn = document.getElementById('save_btn');
   const printBtn = document.getElementById('print_btn');
