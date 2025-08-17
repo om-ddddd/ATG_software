@@ -199,11 +199,13 @@ const init = () => {
   // ===============================================
   // HOLD BUTTON EVENT HANDLER - Pause/Stop functionality
   // ===============================================
-  GcWidget.querySelector("#button").then((hButton) => {
+ const hButton = document.getElementById("button"); // Get hold button element
+ const rButton = document.getElementById("button_1"); // Get resume button element
     if (hButton) {
       hButton.addEventListener("click", () => {
         //console.info("Hold button clicked - pausing system operations");
-        
+        hButton.style.backgroundColor = "#17de63"; // Change button color to indicate hold state
+        rButton.style.backgroundColor = "red"; // Change button color to indicate hold state
         if (window.pmVars) {
           // Set system to hold state
           window.pmVars.hold_status = 1; // Enable hold mode
@@ -226,16 +228,16 @@ const init = () => {
         }
       });
     }
-  });
   
   // ===============================================
   // RESUME BUTTON EVENT HANDLER - Resume/Start functionality
   // ===============================================
-  GcWidget.querySelector("#button_1").then((rButton) => {
+
     if (rButton) {
       rButton.addEventListener("click", () => {
         //console.info("Resume button clicked - starting system operations");
-        
+        hButton.style.backgroundColor = "red"; // Change button color to indicate hold state
+        rButton.style.backgroundColor = "#17de63"; // Change button color to indicate hold state
         if (window.pmVars) {
           // Release system from hold state
           window.pmVars.hold_status = 0; // Disable hold mode
@@ -258,8 +260,7 @@ const init = () => {
         }
       });
     }
-  });
-  
+ 
   // ===============================================
   // QUICK INPUT CONTROLS - Manual water level override
   // ===============================================

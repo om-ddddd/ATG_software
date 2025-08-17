@@ -59,6 +59,8 @@
     position: relative;
     width: 53px;
     height: 42px;
+    background-color: red;
+    border: black solid
 }
 
 #container2 {

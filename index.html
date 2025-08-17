@@ -418,7 +418,8 @@
                     </div>
                     <gc-widget-container id="container_90">
                         <gc-widget-label id="manual_check" label="Enter Range and Offset Manually"></gc-widget-label>
-                        <input type="checkbox" name="checkbox" id="m_check" style="width: 20px; position: absolute;left: 74px;top: 69px;height: 16px;" />
+                        <input type="checkbox" name="checkbox" id="m_check"
+                            style="width: 20px; position: absolute;left: 74px;top: 69px;height: 16px;" />
                         <gc-widget-input id="input_5" placeholder="Offset"></gc-widget-input>
                         <gc-widget-label id="label_9" label="Offset"></gc-widget-label>
                         <gc-widget-input id="input_6"></gc-widget-input>
@@ -436,8 +437,8 @@
                             </div>
                         </div>
                         <div id="container_2">
-                            <gc-widget-button id="button" label="H"></gc-widget-button>
-                            <gc-widget-button id="button_1" label="R"></gc-widget-button>
+                            <button id="button">H</button>
+                            <button id="button_1">R</button>
                         </div>
                         <div id="container10">
                             <input type="checkbox" id="quick_start" checked= />
@@ -466,9 +467,9 @@
                                 <button id="start" style="width: 58px">START</button>
                             </div>
                         </div>
-                        <div id = "tide-details"></div>
-                        <div id = "adc_value">
-                           ADC Value
+                        <div id="tide-details"></div>
+                        <div id="adc_value">
+                            ADC Value
                             <div id="pot_value"></div>
                         </div>
 
@@ -655,6 +656,8 @@
             const holdIndicatorLight = document.getElementById(
                 "hold_indicator_light"
             );
+            const hButton = document.getElementById("button"); // Get hold button element
+            const rButton = document.getElementById("button_1"); // Get resume button element
 
             // Function to check hold status and update indicator
             function updateHoldIndicator() {
@@ -665,8 +668,12 @@
                         window.pmVars.quick_hold === 1
                     ) {
                         holdIndicatorLight.style.backgroundColor = "#17de63"; // Green
+                        hButton.style.backgroundColor = "#17de63"; // Change button color to indicate hold state
+                        rButton.style.backgroundColor = "red"; // Change button color to indicate hold state
                     } else {
                         holdIndicatorLight.style.backgroundColor = "red";
+                        rButton.style.backgroundColor = "#17de63"; // Change button color to indicate hold state
+                        hButton.style.backgroundColor = "red"; // Change button color to indicate hold state
                     }
                 }
             }
@@ -843,17 +850,17 @@
         });
     </script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    function updatePotValue() {
-        const potValueDiv = document.getElementById('pot_value');
-        if (potValueDiv && window.pmVars) {
-            potValueDiv.textContent = (window.pmVars.pot_output || 0).toFixed(3);
-        }
-    }
-    
-    setInterval(updatePotValue, 100);
-});
-</script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function updatePotValue() {
+                const potValueDiv = document.getElementById('pot_value');
+                if (potValueDiv && window.pmVars) {
+                    potValueDiv.textContent = (window.pmVars.pot_output || 0).toFixed(3);
+                }
+            }
+
+            setInterval(updatePotValue, 100);
+        });
+    </script>
     <iframe id="aboutDialogFrame" src="./about-dialog.html"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:1000;"></iframe>
 </body>
