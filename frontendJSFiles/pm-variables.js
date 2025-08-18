@@ -158,6 +158,42 @@ export async function initializePmVars() {
                     return undefined;
                 }
             },
+            get forward() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.forward');
+                    return binding?.getValue();
+                } catch (err) {
+                    //console.error('Error getting forward:', err);
+                    return undefined;
+                }
+            },
+            get forward_derivative() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.forward_derivative');
+                    return binding?.getValue();
+                } catch (err) {
+                    //console.error('Error getting forward_derivative:', err);
+                    return undefined;
+                }
+            },
+            get point_95() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.point_95');
+                    return binding?.getValue();
+                } catch (err) {
+                    //console.error('Error getting point_95:', err);
+                    return undefined;
+                }
+            },
+            get dcoffset() {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.dcoffset');
+                    return binding?.getValue();
+                } catch (err) {
+                    //console.error('Error getting dcoffset:', err);
+                    return undefined;
+                }
+            },
 
             // Setter functions to change values
             set switchinput(value) {
@@ -368,12 +404,64 @@ export async function initializePmVars() {
                 }
                 return value;
             },
+            set forward(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.forward');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        //console.error('Error: PM binding for forward not found');
+                    }
+                } catch (err) {
+                    //console.error('Error setting forward:', err);
+                }
+                return value;
+            },
+            set forward_derivative(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.forward_derivative');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        //console.error('Error: PM binding for forward_derivative not found');
+                    }
+                } catch (err) {
+                    //console.error('Error setting forward_derivative:', err);
+                }
+                return value;
+            },
+            set point_95(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.point_95');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        //console.error('Error: PM binding for point_95 not found');
+                    }
+                } catch (err) {
+                    //console.error('Error setting point_95:', err);
+                }
+                return value;
+            },
+            set dcoffset(value) {
+                try {
+                    const binding = bindingRegistry.getBinding('pm.dcoffset');
+                    if (binding) {
+                        binding.setValue(value);
+                    } else {
+                        //console.error('Error: PM binding for dcoffset not found');
+                    }
+                } catch (err) {
+                    //console.error('Error setting dcoffset:', err);
+                }
+                return value;
+            },
 
             // Helper function to get all PM variables at once
             getAll() {
                 try {
                     return {
-                        switchinput: this.switchinput,
+                        switchinput: this.switchinput,//peace mar
                         sineinput: this.sineinput,
                         cum_sineinput: this.cum_sineinput,
                         mainoutput: this.mainoutput,
@@ -388,7 +476,11 @@ export async function initializePmVars() {
                         quick_hold: this.quick_hold,
                         quick_input: this.quick_input,
                         frequency: this.frequency,
-                        stop: this.stop
+                        stop: this.stop,
+                        forward: this.forward,
+                        forward_derivative: this.forward_derivative,
+                        point_95: this.point_95,
+                        dcoffset: this.dcoffset
                     };
                 } catch (err) {
                     //console.error('Error getting all PM variables:', err);
@@ -399,9 +491,9 @@ export async function initializePmVars() {
             // Helper function to monitor changes in a variable
             monitor(varName, intervalMs = 1000) {
                 // Check if variable name is valid
-                if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop'].includes(varName)) {
+                if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop', 'forward', 'forward_derivative', 'point_95', 'dcoffset'].includes(varName)) {
                     //console.error(`Error: Invalid PM variable name "${varName}"`);
-                    //console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gate_status, hold_status, pot_output, kp, ki, main_gain, offset, fine_offset, quick_hold, quick_input, frequency, stop');
+                    //console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gate_status, hold_status, pot_output, kp, ki, main_gain, offset, fine_offset, quick_hold, quick_input, frequency, stop, forward, forward_derivative, point_95, dcoffset');
                     return `Invalid variable name: ${varName}`;
                 }
 
@@ -453,7 +545,7 @@ export async function initializePmVars() {
         };
 
         // Add listener support to track changes in real-time
-        const pmVarNames = ['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop'];
+        const pmVarNames = ['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop', 'forward', 'forward_derivative', 'point_95', 'dcoffset'];
         pmVarNames.forEach(varName => {
             const binding = bindingRegistry.getBinding(`pm.${varName}`);
             if (binding) {
@@ -477,9 +569,9 @@ export async function initializePmVars() {
 
         window.pmVars.addListener = function (varName, callback) {
             // Check if variable name is valid
-            if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop'].includes(varName)) {
+            if (!['switchinput', 'sineinput', 'cum_sineinput', 'mainoutput', 'gate_status', 'hold_status', 'pot_output', 'kp', 'ki', 'main_gain', 'offset', 'fine_offset', 'quick_hold', 'quick_input', 'frequency', 'stop', 'forward', 'forward_derivative', 'point_95', 'dcoffset'].includes(varName)) {
                 //console.error(`Error: Invalid PM variable name "${varName}"`);
-                //console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gate_status, hold_status, pot_output, kp, ki, main_gain, offset, fine_offset, quick_hold, quick_input, frequency, stop');
+                //console.info('Valid variables: switchinput, sineinput, cum_sineinput, mainoutput, gate_status, hold_status, pot_output, kp, ki, main_gain, offset, fine_offset, quick_hold, quick_input, frequency, stop, forward, forward_derivative, point_95, dcoffset');
                 return `Invalid variable name: ${varName}`;
             }
 
@@ -509,6 +601,11 @@ export async function initializePmVars() {
             return `Listener not found for pm.${varName}`;
         };
 
+        // Set default values for new PM variables
+        window.pmVars.point_95 = 0.95;
+        window.pmVars.forward = 70;
+        window.pmVars.forward_derivative = 6000;
+       
         //console.info('PM variables are now accessible via the global "pmVars" object in the browser //console.');
         //console.info('================================================================');
 
