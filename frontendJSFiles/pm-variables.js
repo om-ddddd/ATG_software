@@ -601,10 +601,8 @@ export async function initializePmVars() {
             return `Listener not found for pm.${varName}`;
         };
 
-        // Set default values for new PM variables
-        window.pmVars.point_95 = 0.95;
-        window.pmVars.forward = 70;
-        window.pmVars.forward_derivative = 6000;
+        // Load Super Admin settings and set PM variables accordingly
+        await loadSuperAdminSettings();
        
         //console.info('PM variables are now accessible via the global "pmVars" object in the browser //console.');
         //console.info('================================================================');
@@ -616,5 +614,78 @@ export async function initializePmVars() {
     }
 }
 
+// Function to load Super Admin settings from backend and set PM variables
+async function loadSuperAdminSettings() {
+    try {
+        console.log('Loading Super Admin settings for PM variables initialization...');
+        
+        const response = await fetch('/api/super-admin/settings', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                // Set PM variables from Super Admin settings
+                window.pmVars.point_95 = result.data.multiplicationFactor || 0.95;
+                window.pmVars.forward = result.data.forward || 70;
+                window.pmVars.forward_derivative = result.data.forwardDerivative || 6000;
+                
+                console.log('PM variables initialized from Super Admin settings:', {
+                    point_95: window.pmVars.point_95,
+                    forward: window.pmVars.forward,
+                    forward_derivative: window.pmVars.forward_derivative
+                });
+            } else {
+                console.warn('Super Admin settings not available, using default values');
+                setDefaultValues();
+            }
+        } else {
+            console.warn('Failed to load Super Admin settings, using default values');
+            setDefaultValues();
+        }
+    } catch (error) {
+        console.error('Error loading Super Admin settings, using default values:', error);
+        setDefaultValues();
+    }
+}
+
+// Function to set default values as fallback
+function setDefaultValues() {
+    window.pmVars.point_95 = 0.95;
+    window.pmVars.forward = 70;
+    window.pmVars.forward_derivative = 6000;
+    
+    console.log('PM variables set to default values:', {
+        point_95: window.pmVars.point_95,
+        forward: window.pmVars.forward,
+        forward_derivative: window.pmVars.forward_derivative
+    });
+}
+
+// Global function to refresh PM variables from Super Admin settings
+async function refreshPMVariablesFromSuperAdmin() {
+    try {
+        console.log('Refreshing PM variables from Super Admin settings...');
+        await loadSuperAdminSettings();
+        return true;
+    } catch (error) {
+        console.error('Error refreshing PM variables:', error);
+        return false;
+    }
+}
+
+// Make refresh function globally accessible
+if (typeof window !== 'undefined') {
+    window.refreshPMVariablesFromSuperAdmin = refreshPMVariablesFromSuperAdmin;
+}
+
 // Auto-initialize when module is loaded
 initializePmVars();
+
+// Export functions for external use
+export { loadSuperAdminSettings, setDefaultValues, refreshPMVariablesFromSuperAdmin };

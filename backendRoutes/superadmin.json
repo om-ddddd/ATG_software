@@ -1,7 +1,7 @@
 {
-  "multiplicationFactor": 1.1,
-  "forward": 70,
-  "forwardDerivative": 6000,
-  "lastUpdated": "2025-08-18T11:51:37.348Z",
+  "multiplicationFactor": 0.95,
+  "forward": 70000000000,
+  "forwardDerivative": 60000,
+  "lastUpdated": "2025-08-18T12:08:07.102Z",
   "version": "1.0.0"
 }

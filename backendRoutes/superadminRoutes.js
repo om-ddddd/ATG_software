@@ -103,24 +103,8 @@ function setupSuperAdminRoutes(app, dependencies) {
             errors.push('Forward derivative must be a number');
         }
 
-        // Range validations (optional - adjust as needed)
-        if (typeof settings.multiplicationFactor === 'number') {
-            if (settings.multiplicationFactor < 0 || settings.multiplicationFactor > 10) {
-                errors.push('Multiplication factor must be between 0 and 10');
-            }
-        }
-
-        if (typeof settings.forward === 'number') {
-            if (settings.forward < -1000 || settings.forward > 1000) {
-                errors.push('Forward value must be between -1000 and 1000');
-            }
-        }
-
-        if (typeof settings.forwardDerivative === 'number') {
-            if (settings.forwardDerivative < 0 || settings.forwardDerivative > 100000) {
-                errors.push('Forward derivative must be between 0 and 100000');
-            }
-        }
+        // Range validations removed - no limits applied
+        // Values can be any valid number
 
         return errors;
     };

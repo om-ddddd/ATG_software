@@ -429,6 +429,30 @@ class SuperAdmin {
             this.showError('settings-message', 'Settings saved to backend, but failed to update PM variables.');
         }
     }
+
+    // Refresh PM Variables from backend (useful for external updates)
+    async refreshPMVariablesFromBackend() {
+        try {
+            const backendData = await this.loadFromBackend();
+            if (backendData && window.pmVars) {
+                window.pmVars.point_95 = backendData.multiplicationFactor;
+                window.pmVars.forward = backendData.forward;
+                window.pmVars.forward_derivative = backendData.forwardDerivative;
+                
+                console.log('PM Variables refreshed from backend:', {
+                    point_95: backendData.multiplicationFactor,
+                    forward: backendData.forward,
+                    forward_derivative: backendData.forwardDerivative
+                });
+                
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error refreshing PM variables from backend:', error);
+            return false;
+        }
+    }
 }
 
 // Initialize Super Admin when DOM is ready
