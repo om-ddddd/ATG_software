@@ -1,0 +1,227 @@
+/* Super Admin Modal Styles */
+.super-admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.super-admin-overlay.show {
+    display: flex;
+}
+
+.super-admin-modal {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    color: white;
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.super-admin-modal h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.super-admin-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.super-admin-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.super-admin-form-group {
+    margin-bottom: 20px;
+}
+
+.super-admin-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #f0f0f0;
+}
+
+.super-admin-form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.super-admin-form-group input:focus {
+    outline: none;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.super-admin-form-group input[type="password"] {
+    letter-spacing: 2px;
+}
+
+.super-admin-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.super-admin-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 100px;
+}
+
+.super-admin-btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+
+.super-admin-btn-primary:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.super-admin-btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.super-admin-btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.super-admin-btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.super-admin-btn-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+.super-admin-error {
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    background-color: rgba(255, 107, 107, 0.1);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.super-admin-success {
+    color: #51cf66;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    background-color: rgba(81, 207, 102, 0.1);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(81, 207, 102, 0.3);
+}
+
+.super-admin-form {
+    width: 100%;
+}
+
+.super-admin-form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.super-admin-form-row .super-admin-form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.super-admin-help-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.super-admin-current-values {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.super-admin-current-values h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #f0f0f0;
+}
+
+.super-admin-current-values .value-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.super-admin-current-values .value-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.super-admin-current-values .value-number {
+    color: #51cf66;
+    font-weight: 600;
+}

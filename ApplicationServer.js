@@ -242,6 +242,15 @@ class AbstractServer {
             path_module: path__default["default"],
             json5_module: JSON5__default["default"]
         });
+
+        // Import and setup Super Admin Routes
+        const setupSuperAdminRoutes = require('./backendRoutes/superadminRoutes');
+        // Initialize the super admin routes
+        setupSuperAdminRoutes(this.app, {
+            fs_module: fs__default["default"],
+            path_module: path__default["default"],
+            json5_module: JSON5__default["default"]
+        });
         // Import and setup Tide Management Routes
         const setupTideRoutes = require('./backendRoutes/tideRoutes');     
         // Initialize the tide management routes

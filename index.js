@@ -18,6 +18,7 @@ import { quickstart } from "./frontendJSFiles/quick_start.js";
 // ===============================================
 import { initializePmVars } from "./frontendJSFiles/pm-variables.js"; // Initialize process measurement variables
 import { initAdministration } from "./frontendJSFiles/auth.js"; // Initialize user authentication system
+import { SuperAdmin } from "./frontendJSFiles/super-admin.js"; // Super Admin functionality
 import {
   startRecording,
   stopRecording,
