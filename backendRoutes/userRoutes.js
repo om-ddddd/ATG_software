@@ -20,7 +20,7 @@ function setupUserRoutes(app, options = {}) {
     const path_default = path_module || path;
     const JSON5_default = json5_module || JSON5;
     
-    console.log("User management routes initialized");
+ //   console.log("User management routes initialized");
     
     // User management endpoint: Change username or password
     app.post('/api/changeUser', (req, res) => {

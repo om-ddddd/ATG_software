@@ -40,7 +40,7 @@ function setupSuperAdminRoutes(app, dependencies) {
         } catch (error) {
             // File doesn't exist, create it with default settings
             await fs.writeFile(SUPERADMIN_SETTINGS_FILE, JSON.stringify(DEFAULT_SETTINGS, null, 2));
-            console.log('Created Super Admin settings file with default values');
+          //  console.log('Created Super Admin settings file with default values');
         }
     };
 
@@ -127,7 +127,7 @@ function setupSuperAdminRoutes(app, dependencies) {
                 message: 'Super Admin settings retrieved successfully'
             });
 
-            console.log('Super Admin settings retrieved successfully');
+           // console.log('Super Admin settings retrieved successfully');
         } catch (error) {
             console.error('Error retrieving Super Admin settings:', error);
             res.status(500).json({
@@ -172,7 +172,7 @@ function setupSuperAdminRoutes(app, dependencies) {
                 message: 'Super Admin settings updated successfully'
             });
 
-            console.log('Super Admin settings updated:', newSettings);
+           // console.log('Super Admin settings updated:', newSettings);
         } catch (error) {
             console.error('Error updating Super Admin settings:', error);
             res.status(500).json({
@@ -224,7 +224,7 @@ function setupSuperAdminRoutes(app, dependencies) {
                 message: 'Super Admin settings updated successfully'
             });
 
-            console.log('Super Admin settings partially updated:', updates);
+           // console.log('Super Admin settings partially updated:', updates);
         } catch (error) {
             console.error('Error updating Super Admin settings:', error);
             res.status(500).json({
@@ -249,7 +249,7 @@ function setupSuperAdminRoutes(app, dependencies) {
                 message: 'Super Admin settings reset to defaults successfully'
             });
 
-            console.log('Super Admin settings reset to defaults');
+            //console.log('Super Admin settings reset to defaults');
         } catch (error) {
             console.error('Error resetting Super Admin settings:', error);
             res.status(500).json({
@@ -292,14 +292,14 @@ function setupSuperAdminRoutes(app, dependencies) {
         });
     });
 
-    console.log('Super Admin routes initialized successfully');
-    console.log('Available endpoints:');
-    console.log('  - GET /api/super-admin/settings');
-    console.log('  - POST /api/super-admin/settings');
-    console.log('  - PUT /api/super-admin/settings');
-    console.log('  - DELETE /api/super-admin/settings');
-    console.log('  - GET /api/super-admin/health');
-    console.log('  - GET /api/super-admin/defaults');
+   // console.log('Super Admin routes initialized successfully');
+   // console.log('Available endpoints:');
+    //console.log('  - GET /api/super-admin/settings');
+    //console.log('  - POST /api/super-admin/settings');
+    //console.log('  - PUT /api/super-admin/settings');
+    //console.log('  - DELETE /api/super-admin/settings');
+    //console.log('  - GET /api/super-admin/health');
+    //console.log('  - GET /api/super-admin/defaults');
 }
 
 module.exports = setupSuperAdminRoutes;
